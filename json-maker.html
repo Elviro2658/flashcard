@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تبدیل‌گر JSON فلش‌کارت</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--card:#1e293b;--bd:#334155;--tx:#e2e8f0;--mt:#94a3b8;--ac:#3b82f6;--ok:#4ade80;--danger:#dc2626;--purple:#7c3aed}
+body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding:14px;display:flex;flex-direction:column;align-items:center}
+.wrap{width:100%;max-width:900px}
+h1{font-size:1rem;color:var(--mt);text-align:center;margin-bottom:10px}
+.topbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;justify-content:center}
+.topbar button{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;font-family:inherit;font-size:.78rem;cursor:pointer;font-weight:600}
+.topbar button:hover{background:var(--bd)}
+.topbar button.green{background:#16a34a;color:#fff;border-color:#16a34a}
+.topbar button.purple{background:var(--purple);color:#fff;border-color:var(--purple)}
+.topbar button.blue{background:var(--ac);color:#fff;border-color:var(--ac)}
+.section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.section h2{font-size:.85rem;color:var(--mt);margin-bottom:8px}
+input[type="text"],textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;resize:vertical}
+textarea{min-height:60px}
+.subtopic{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:8px}
+.subtopic-head{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.subtopic-head input{flex:1}
+.btn-icon{background:transparent;border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:6px 10px;cursor:pointer;font-family:inherit;font-size:.75rem;font-weight:700}
+.btn-icon:hover{background:var(--bd)}
+.btn-icon.danger{color:var(--danger);border-color:var(--danger)}
+.btn-icon.danger:hover{background:var(--danger);color:#fff}
+.card-row{display:flex;gap:6px;margin-bottom:6px;align-items:flex-start}
+.card-row textarea{flex:1;min-height:44px}
+.card-row .btn-icon{padding:10px 10px}
+.add-card-btn{background:var(--ac);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-family:inherit;font-size:.75rem;cursor:pointer;font-weight:600;margin-top:4px}
+.add-card-btn:hover{filter:brightness(1.1)}
+.alert-bar{padding:10px 12px;border-radius:9px;font-size:.82rem;margin-bottom:10px;text-align:center;display:none}
+.alert-bar.show{display:block}
+.alert-bar.ok{background:#166534;color:#dcfce7}
+.alert-bar.err{background:#7f1d1d;color:#fee2e2}
+.preview{background:#000;color:#4ade80;padding:12px;border-radius:8px;font-family:monospace;font-size:.75rem;max-height:200px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+.hint{font-size:.7rem;color:var(--mt);margin-top:6px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🔧 تبدیل‌گر JSON فلش‌کارت</h1>
+
+<div class="alert-bar" id="alertBar"></div>
+
+<div class="topbar">
+  <button class="blue" id="btnNew">🆕 شروع جدید</button>
+  <button class="purple" id="btnLoad">📥 بارگذاری JSON</button>
+  <button class="green" id="btnDownload">📤 دانلود JSON</button>
+  <button id="btnPreview">👁 پیش‌نمایش</button>
+  <input type="file" id="fileInput" accept=".json" style="display:none">
+</div>
+
+<div class="section">
+  <h2>📚 نام درس</h2>
+  <input type="text" id="topicName" placeholder="مثلاً: قفسه سینه">
+</div>
+
+<div class="section">
+  <h2>📂 مبحث‌ها</h2>
+  <div id="subtopicsList"></div>
+  <button class="add-card-btn" id="btnAddSubtopic" style="width:100%;padding:10px;margin-top:6px">➕ مبحث جدید</button>
+</div>
+
+<div class="section" id="previewSection" style="display:none">
+  <h2>👁 پیش‌نمایش JSON</h2>
+  <div class="preview" id="previewBox"></div>
+</div>
+
+<div class="section">
+  <h2>💡 راهنما</h2>
+  <div class="hint">
+    • نام درس را وارد کن<br>
+    • برای هر مبحث، «➕ مبحث جدید» بزن<br>
+    • داخل هر مبحث، سؤال و پاسخ کارت‌ها را بنویس<br>
+    • «📤 دانلود JSON» را بزن<br>
+    • فایل JSON را در برنامه فلش‌کارت آپلود کن
+  </div>
+</div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let data = { topic: '', subtopics: [] };
+
+function showAlert(msg, type){
+  const el = $('alertBar');
+  el.textContent = msg;
+  el.className = 'alert-bar show ' + (type || '');
+  clearTimeout(window._alertTimer);
+  window._alertTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3500);
+}
+
+function makeSubtopicId(){ return 'st_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+function makeCardId(){ return 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+function render(){
+  const wrap = $('subtopicsList');
+  if(data.subtopics.length === 0){
+    wrap.innerHTML = '<div style="text-align:center;color:var(--mt);padding:14px;font-size:.82rem">هنوز مبحثی نیست. «➕ مبحث جدید» را بزن.</div>';
+    return;
+  }
+  wrap.innerHTML = data.subtopics.map((st, si) => `
+    <div class="subtopic">
+      <div class="subtopic-head">
+        <input type="text" value="${escapeHtml(st.name||'')}" placeholder="نام مبحث" data-sub-name="${st.id}">
+        <button class="btn-icon" data-up="${st.id}" title="بالا">▲</button>
+        <button class="btn-icon" data-down="${st.id}" title="پایین">▼</button>
+        <button class="btn-icon danger" data-del-sub="${st.id}" title="حذف مبحث">🗑</button>
+      </div>
+      <div class="cards-list" data-cards-for="${st.id}">
+        ${(st.cards||[]).map(c => `
+          <div class="card-row">
+            <textarea placeholder="سؤال..." data-q="${st.id}|${c.id}">${escapeHtml(c.q||'')}</textarea>
+            <textarea placeholder="پاسخ..." data-a="${st.id}|${c.id}">${escapeHtml(c.a||'')}</textarea>
+            <button class="btn-icon danger" data-del-card="${st.id}|${c.id}" title="حذف کارت">🗑</button>
+          </div>
+        `).join('')}
+      </div>
+      <button class="add-card-btn" data-add-card="${st.id}">➕ کارت جدید</button>
+    </div>
+  `).join('');
+
+  bindEvents();
+}
+
+function escapeHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function bindEvents(){
+  // نام درس
+  $('topicName').oninput = e => { data.topic = e.target.value; };
+
+  // نام مبحث
+  document.querySelectorAll('[data-sub-name]').forEach(inp => {
+    inp.oninput = e => {
+      const st = data.subtopics.find(x => x.id === inp.dataset.subName);
+      if(st) st.name = e.target.value;
+    };
+  });
+
+  // حذف مبحث
+  document.querySelectorAll('[data-del-sub]').forEach(b => {
+    b.onclick = () => {
+      if(!confirm('این مبحث و همه کارت‌هایش حذف شود؟')) return;
+      data.subtopics = data.subtopics.filter(x => x.id !== b.dataset.delSub);
+      render();
+    };
+  });
+
+  // جابه‌جایی مبحث
+  document.querySelectorAll('[data-up]').forEach(b => {
+    b.onclick = () => {
+      const i = data.subtopics.findIndex(x => x.id === b.dataset.up);
+      if(i > 0){ [data.subtopics[i-1], data.subtopics[i]] = [data.subtopics[i], data.subtopics[i-1]]; render(); }
+    };
+  });
+  document.querySelectorAll('[data-down]').forEach(b => {
+    b.onclick = () => {
+      const i = data.subtopics.findIndex(x => x.id === b.dataset.down);
+      if(i < data.subtopics.length-1){ [data.subtopics[i+1], data.subtopics[i]] = [data.subtopics[i], data.subtopics[i+1]]; render(); }
+    };
+  });
+
+  // اضافه کردن کارت
+  document.querySelectorAll('[data-add-card]').forEach(b => {
+    b.onclick = () => {
+      const st = data.subtopics.find(x => x.id === b.dataset.addCard);
+      if(!st) return;
+      if(!st.cards) st.cards = [];
+      st.cards.push({id: makeCardId(), q: '', a: ''});
+      render();
+    };
+  });
+
+  // متن سؤال و پاسخ
+  document.querySelectorAll('[data-q]').forEach(inp => {
+    inp.oninput = e => {
+      const [sid, cid] = inp.dataset.q.split('|');
+      const st = data.subtopics.find(x => x.id === sid);
+      if(!st) return;
+      const c = (st.cards||[]).find(x => x.id === cid);
+      if(c) c.q = e.target.value;
+    };
+  });
+  document.querySelectorAll('[data-a]').forEach(inp => {
+    inp.oninput = e => {
+      const [sid, cid] = inp.dataset.a.split('|');
+      const st = data.subtopics.find(x => x.id === sid);
+      if(!st) return;
+      const c = (st.cards||[]).find(x => x.id === cid);
+      if(c) c.a = e.target.value;
+    };
+  });
+
+  // حذف کارت
+  document.querySelectorAll('[data-del-card]').forEach(b => {
+    b.onclick = () => {
+      const [sid, cid] = b.dataset.delCard.split('|');
+      const st = data.subtopics.find(x => x.id === sid);
+      if(!st) return;
+      st.cards = (st.cards||[]).filter(x => x.id !== cid);
+      render();
+    };
+  });
+}
+
+$('btnAddSubtopic').onclick = () => {
+  data.subtopics.push({id: makeSubtopicId(), name: '', cards: []});
+  render();
+};
+
+$('btnNew').onclick = () => {
+  if(!confirm('همه چیز پاک شود و از نو شروع کنی؟')) return;
+  data = { topic: '', subtopics: [] };
+  $('topicName').value = '';
+  $('previewSection').style.display = 'none';
+  render();
+  showAlert('✅ شروع جدید.', 'ok');
+};
+
+function toJSON(){
+  const out = {
+    version: 1,
+    topic: data.topic.trim() || 'بدون نام',
+    subtopics: data.subtopics.map(st => ({
+      name: (st.name || '').trim() || 'بدون نام',
+      cards: (st.cards || [])
+        .filter(c => (c.q||'').trim() && (c.a||'').trim())
+        .map(c => ({ q: c.q.trim(), a: c.a.trim() }))
+    })).filter(st => st.cards.length > 0)
+  };
+  return out;
+}
+
+$('btnDownload').onclick = () => {
+  const out = toJSON();
+  const totalCards = out.subtopics.reduce((s, st) => s + st.cards.length, 0);
+  if(totalCards === 0){ showAlert('❌ هیچ کارتی برای ذخیره نیست.', 'err'); return; }
+  if(out.subtopics.length === 0){ showAlert('❌ هیچ مبحثی با کارت پر شده نیست.', 'err'); return; }
+  const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const topicSafe = (data.topic || 'cards').replace(/[^\u0600-\u06FF\w\-]+/g, '-');
+  a.download = `${topicSafe}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showAlert(`✅ ${totalCards} کارت در ${out.subtopics.length} مبحث — فایل ذخیره شد.`, 'ok');
+};
+
+$('btnPreview').onclick = () => {
+  const out = toJSON();
+  $('previewBox').textContent = JSON.stringify(out, null, 2);
+  $('previewSection').style.display = 'block';
+};
+
+$('btnLoad').onclick = () => $('fileInput').click();
+
+$('fileInput').onchange = e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try{
+      const obj = JSON.parse(ev.target.result);
+      data = { topic: obj.topic || '', subtopics: [] };
+      $('topicName').value = data.topic;
+      (obj.subtopics || []).forEach(st => {
+        data.subtopics.push({
+          id: makeSubtopicId(),
+          name: st.name || '',
+          cards: (st.cards || []).map(c => ({id: makeCardId(), q: c.q || '', a: c.a || ''}))
+        });
+      });
+      // اگر فرمت ساده بود [{q,a}]
+      if(Array.isArray(obj)){
+        data.subtopics.push({
+          id: makeSubtopicId(),
+          name: 'بدون مبحث',
+          cards: obj.map(c => ({id: makeCardId(), q: c.q || '', a: c.a || ''}))
+        });
+      }
+      render();
+      showAlert('✅ بارگذاری شد.', 'ok');
+    }catch(err){
+      showAlert('❌ فایل نامعتبر: ' + err.message, 'err');
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+};
+
+// شروع
+data.subtopics.push({id: makeSubtopicId(), name: '', cards: [{id: makeCardId(), q: '', a: ''}]});
+render();
+</script>
+</body>
+</html>
