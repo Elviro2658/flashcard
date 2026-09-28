@@ -3,88 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تبدیل‌گر JSON فلش‌کارت</title>
+<title>تبدیل‌گر هوشمند TXT به JSON</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0f172a;--card:#1e293b;--bd:#334155;--tx:#e2e8f0;--mt:#94a3b8;--ac:#3b82f6;--ok:#4ade80;--danger:#dc2626;--purple:#7c3aed}
+:root{--bg:#0f172a;--card:#1e293b;--bd:#334155;--tx:#e2e8f0;--mt:#94a3b8;--ac:#3b82f6;--ok:#4ade80;--danger:#dc2626;--purple:#7c3aed;--warn:#fbbf24}
 body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding:14px;display:flex;flex-direction:column;align-items:center}
-.wrap{width:100%;max-width:900px}
+.wrap{width:100%;max-width:1000px}
 h1{font-size:1rem;color:var(--mt);text-align:center;margin-bottom:10px}
 .topbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;justify-content:center}
-.topbar button{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;font-family:inherit;font-size:.78rem;cursor:pointer;font-weight:600}
+.topbar button{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px 14px;font-family:inherit;font-size:.78rem;cursor:pointer;font-weight:600;transition:filter .15s}
 .topbar button:hover{background:var(--bd)}
 .topbar button.green{background:#16a34a;color:#fff;border-color:#16a34a}
 .topbar button.purple{background:var(--purple);color:#fff;border-color:var(--purple)}
 .topbar button.blue{background:var(--ac);color:#fff;border-color:var(--ac)}
-.section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
-.section h2{font-size:.85rem;color:var(--mt);margin-bottom:8px}
+.topbar button.red{background:var(--danger);color:#fff;border-color:var(--danger)}
+.section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px}
+.section h2{font-size:.85rem;color:var(--mt);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.section h2 .badge{background:var(--bg);color:var(--tx);padding:2px 8px;border-radius:99px;font-size:.7rem;font-weight:600}
 input[type="text"],textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;resize:vertical}
-textarea{min-height:60px}
+textarea{min-height:180px;font-family:monospace;font-size:.78rem;line-height:1.7}
+.drop-zone{border:2px dashed var(--bd);border-radius:12px;padding:26px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:8px}
+.drop-zone:hover,.drop-zone.dragging{background:var(--bg);border-color:var(--ac)}
+.drop-zone .icon{font-size:2rem;margin-bottom:8px}
+.drop-zone .text{font-size:.85rem;color:var(--mt)}
+.drop-zone .small{font-size:.7rem;color:var(--mt);margin-top:6px}
 .subtopic{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:8px}
 .subtopic-head{display:flex;gap:6px;align-items:center;margin-bottom:8px}
 .subtopic-head input{flex:1}
-.btn-icon{background:transparent;border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:6px 10px;cursor:pointer;font-family:inherit;font-size:.75rem;font-weight:700}
+.btn-icon{background:transparent;border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:5px 9px;cursor:pointer;font-family:inherit;font-size:.72rem;font-weight:700}
 .btn-icon:hover{background:var(--bd)}
 .btn-icon.danger{color:var(--danger);border-color:var(--danger)}
 .btn-icon.danger:hover{background:var(--danger);color:#fff}
 .card-row{display:flex;gap:6px;margin-bottom:6px;align-items:flex-start}
-.card-row textarea{flex:1;min-height:44px}
-.card-row .btn-icon{padding:10px 10px}
+.card-row textarea{flex:1;min-height:44px;font-family:inherit;font-size:.85rem}
+.card-row .btn-icon{padding:10px 10px;flex-shrink:0}
 .add-card-btn{background:var(--ac);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-family:inherit;font-size:.75rem;cursor:pointer;font-weight:600;margin-top:4px}
 .add-card-btn:hover{filter:brightness(1.1)}
 .alert-bar{padding:10px 12px;border-radius:9px;font-size:.82rem;margin-bottom:10px;text-align:center;display:none}
 .alert-bar.show{display:block}
 .alert-bar.ok{background:#166534;color:#dcfce7}
 .alert-bar.err{background:#7f1d1d;color:#fee2e2}
-.preview{background:#000;color:#4ade80;padding:12px;border-radius:8px;font-family:monospace;font-size:.75rem;max-height:200px;overflow:auto;white-space:pre-wrap;word-break:break-all}
-.hint{font-size:.7rem;color:var(--mt);margin-top:6px;line-height:1.6}
+.alert-bar.warn{background:#78350f;color:#fef3c7}
+.preview{background:#000;color:#4ade80;padding:12px;border-radius:8px;font-family:monospace;font-size:.72rem;max-height:250px;overflow:auto;white-space:pre-wrap;word-break:break-all;line-height:1.5}
+.hint{font-size:.72rem;color:var(--mt);margin-top:6px;line-height:1.7}
+.hint code{background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.7rem}
+.help-box{background:#1e293b;border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:.78rem;line-height:1.9;color:var(--mt)}
+.help-box b{color:var(--tx)}
+.help-box code{background:#0f172a;padding:2px 6px;border-radius:4px;color:var(--warn);font-size:.72rem}
+.stats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.stat{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;font-size:.75rem;flex:1;text-align:center;min-width:80px}
+.stat b{color:var(--ac);font-size:1rem;display:block}
+.copy-btn{position:fixed;bottom:16px;left:16px;background:var(--ok);color:#000;border:none;border-radius:10px;padding:12px 18px;font-family:inherit;font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);display:none;z-index:100}
+.copy-btn.show{display:block}
+.copy-btn:hover{filter:brightness(1.1)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>🔧 تبدیل‌گر JSON فلش‌کارت</h1>
+<h1>🔄 تبدیل‌گر هوشمند TXT به JSON</h1>
 
 <div class="alert-bar" id="alertBar"></div>
 
 <div class="topbar">
   <button class="blue" id="btnNew">🆕 شروع جدید</button>
-  <button class="purple" id="btnLoad">📥 بارگذاری JSON</button>
+  <button class="purple" id="btnLoadJSON">📥 بارگذاری JSON</button>
   <button class="green" id="btnDownload">📤 دانلود JSON</button>
+  <button id="btnCopy">📋 کپی JSON</button>
   <button id="btnPreview">👁 پیش‌نمایش</button>
+  <button class="red" id="btnClear">🗑 پاک کردن همه</button>
   <input type="file" id="fileInput" accept=".json" style="display:none">
 </div>
 
 <div class="section">
-  <h2>📚 نام درس</h2>
-  <input type="text" id="topicName" placeholder="مثلاً: قفسه سینه">
+  <h2>📂 مرحله ۱ — فایل TXT را بارگذاری کن</h2>
+  <div class="drop-zone" id="dropZone">
+    <div class="icon">📄</div>
+    <div class="text">فایل TXT را اینجا رها کن یا کلیک کن</div>
+    <div class="small">یا محتوای TXT را در کادر پایین Paste کن</div>
+  </div>
+  <input type="file" id="txtFileInput" accept=".txt,.text,text/plain" style="display:none">
+  <h2 style="margin-top:12px">✏️ یا محتوای TXT را اینجا Paste کن</h2>
+  <textarea id="txtInput" placeholder="قفسه سینه&#10;	نمای کلی&#10;قفسه سینه و دیافراگم	محدودکننده حفره سینه‌ای؟&#10;بسیار کوچک‌تر از قفسه سینه	اندازه حفره سینه‌ای نسبت به قفسه سینه؟"></textarea>
+  <button class="add-card-btn" id="btnParse" style="width:100%;padding:10px;margin-top:8px;font-size:.85rem">🔄 تجزیه و ساخت JSON</button>
 </div>
 
-<div class="section">
-  <h2>📂 مبحث‌ها</h2>
+<div class="section" id="resultSection" style="display:none">
+  <h2>📚 مرحله ۲ — ویرایش نتیجه <span class="badge" id="resultBadge"></span></h2>
+  <div class="stats" id="statsBox"></div>
+
+  <h2 style="margin-top:12px">نام درس</h2>
+  <input type="text" id="topicName" placeholder="نام درس">
+
+  <h2 style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+    <span>مبحث‌ها و کارت‌ها</span>
+    <button class="add-card-btn" id="btnAddSubtopic" style="margin-top:0">➕ مبحث جدید</button>
+  </h2>
   <div id="subtopicsList"></div>
-  <button class="add-card-btn" id="btnAddSubtopic" style="width:100%;padding:10px;margin-top:6px">➕ مبحث جدید</button>
+
+  <h2 style="margin-top:12px">💡 راهنما</h2>
+  <div class="hint">
+    • نام درس و مبحث‌ها را می‌توانی ویرایش کنی<br>
+    • کارت‌ها را می‌توانی ویرایش یا حذف کنی<br>
+    • «📋 کپی JSON» یا «📤 دانلود JSON» را بزن<br>
+    • فایل را در برنامه فلش‌کارت آپلود کن
+  </div>
 </div>
 
 <div class="section" id="previewSection" style="display:none">
-  <h2>👁 پیش‌نمایش JSON</h2>
+  <h2>👁 پیش‌نمایش JSON <button class="btn-icon" id="btnClosePreview">✕ بستن</button></h2>
   <div class="preview" id="previewBox"></div>
 </div>
 
 <div class="section">
-  <h2>💡 راهنما</h2>
-  <div class="hint">
-    • نام درس را وارد کن<br>
-    • برای هر مبحث، «➕ مبحث جدید» بزن<br>
-    • داخل هر مبحث، سؤال و پاسخ کارت‌ها را بنویس<br>
-    • «📤 دانلود JSON» را بزن<br>
-    • فایل JSON را در برنامه فلش‌کارت آپلود کن
+  <h2>💡 راهنمای فرمت TXT</h2>
+  <div class="help-box">
+    <b>ساختار مورد انتظار:</b><br>
+    <code>قفسه سینه</code> ← نام درس (خط بدون تب)<br>
+    <code>&nbsp;&nbsp;&nbsp;&nbsp;نمای کلی</code> ← نام مبحث (خط با تب در ابتدا)<br>
+    <code>پاسخ&nbsp;&nbsp;&nbsp;&nbsp;سؤال</code> ← کارت (پاسخ TAB سؤال)<br><br>
+    <b>نکته:</b> خطوطی که با تب شروع می‌شوند = نام مبحث، بقیه = کارت.<br>
+    <b>تب:</b> در ویندوز با کلید Tab، در Word به صورت فاصله بزرگ دیده می‌شود.
   </div>
 </div>
-
 </div>
 
+<button class="copy-btn" id="btnCopyFloat">📋 کپی JSON</button>
+
 <script>
-const $ = id => document.getElementById(id);
+</script>
+</body>
+</html>const $ = id => document.getElementById(id);
 
 let data = { topic: '', subtopics: [] };
 
@@ -96,13 +144,84 @@ function showAlert(msg, type){
   window._alertTimer = setTimeout(()=>{ el.classList.remove('show'); }, 3500);
 }
 
-function makeSubtopicId(){ return 'st_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
-function makeCardId(){ return 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+function escapeHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
+function makeId(){ return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+
+/* ============================================================
+   تجزیه متن TXT
+   ============================================================ */
+function parseTXT(text){
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const topic = { name: '', subtopics: [] };
+  let currentSubtopic = null;
+  let foundTopicName = false;
+
+  for(let i = 0; i < lines.length; i++){
+    const raw = lines[i];
+    if(!raw || !raw.trim()) continue;
+
+    // تشخیص تب در ابتدای خط = نام مبحث
+    const startsWithTab = /^\t/.test(raw);
+    const trimmed = raw.replace(/^\t+/, '').trim();
+
+    if(startsWithTab){
+      // نام مبحث جدید
+      currentSubtopic = { id: makeId(), name: trimmed, cards: [] };
+      topic.subtopics.push(currentSubtopic);
+      continue;
+    }
+
+    // خطوطی که تب وسط دارند = کارت (پاسخ TAB سؤال)
+    if(raw.includes('\t')){
+      const parts = raw.split('\t').map(p => p.trim());
+      const a = parts[0] || '';
+      const q = parts.slice(1).join(' ').trim();
+      if(!q || !a) continue;
+      if(!currentSubtopic){
+        currentSubtopic = { id: makeId(), name: 'عمومی', cards: [] };
+        topic.subtopics.push(currentSubtopic);
+      }
+      currentSubtopic.cards.push({ id: makeId(), q, a });
+      continue;
+    }
+
+    // خط بدون تب = نام درس (فقط اولین بار)
+    if(!foundTopicName){
+      topic.name = trimmed;
+      foundTopicName = true;
+      continue;
+    }
+
+    // خط بدون تب که درس نیست — احتمالاً بخش جدید یا سرتیتر
+    // اگر خط کوتاه باشد (کمتر از ۵ کلمه)، آن را به عنوان مبحث جدید در نظر بگیر
+    const wordCount = trimmed.split(/\s+/).length;
+    if(wordCount <= 5 && trimmed.length < 50){
+      currentSubtopic = { id: makeId(), name: trimmed, cards: [] };
+      topic.subtopics.push(currentSubtopic);
+    }
+  }
+
+  // اگر درس نام ندارد
+  if(!topic.name) topic.name = 'بدون نام';
+
+  // اگر مبحثی نیست ولی کارت هست
+  if(topic.subtopics.length === 0){
+    topic.subtopics.push({ id: makeId(), name: 'عمومی', cards: [] });
+  }
+
+  return topic;
+}
+
+/* ============================================================
+   رندر نتیجه
+   ============================================================ */
 function render(){
   const wrap = $('subtopicsList');
   if(data.subtopics.length === 0){
-    wrap.innerHTML = '<div style="text-align:center;color:var(--mt);padding:14px;font-size:.82rem">هنوز مبحثی نیست. «➕ مبحث جدید» را بزن.</div>';
+    wrap.innerHTML = '<div style="text-align:center;color:var(--mt);padding:14px;font-size:.82rem">هنوز مبحثی نیست.</div>';
     return;
   }
   wrap.innerHTML = data.subtopics.map((st, si) => `
@@ -113,24 +232,31 @@ function render(){
         <button class="btn-icon" data-down="${st.id}" title="پایین">▼</button>
         <button class="btn-icon danger" data-del-sub="${st.id}" title="حذف مبحث">🗑</button>
       </div>
-      <div class="cards-list" data-cards-for="${st.id}">
+      <div class="cards-list">
         ${(st.cards||[]).map(c => `
           <div class="card-row">
             <textarea placeholder="سؤال..." data-q="${st.id}|${c.id}">${escapeHtml(c.q||'')}</textarea>
             <textarea placeholder="پاسخ..." data-a="${st.id}|${c.id}">${escapeHtml(c.a||'')}</textarea>
-            <button class="btn-icon danger" data-del-card="${st.id}|${c.id}" title="حذف کارت">🗑</button>
+            <button class="btn-icon danger" data-del-card="${st.id}|${c.id}" title="حذف">🗑</button>
           </div>
         `).join('')}
       </div>
       <button class="add-card-btn" data-add-card="${st.id}">➕ کارت جدید</button>
     </div>
   `).join('');
-
   bindEvents();
+  updateStats();
 }
 
-function escapeHtml(s){
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function updateStats(){
+  const totalCards = data.subtopics.reduce((s, st) => s + (st.cards||[]).length, 0);
+  const totalSubs = data.subtopics.length;
+  $('statsBox').innerHTML = `
+    <div class="stat"><b>${totalCards}</b>کارت</div>
+    <div class="stat"><b>${totalSubs}</b>مبحث</div>
+    <div class="stat"><b>${data.topic ? '✅' : '❌'}</b>نام درس</div>
+  `;
+  $('resultBadge').textContent = `${totalCards} کارت در ${totalSubs} مبحث`;
 }
 
 function bindEvents(){
@@ -174,7 +300,7 @@ function bindEvents(){
       const st = data.subtopics.find(x => x.id === b.dataset.addCard);
       if(!st) return;
       if(!st.cards) st.cards = [];
-      st.cards.push({id: makeCardId(), q: '', a: ''});
+      st.cards.push({id: makeId(), q: '', a: ''});
       render();
     };
   });
@@ -211,18 +337,48 @@ function bindEvents(){
   });
 }
 
+/* ============================================================
+   رویدادها
+   ============================================================ */
+$('btnParse').onclick = () => {
+  const text = $('txtInput').value.trim();
+  if(!text){ showAlert('❌ محتوای TXT خالی است.', 'err'); return; }
+  try{
+    data = parseTXT(text);
+    $('topicName').value = data.topic;
+    $('resultSection').style.display = 'block';
+    render();
+    const totalCards = data.subtopics.reduce((s, st) => s + (st.cards||[]).length, 0);
+    showAlert(`✅ ${totalCards} کارت در ${data.subtopics.length} مبحث ساخته شد.`, 'ok');
+    $('resultSection').scrollIntoView({behavior:'smooth'});
+  }catch(e){
+    showAlert('❌ خطا در تجزیه: ' + e.message, 'err');
+  }
+};
+
 $('btnAddSubtopic').onclick = () => {
-  data.subtopics.push({id: makeSubtopicId(), name: '', cards: []});
+  data.subtopics.push({id: makeId(), name: '', cards: []});
   render();
 };
 
 $('btnNew').onclick = () => {
   if(!confirm('همه چیز پاک شود و از نو شروع کنی؟')) return;
   data = { topic: '', subtopics: [] };
+  $('txtInput').value = '';
   $('topicName').value = '';
+  $('resultSection').style.display = 'none';
   $('previewSection').style.display = 'none';
-  render();
   showAlert('✅ شروع جدید.', 'ok');
+};
+
+$('btnClear').onclick = () => {
+  if(!confirm('همه چیز پاک شود؟')) return;
+  data = { topic: '', subtopics: [] };
+  $('txtInput').value = '';
+  $('topicName').value = '';
+  $('resultSection').style.display = 'none';
+  $('previewSection').style.display = 'none';
+  showAlert('🗑 پاک شد.', 'warn');
 };
 
 function toJSON(){
@@ -243,7 +399,6 @@ $('btnDownload').onclick = () => {
   const out = toJSON();
   const totalCards = out.subtopics.reduce((s, st) => s + st.cards.length, 0);
   if(totalCards === 0){ showAlert('❌ هیچ کارتی برای ذخیره نیست.', 'err'); return; }
-  if(out.subtopics.length === 0){ showAlert('❌ هیچ مبحثی با کارت پر شده نیست.', 'err'); return; }
   const blob = new Blob([JSON.stringify(out, null, 2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -252,16 +407,47 @@ $('btnDownload').onclick = () => {
   a.download = `${topicSafe}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  showAlert(`✅ ${totalCards} کارت در ${out.subtopics.length} مبحث — فایل ذخیره شد.`, 'ok');
+  showAlert(`✅ ${totalCards} کارت — فایل ذخیره شد.`, 'ok');
 };
+
+async function copyJSON(){
+  const out = toJSON();
+  const totalCards = out.subtopics.reduce((s, st) => s + st.cards.length, 0);
+  if(totalCards === 0){ showAlert('❌ هیچ کارتی برای کپی نیست.', 'err'); return; }
+  const txt = JSON.stringify(out, null, 2);
+  try{
+    await navigator.clipboard.writeText(txt);
+    showAlert(`✅ ${totalCards} کارت در کلیپ‌بورد کپی شد.`, 'ok');
+    const btn = $('btnCopyFloat');
+    btn.textContent = '✅ کپی شد!';
+    setTimeout(()=>{ btn.textContent = '📋 کپی JSON'; }, 2000);
+  }catch(e){
+    // روش جایگزین برای مرورگرهای قدیمی
+    const ta = document.createElement('textarea');
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showAlert(`✅ ${totalCards} کارت کپی شد.`, 'ok');
+  }
+}
+
+$('btnCopy').onclick = copyJSON;
+$('btnCopyFloat').onclick = copyJSON;
 
 $('btnPreview').onclick = () => {
   const out = toJSON();
   $('previewBox').textContent = JSON.stringify(out, null, 2);
   $('previewSection').style.display = 'block';
+  $('previewSection').scrollIntoView({behavior:'smooth'});
 };
 
-$('btnLoad').onclick = () => $('fileInput').click();
+$('btnClosePreview').onclick = () => {
+  $('previewSection').style.display = 'none';
+};
+
+$('btnLoadJSON').onclick = () => $('fileInput').click();
 
 $('fileInput').onchange = e => {
   const f = e.target.files[0];
@@ -274,19 +460,19 @@ $('fileInput').onchange = e => {
       $('topicName').value = data.topic;
       (obj.subtopics || []).forEach(st => {
         data.subtopics.push({
-          id: makeSubtopicId(),
+          id: makeId(),
           name: st.name || '',
-          cards: (st.cards || []).map(c => ({id: makeCardId(), q: c.q || '', a: c.a || ''}))
+          cards: (st.cards || []).map(c => ({id: makeId(), q: c.q || '', a: c.a || ''}))
         });
       });
-      // اگر فرمت ساده بود [{q,a}]
       if(Array.isArray(obj)){
         data.subtopics.push({
-          id: makeSubtopicId(),
+          id: makeId(),
           name: 'بدون مبحث',
-          cards: obj.map(c => ({id: makeCardId(), q: c.q || '', a: c.a || ''}))
+          cards: obj.map(c => ({id: makeId(), q: c.q || '', a: c.a || ''}))
         });
       }
+      $('resultSection').style.display = 'block';
       render();
       showAlert('✅ بارگذاری شد.', 'ok');
     }catch(err){
@@ -297,9 +483,49 @@ $('fileInput').onchange = e => {
   e.target.value = '';
 };
 
+/* ============================================================
+   Drag & Drop فایل TXT
+   ============================================================ */
+const dz = $('dropZone');
+dz.onclick = () => $('txtFileInput').click();
+
+dz.addEventListener('dragover', e => {
+  e.preventDefault();
+  dz.classList.add('dragging');
+});
+dz.addEventListener('dragleave', () => {
+  dz.classList.remove('dragging');
+});
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('dragging');
+  const f = e.dataTransfer.files[0];
+  if(f) readTXTFile(f);
+});
+
+$('txtFileInput').onchange = e => {
+  const f = e.target.files[0];
+  if(f) readTXTFile(f);
+  e.target.value = '';
+};
+
+function readTXTFile(f){
+  const r = new FileReader();
+  r.onload = ev => {
+    $('txtInput').value = ev.target.result;
+    showAlert('✅ فایل بارگذاری شد. الان «🔄 تجزیه» را بزن.', 'ok');
+  };
+  r.readAsText(f, 'UTF-8');
+}
+
+/* ============================================================
+   نمایش دکمه شناور کپی
+   ============================================================ */
+const observer = new MutationObserver(() => {
+  const hasCards = data.subtopics.some(st => (st.cards||[]).length > 0);
+  $('btnCopyFloat').classList.toggle('show', hasCards);
+});
+observer.observe($('subtopicsList'), {childList:true, subtree:true});
+
 // شروع
-data.subtopics.push({id: makeSubtopicId(), name: '', cards: [{id: makeCardId(), q: '', a: ''}]});
-render();
-</script>
-</body>
-</html>
+$('btnCopyFloat').classList.remove('show');
