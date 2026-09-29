@@ -665,6 +665,7 @@ $('btnMergeSimilar').addEventListener('click',()=>{const groups=findSimilarCardG
 /* ==== پایان بخش ۴ ==== *//* ==== راه‌اندازی ==== */
 window.addEventListener('beforeunload',()=>{try{if(STATE)saveLS(STORAGE_KEY,STATE);if(TOPICS)saveLS(TOPICS_KEY,TOPICS)}catch(e){}});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){saveState(true);saveTopics()}});
+alert('START | TOPICS: '+TOPICS.length+' | Cards: '+getAllCards().length);
 async function init(){
   try{await openIDB();saveStatus.idb=true}catch(e){saveStatus.idb=false}
   loadSettings();
