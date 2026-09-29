@@ -189,6 +189,24 @@ body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);mi
 .end-subtopic .btn-row button.green{background:#16a34a}
 .end-subtopic .btn-row button.neutral{background:#475569}
 .end-subtopic .btn-row button.purple{background:#7c3aed}
+  .dashboard-inline{width:100%;max-width:900px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-top:12px;display:none}
+.dashboard-inline.show{display:block}
+.dashboard-inline h2{font-size:.95rem;margin-bottom:12px;color:var(--ac)}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:12px}
+.dash-item{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center}
+.dash-item .num{font-size:1.4rem;font-weight:700;color:var(--ac)}
+.dash-item .lbl{font-size:.68rem;color:var(--mt);margin-top:3px}
+.dash-item.ok .num{color:var(--ok)}
+.dash-item.pt .num{color:var(--pt)}
+.dash-item.wr .num{color:var(--wr)}
+.dash-item.brain .num{color:#a78bfa}
+.dash-item.trophy .num{color:#fbbf24}
+.dash-section{margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)}
+.dash-section h3{font-size:.82rem;color:var(--mt);margin-bottom:8px}
+.step-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.step-item{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 2px;text-align:center}
+.step-item .snum{font-size:1.1rem;font-weight:700}
+.step-item .slbl{font-size:.55rem;color:var(--mt);margin-top:2px}
 </style>
 </head>
 <body>
