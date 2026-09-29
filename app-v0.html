@@ -581,7 +581,40 @@ function renderTopicsList(){
   wrap.innerHTML=html;
   bindTopicsEvents();
 }
-function renderSubtopics(topic){if(!topic.subtopics||topic.subtopics.length===0){return'<div style="text-align:center;padding:10px;color:var(--mt);font-size:.78rem">مبحثی ندارد</div>'}let html='';topic.subtopics.forEach(st=>{const isRead=isSubtopicRead(topic.id,st.id);const dueN=countDueInTopicSub(topic.id,st.id);const startN=countStartInTopicSub(topic.id,st.id);html+=`<div class="subtopic-item ${isRead?'read':''}"><input type="checkbox" data-sub-read="${topic.id}|${st.id}" ${isRead?'checked':''} title="خوانده‌شده"><div class="sub-name">📂 ${escapeHtml(st.name)} <span class="card-count">${(st.cards||[]).length} کارت</span>${dueN>0?`<span class="due-count">${dueN} سررسیده</span>`:''}${startN>0?`<span class="start-count">${startN} استارت</span>`:''}</div><div class="sub-actions"><button class="primary" data-review-sub="${topic.id}|${st.id}">▶ مرور</button><button class="rand" data-rand-sub="${topic.id}|${st.id}">🎲</button><div class="sub-dots"><button>⋮</button><div class="dropdown"><button data-add-card="${topic.id}|${st.id}">➕ کارت جدید</button><button data-edit-sub="${topic.id}|${st.id}">✏ تغییر نام</button><button data-move-sub="${topic.id}|${st.id}">📂 جابه‌جا</button><button data-up-sub="${topic.id}|${st.id}">▲ بالا</button><button data-down-sub="${topic.id}|${st.id}">▼ پایین</button><button class="danger" data-del-sub="${topic.id}|${st.id}">🗑 حذف مبحث</button></div></div></div></div>`});return html}
+function renderSubtopics(topic){
+  var subs=topic.subtopics||[];
+  if(subs.length===0){
+    return '<div style="text-align:center;padding:10px;color:var(--mt);font-size:.78rem">مبحثی ندارد</div>';
+  }
+  var html='';
+  for(var i=0;i<subs.length;i++){
+    var st=subs[i];
+    var isRead=isSubtopicRead(topic.id,st.id);
+    var dueN=countDueInTopicSub(topic.id,st.id);
+    var startN=countStartInTopicSub(topic.id,st.id);
+    html+='<div class="subtopic-item '+(isRead?'read':'')+'">';
+    html+='<input type="checkbox" data-sub-read="'+topic.id+'|'+st.id+'" '+(isRead?'checked':'')+'>';
+    html+='<div class="sub-name">📂 '+escapeHtml(st.name);
+    html+=' <span class="card-count">'+((st.cards||[]).length)+' کارت</span>';
+    if(dueN>0)html+=' <span class="due-count">'+dueN+' سررسیده</span>';
+    if(startN>0)html+=' <span class="start-count">'+startN+' استارت</span>';
+    html+='</div>';
+    html+='<div class="sub-actions">';
+    html+='<button class="primary" data-review-sub="'+topic.id+'|'+st.id+'">▶ مرور</button>';
+    html+='<button class="rand" data-rand-sub="'+topic.id+'|'+st.id+'">🎲</button>';
+    html+='<div class="sub-dots"><button>⋮</button><div class="dropdown">';
+    html+='<button data-add-card="'+topic.id+'|'+st.id+'">➕ کارت جدید</button>';
+    html+='<button data-edit-sub="'+topic.id+'|'+st.id+'">✏ تغییر نام</button>';
+    html+='<button data-move-sub="'+topic.id+'|'+st.id+'">📂 جابه‌جا</button>';
+    html+='<button data-up-sub="'+topic.id+'|'+st.id+'">▲ بالا</button>';
+    html+='<button data-down-sub="'+topic.id+'|'+st.id+'">▼ پایین</button>';
+    html+='<button class="danger" data-del-sub="'+topic.id+'|'+st.id+'">🗑 حذف مبحث</button>';
+    html+='</div></div>';
+    html+='</div>';
+    html+='</div>';
+  }
+  return html;
+}
 function bindTopicsEvents(){
   document.querySelectorAll('[data-toggle]').forEach(el=>{el.addEventListener('click',e=>{if(e.target.closest('input,button'))return;const item=el.closest('.topic-item');item.classList.toggle('open')})});
   document.querySelectorAll('.dots-menu>button').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const dm=b.parentElement;document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(x=>{if(x!==dm)x.classList.remove('open')});dm.classList.toggle('open')})});
