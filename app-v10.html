@@ -1,0 +1,3211 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>فلش‌کارت v10</title>
+<style>
+/* ============ RESET & ROOT ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a; --bg2:#1e293b; --bg3:#334155;
+  --fg:#e2e8f0; --fg2:#94a3b8; --fg3:#64748b;
+  --border:#334155; --border2:#475569;
+  --primary:#3b82f6; --primary2:#2563eb;
+  --green:#22c55e; --yellow:#eab308; --red:#ef4444;
+  --star:#facc15; --purple:#a855f7;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 4px 20px rgba(0,0,0,.35);
+  --font: Tahoma, 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+html[data-theme="light"]{
+  --bg:#f1f5f9; --bg2:#ffffff; --bg3:#e2e8f0;
+  --fg:#0f172a; --fg2:#475569; --fg3:#94a3b8;
+  --border:#cbd5e1; --border2:#94a3b8;
+  --shadow:0 4px 20px rgba(0,0,0,.08);
+}
+html[data-theme="dim"]{
+  --bg:#1a1a1a; --bg2:#262626; --bg3:#333333;
+  --fg:#d4d4d4; --fg2:#a3a3a3; --fg3:#737373;
+  --border:#404040; --border2:#525252;
+}
+html,body{height:100%}
+body{
+  font-family:var(--font); background:var(--bg); color:var(--fg);
+  line-height:1.7; font-size:15px; overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .25s,color .25s;
+}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+input,textarea,select{outline:none}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ============ LAYOUT ============ */
+#app{max-width:820px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative}
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;
+  padding:12px 14px;background:var(--bg2);border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.topbar h1{font-size:1.05rem;font-weight:700;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .btn-icon{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  font-size:1.15rem;background:var(--bg3);transition:transform .15s,background .2s;
+}
+.topbar .btn-icon:active{transform:scale(.9)}
+.topbar .btn-icon.hidden{visibility:hidden;pointer-events:none}
+
+main{flex:1;padding:14px;padding-bottom:100px}
+.view{display:none;animation:fadeIn .25s ease}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ============ HOME MENU ============ */
+.home-greeting{
+  text-align:center;padding:10px 0 16px;font-size:.95rem;color:var(--fg2);
+}
+.home-progress{
+  background:var(--bg2);border-radius:var(--radius);padding:14px;
+  margin-bottom:16px;border:1px solid var(--border);
+}
+.home-progress .bar{height:10px;background:var(--bg3);border-radius:6px;overflow:hidden;margin-top:8px}
+.home-progress .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--green));transition:width .5s}
+.home-progress .row{display:flex;justify-content:space-between;font-size:.85rem;color:var(--fg2)}
+
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.menu-btn{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 12px;display:flex;align-items:center;gap:10px;
+  transition:transform .12s,border-color .2s,background .2s;text-align:right;
+}
+.menu-btn:active{transform:scale(.97)}
+.menu-btn:hover{border-color:var(--primary)}
+.menu-btn .ic{font-size:1.35rem;flex-shrink:0}
+.menu-btn .txt{flex:1;font-size:.9rem;font-weight:600}
+.menu-btn .cnt{
+  font-size:.78rem;background:var(--bg3);color:var(--fg2);
+  padding:2px 8px;border-radius:20px;min-width:28px;text-align:center;
+}
+.menu-btn.danger:hover{border-color:var(--red)}
+
+/* ============ SUGGESTION ============ */
+.suggest{
+  margin-top:16px;background:linear-gradient(135deg,var(--primary2),var(--purple));
+  color:#fff;border-radius:var(--radius);padding:14px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  box-shadow:var(--shadow);
+}
+.suggest .ic{font-size:1.5rem}
+.suggest .txt{flex:1}
+.suggest .txt small{opacity:.85;font-size:.75rem;display:block}
+.suggest .txt b{font-size:.95rem}
+
+/* ============ STUDY VIEW ============ */
+#view-study{display:none}
+#view-study.active{display:flex;flex-direction:column;gap:14px}
+.study-progress{font-size:.8rem;color:var(--fg2);text-align:center}
+.card-box{
+  position:relative;background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px 20px;min-height:260px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;box-shadow:var(--shadow);
+}
+.card-question{font-size:1.15rem;font-weight:600;line-height:1.9;word-break:break-word}
+.card-answer{
+  margin-top:18px;padding-top:18px;border-top:1px dashed var(--border2);
+  font-size:1.5rem;font-weight:600;line-height:1.8;color:var(--green);
+  width:100%;word-break:break-word;
+}
+.card-corner{position:absolute;font-size:.72rem;color:var(--fg3);display:flex;gap:6px;align-items:center;line-height:1.4}
+.corner-tl{top:8px;left:8px}
+.corner-bl{bottom:8px;left:8px}
+.corner-tr{top:8px;right:8px;flex-direction:column;align-items:flex-end;text-align:left;max-width:55%}
+.corner-br{bottom:8px;right:8px}
+.corner-tl button,.corner-bl button{
+  font-size:1rem;padding:4px 6px;border-radius:6px;background:var(--bg3);
+  opacity:.7;transition:opacity .2s,transform .15s;
+}
+.corner-tl button:hover,.corner-bl button:hover{opacity:1}
+.corner-tl button:active,.corner-bl button:active{transform:scale(.85)}
+.corner-tl button.on,.corner-bl button.on{background:var(--star);color:#000;opacity:1}
+.corner-bl button.susp{background:var(--yellow);color:#000;opacity:1}
+.corner-bl button.del{background:var(--red);color:#fff;opacity:1}
+.encourage{
+  position:absolute;top:50%;right:8px;transform:translateY(-50%);
+  font-size:.78rem;color:var(--green);background:var(--bg3);
+  padding:6px 8px;border-radius:8px;max-width:110px;text-align:center;
+  animation:fadeIn .4s ease;
+}
+.due-note{margin-top:10px;font-size:.82rem;color:var(--fg2);text-align:center}
+.study-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.study-actions button{
+  padding:14px 8px;border-radius:var(--radius-sm);font-weight:700;font-size:.95rem;
+  color:#fff;transition:transform .12s,filter .2s;
+}
+.study-actions button:active{transform:scale(.95)}
+.study-actions .btn-correct{background:var(--green)}
+.study-actions .btn-partial{background:var(--yellow);color:#000}
+.study-actions .btn-wrong{background:var(--red)}
+.study-actions .btn-skip{
+  grid-column:1 / -1;background:var(--bg3);color:var(--fg);
+}
+.study-actions button:disabled{opacity:.4;cursor:not-allowed}
+.show-answer-hint{
+  text-align:center;color:var(--fg3);font-size:.85rem;padding:8px;
+}
+
+/* ============ LIST VIEWS ============ */
+.panel-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.panel-head h2{font-size:1.05rem;flex:1}
+.btn{
+  padding:9px 14px;border-radius:var(--radius-sm);background:var(--bg2);
+  border:1px solid var(--border);font-size:.85rem;font-weight:600;
+  transition:transform .12s,border-color .2s,background .2s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.btn:active{transform:scale(.96)}
+.btn:hover{border-color:var(--primary)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary:hover{background:var(--primary2)}
+.btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 10px;font-size:.8rem}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.list-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px 14px;display:flex;align-items:center;gap:10px;
+  transition:border-color .2s,transform .12s;
+}
+.list-item:hover{border-color:var(--border2)}
+.list-item .body{flex:1;min-width:0}
+.list-item .title{font-weight:700;font-size:.95rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.list-item .meta{font-size:.78rem;color:var(--fg2);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.list-item .meta .badge{background:var(--bg3);padding:1px 7px;border-radius:10px}
+.list-item .actions{display:flex;gap:4px;flex-shrink:0}
+.list-item .actions button{
+  width:32px;height:32px;border-radius:8px;background:var(--bg3);
+  display:grid;place-items:center;font-size:.95rem;
+  transition:transform .12s,background .2s;
+}
+.list-item .actions button:active{transform:scale(.85)}
+.list-item .actions button.on{background:var(--star);color:#000}
+.list-item input[type="checkbox"]{
+  width:20px;height:20px;accent-color:var(--primary);flex-shrink:0;cursor:pointer;
+}
+.list-item .sub{display:flex;flex-direction:column;gap:6px;padding-right:14px;border-right:2px solid var(--border);margin-top:6px}
+.progress-mini{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:6px}
+.progress-mini > i{display:block;height:100%;background:var(--green);transition:width .4s}
+.empty-state{
+  text-align:center;color:var(--fg3);padding:40px 20px;font-size:.9rem;
+  border:1px dashed var(--border);border-radius:var(--radius);
+}
+
+/* ============ CARD EDIT / TOPIC PANEL ============ */
+.card-row{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 12px;display:flex;gap:10px;align-items:flex-start;
+}
+.card-row .q{font-weight:600;font-size:.88rem;flex:1;word-break:break-word}
+.card-row .a{font-size:.82rem;color:var(--fg2);margin-top:4px;word-break:break-word}
+.card-row .actions{display:flex;gap:4px;flex-shrink:0}
+.card-row .actions button{
+  width:30px;height:30px;border-radius:7px;background:var(--bg3);
+  display:grid;place-items:center;font-size:.9rem;
+}
+
+/* ============ STATS ============ */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.stat-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px;text-align:center;
+}
+.stat-box .num{font-size:1.6rem;font-weight:800;color:var(--primary)}
+.stat-box .lbl{font-size:.78rem;color:var(--fg2);margin-top:4px}
+.stat-box.green .num{color:var(--green)}
+.stat-box.yellow .num{color:var(--yellow)}
+.stat-box.red .num{color:var(--red)}
+.stat-box.purple .num{color:var(--purple)}
+.stats-section{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px}
+.stats-section h3{font-size:.95rem;margin-bottom:12px;color:var(--fg)}
+.step-bar{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.82rem}
+.step-bar .lbl{width:70px;color:var(--fg2);flex-shrink:0}
+.step-bar .track{flex:1;height:18px;background:var(--bg3);border-radius:9px;overflow:hidden}
+.step-bar .track > i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--purple));transition:width .5s}
+.step-bar .num{width:40px;text-align:left;font-weight:700}
+
+/* ============ FORMS ============ */
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.82rem;color:var(--fg2);margin-bottom:6px}
+.field input[type="text"],.field input[type="number"],.field textarea,.field select{
+  width:100%;padding:11px 12px;border-radius:var(--radius-sm);
+  background:var(--bg3);border:1px solid var(--border);color:var(--fg);
+  transition:border-color .2s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--primary)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.7}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+/* ============ MODAL ============ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);
+  display:none;place-items:center;z-index:200;padding:16px;
+}
+.modal-overlay.show{display:grid;animation:fadeIn .2s}
+.modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;max-width:420px;width:100%;box-shadow:var(--shadow);
+  animation:pop .25s ease;
+}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+.modal h3{font-size:1rem;margin-bottom:10px}
+.modal p{font-size:.88rem;color:var(--fg2);margin-bottom:14px;line-height:1.8}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+
+/* ============ FOOTER ============ */
+.footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:10px 14px;text-align:center;font-size:.82rem;color:var(--fg2);
+  max-width:820px;margin:0 auto;
+}
+.footer .save-ind{position:absolute;top:-24px;right:14px;font-size:.7rem;color:var(--fg3)}
+
+/* ============ SEARCH ============ */
+.search-box{position:relative;margin-bottom:14px}
+.search-box input{width:100%;padding:12px 40px 12px 14px;border-radius:var(--radius);background:var(--bg2);border:1px solid var(--border)}
+.search-box .ic{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--fg3)}
+
+/* ============ TOAST ============ */
+#toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg3);color:var(--fg);padding:10px 18px;border-radius:20px;
+  font-size:.85rem;box-shadow:var(--shadow);opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s;z-index:300;max-width:90vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{background:var(--green);color:#fff}
+#toast.err{background:var(--red);color:#fff}
+
+/* ============ MISC ============ */
+.hidden{display:none!important}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.text-center{text-align:center}
+.mt-8{margin-top:8px}
+.mt-14{margin-top:14px}
+.mb-14{margin-bottom:14px}
+.flex{display:flex;gap:8px;align-items:center}
+.flex-wrap{flex-wrap:wrap}
+.muted{color:var(--fg2);font-size:.82rem}
+
+@media (max-width:420px){
+  .menu-grid{gap:8px}
+  .menu-btn{padding:12px 10px}
+  .menu-btn .txt{font-size:.82rem}
+  .stats-grid{gap:8px}
+  .stat-box .num{font-size:1.3rem}
+  .card-answer{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <button class="btn-icon hidden" id="btnBack" title="بازگشت">←</button>
+    <h1 id="pageTitle">فلش‌کارت</h1>
+    <button class="btn-icon" id="btnTheme" title="تغییر تم">🌙</button>
+  </header>
+
+  <main>
+
+    <!-- ============ HOME ============ -->
+    <section class="view active" id="view-home">
+      <div class="home-progress">
+        <div class="row"><span>پیشرفت کل</span><span id="homePct">۰٪</span></div>
+        <div class="bar"><i id="homeBar" style="width:0%"></i></div>
+        <div class="row mt-8"><span id="homeStats">۰ / ۰ کارت</span><span id="homeStreak"></span></div>
+      </div>
+
+      <div class="menu-grid" id="menuGrid"><!-- JS --></div>
+
+      <div class="suggest" id="suggestBox" style="display:none">
+        <span class="ic">🎯</span>
+        <div class="txt">
+          <small>پیشنهاد امروز</small>
+          <b id="suggestText">—</b>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STUDY ============ -->
+    <section class="view" id="view-study">
+      <div class="study-progress" id="studyProgress">—</div>
+
+      <div class="card-box" id="cardBox">
+        <div class="card-corner corner-tl">
+          <button id="btnStar" title="ستاره">☆</button>
+        </div>
+        <div class="card-corner corner-bl">
+          <button id="btnSuspend" title="تعلیق">⏸</button>
+          <button id="btnDelete" title="حذف">🗑</button>
+        </div>
+        <div class="card-corner corner-tr" id="cardMeta"></div>
+        <div class="card-corner corner-br" id="cardViews">👁 ۰</div>
+        <div class="encourage hidden" id="encourage"></div>
+
+        <div class="card-question" id="cardQ">—</div>
+        <div class="card-answer hidden" id="cardA">—</div>
+        <div class="due-note hidden" id="dueNote"></div>
+      </div>
+
+      <div class="show-answer-hint" id="showHint">برای دیدن پاسخ کلید <b>۵</b> یا روی کارت بزن</div>
+
+      <div class="study-actions">
+        <button class="btn-correct" id="btnCorrect">✅ درست <small>(۱)</small></button>
+        <button class="btn-partial" id="btnPartial">🟡 حدودی <small>(۲)</small></button>
+        <button class="btn-wrong" id="btnWrong">🔴 غلط <small>(۳)</small></button>
+        <button class="btn-skip" id="btnSkip">⏭ رد کردن <small>(۴)</small></button>
+      </div>
+    </section>
+
+    <!-- ============ LESSONS PANEL ============ -->
+    <section class="view" id="view-lessons">
+      <div class="panel-head">
+        <h2>📚 درس‌ها</h2>
+        <button class="btn primary small" id="btnNewLesson">➕ درس جدید</button>
+        <button class="btn small" id="btnReviewSelected">▶ مرور انتخاب‌شده‌ها</button>
+        <button class="btn small" id="btnLoadJsonLessons">📁 بارگذاری JSON</button>
+      </div>
+      <div class="list" id="lessonsList"><!-- JS --></div>
+    </section>
+
+    <!-- ============ SUBTOPICS PANEL ============ -->
+    <section class="view" id="view-subtopics">
+      <div class="panel-head">
+        <h2 id="subtopicsTitle">📂 مبحث‌ها</h2>
+        <button class="btn primary small" id="btnNewSubtopic">➕ مبحث جدید</button>
+        <button class="btn small" id="btnReviewTopic">▶ مرور همه</button>
+      </div>
+      <div class="list" id="subtopicsList"><!-- JS --></div>
+    </section>
+
+    <!-- ============ CARDS PANEL ============ -->
+    <section class="view" id="view-cards">
+      <div class="panel-head">
+        <h2 id="cardsTitle">🃏 کارت‌ها</h2>
+        <button class="btn primary small" id="btnNewCard">➕ کارت جدید</button>
+        <button class="btn small" id="btnReviewCards">▶ مرور</button>
+        <button class="btn small" id="btnRandomCards">🎲 تصادفی</button>
+        <button class="btn small" id="btnMarkAllRead">📌 همه خوانده</button>
+      </div>
+      <div class="search-box mb-14">
+        <input type="text" id="cardSearch" placeholder="جستجو در کارت‌ها...">
+        <span class="ic">🔍</span>
+      </div>
+      <div class="flex flex-wrap mb-14" id="bulkActions" style="display:none">
+        <span class="muted" id="bulkCount">۰ انتخاب</span>
+        <button class="btn small danger" id="btnBulkDelete">🗑 حذف گروهی</button>
+        <button class="btn small" id="btnBulkMove">📂 انتقال</button>
+        <button class="btn small ghost" id="btnBulkCancel">✕ لغو</button>
+      </div>
+      <div class="list" id="cardsList"><!-- JS --></div>
+    </section>
+
+    <!-- ============ DUE PANEL ============ -->
+    <section class="view" id="view-due">
+      <div class="panel-head">
+        <h2>⏰ سررسیده‌ها</h2>
+        <button class="btn primary small" id="btnReviewAllDue">▶ مرور همه</button>
+      </div>
+      <div class="list" id="dueList"><!-- JS --></div>
+    </section>
+
+    <!-- ============ SEARCH ============ -->
+    <section class="view" id="view-search">
+      <div class="search-box">
+        <input type="text" id="globalSearch" placeholder="جستجو در نام درس و مبحث...">
+        <span class="ic">🔍</span>
+      </div>
+      <div class="list" id="searchResults"><!-- JS --></div>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section class="view" id="view-stats">
+      <h2 class="mb-14" style="font-size:1.05rem">📊 تابلوی آمار</h2>
+      <div id="statsBody"><!-- JS --></div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="view" id="view-settings">
+      <h2 class="mb-14" style="font-size:1.05rem">⚙️ تنظیمات</h2>
+      <div class="stats-section">
+        <h3>🎛 بازه‌های مرور</h3>
+        <div class="form-row">
+          <div class="field">
+            <label>بازه «حدودی» (روز)</label>
+            <input type="number" id="setPartial" min="1" max="30">
+          </div>
+          <div class="field">
+            <label>آستانه «سخت‌ها» (نمایش)</label>
+            <input type="number" id="setHard" min="1" max="50">
+          </div>
+        </div>
+        <div class="field">
+          <label>زنجیره «درست» (روز، با کاما)</label>
+          <input type="text" id="setChain" placeholder="3,7,14,26,58,125">
+        </div>
+        <div class="field">
+          <label>بازه «غلط» (روز)</label>
+          <input type="number" id="setWrong" min="1" max="30">
+        </div>
+        <button class="btn primary" id="btnSaveSettings">💾 ذخیره تنظیمات</button>
+      </div>
+
+      <div class="stats-section">
+        <h3>📁 داده‌ها</h3>
+        <div class="flex flex-wrap">
+          <button class="btn" id="btnExport">📤 خروجی پشتیبان</button>
+          <button class="btn" id="btnImportFile">📥 وارد کردن پشتیبان</button>
+          <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+          <button class="btn" id="btnLoadJsonSettings">📁 بارگذاری JSON</button>
+          <button class="btn" id="btnEmptyJson">📝 ساخت JSON خالی</button>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>🔧 ابزارها</h3>
+        <div class="flex flex-wrap">
+          <button class="btn" id="btnMerge">🔗 ادغام کارت‌های مشابه</button>
+          <button class="btn" id="btnStorageInfo">ℹ️ وضعیت ذخیره‌سازی</button>
+          <button class="btn danger" id="btnReset">🗑 ریست کامل</button>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <h3>🎨 تم</h3>
+        <div class="flex flex-wrap">
+          <button class="btn" data-theme-set="dark">🌙 تیره</button>
+          <button class="btn" data-theme-set="light">☀️ روشن</button>
+          <button class="btn" data-theme-set="dim">🌗 کم‌نور</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <span class="save-ind" id="saveIndicator">✅</span>
+    <span id="motivation">—</span>
+  </footer>
+
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <h3 id="modalTitle">—</h3>
+    <p id="modalMsg">—</p>
+    <div id="modalFields"></div>
+    <div class="actions" id="modalActions"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+/* بخش‌های JS در پیام‌های ۲ تا ۵ اینجا قرار می‌گیرد */
+</script>
+</body>
+</html>/* ============================================================
+   v10 — بخش ۱: ثابت‌ها، داده، STATE، ذخیره‌سازی
+   ============================================================ */
+
+'use strict';
+
+/* ---------- کلیدهای ذخیره‌سازی (ثابت، تغییر نکنند) ---------- */
+const K = {
+  STATE:    'fc_main_state',
+  SETTINGS: 'fc_main_settings',
+  TOPICS:   'fc_main_topics',
+  THEME:    'fc_main_theme',
+  BACKUP:   'fc_main_backup',
+  DB:       'fc_main_db'
+};
+
+/* ---------- تنظیمات پیش‌فرض ---------- */
+const DEFAULT_SETTINGS = {
+  partialDays: 2,
+  wrongDays: 1,
+  hardThreshold: 7,
+  correctChain: [3, 7, 14, 26, 58, 125]
+};
+
+/* ---------- STATE پیش‌فرض ---------- */
+function defaultState() {
+  return {
+    cards: {},           // { [cardId]: {...} }
+    history: {},         // { 'YYYY-MM-DD': {correct,partial,wrong} }
+    readSubtopics: {},   // { [subtopicId]: true }
+    dailyRecords: {},    // { 'YYYY-MM-DD': {total,newCards} }
+    masteredCount: 0,
+    totalCards: 0,
+    lastExportDate: null,
+    lastBackupDate: null
+  };
+}
+
+/* ---------- STATE مرکزی (فقط در حافظه) ---------- */
+const APP = {
+  topics: [],           // آرایه‌ی درس‌ها — منبع حقیقت
+  state: defaultState(),
+  settings: { ...DEFAULT_SETTINGS },
+  theme: 'dark',
+
+  // ناوبری
+  viewStack: [],        // برای دکمه back
+  currentTopicId: null,
+  currentSubtopicId: null,
+
+  // مطالعه
+  studyQueue: [],       // آرایه‌ی {cardId, topicId, subtopicId, card}
+  studyIndex: 0,
+  studyAnswerShown: false,
+  studyContext: null,   // 'due','all','new',...
+
+  // انتخاب گروهی
+  selectedCards: new Set(),
+
+  // ذخیره‌سازی
+  saveCounter: 0,
+  dirty: false
+};
+
+/* ============================================================
+   ابزارهای عمومی
+   ============================================================ */
+
+/** تولید شناسه یکتا */
+function uid(prefix = 'id') {
+  return prefix + '_' + Date.now().toString(36) + '_' +
+         Math.random().toString(36).slice(2, 8);
+}
+
+/** تاریخ امروز به فرمت YYYY-MM-DD */
+function today() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+
+/** تبدیل عدد به رقم فارسی */
+function toFa(n) {
+  const fa = '۰۱۲۳۴۵۶۷۸۹';
+  return String(n).replace(/\d/g, d => fa[+d]);
+}
+
+/** تاریخ امروز به فارسی برای نمایش */
+function todayFa() {
+  const days = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+  const d = new Date();
+  return days[d.getDay()];
+}
+
+/** جمع امن اعداد */
+function sum(arr) { return arr.reduce((a, b) => a + b, 0); }
+
+/** کپی عمیق */
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+/** پاک‌سازی متن ورودی */
+function clean(s) {
+  return String(s == null ? '' : s).trim().replace(/\s+/g, ' ');
+}
+
+/** نمایش Toast */
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.className = ''; }, 2200);
+}
+
+/** مودال عمومی — Promise-based */
+function showModal({ title = '', msg = '', fields = [], actions = [] }) {
+  return new Promise(resolve => {
+    const overlay = document.getElementById('modalOverlay');
+    const mTitle  = document.getElementById('modalTitle');
+    const mMsg    = document.getElementById('modalMsg');
+    const mFields = document.getElementById('modalFields');
+    const mActions= document.getElementById('modalActions');
+
+    mTitle.textContent = title;
+    mMsg.textContent   = msg;
+    mMsg.style.display = msg ? 'block' : 'none';
+    mFields.innerHTML  = '';
+    mActions.innerHTML = '';
+
+    // فیلدها
+    fields.forEach(f => {
+      const wrap = document.createElement('div');
+      wrap.className = 'field';
+      if (f.label) {
+        const lbl = document.createElement('label');
+        lbl.textContent = f.label;
+        wrap.appendChild(lbl);
+      }
+      const inp = document.createElement(f.type === 'textarea' ? 'textarea' : 'input');
+      if (f.type && f.type !== 'textarea') inp.type = f.type;
+      inp.value = f.value != null ? f.value : '';
+      if (f.placeholder) inp.placeholder = f.placeholder;
+      inp.dataset.fieldKey = f.key;
+      wrap.appendChild(inp);
+      mFields.appendChild(wrap);
+    });
+
+    const close = (result) => {
+      overlay.classList.remove('show');
+      resolve(result);
+    };
+
+    // دکمه‌ها
+    actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.className = 'btn ' + (a.cls || '');
+      btn.textContent = a.text;
+      btn.onclick = () => {
+        if (a.collect) {
+          const vals = {};
+          mFields.querySelectorAll('[data-field-key]').forEach(i => {
+            vals[i.dataset.fieldKey] = i.value;
+          });
+          close({ action: a.value, values: vals });
+        } else {
+          close(a.value);
+        }
+      };
+      mActions.appendChild(btn);
+    });
+
+    overlay.classList.add('show');
+    setTimeout(() => {
+      const first = mFields.querySelector('input,textarea');
+      if (first) first.focus();
+    }, 100);
+  });
+}
+
+/** تأیید ساده */
+async function confirmBox(title, msg) {
+  const r = await showModal({
+    title, msg,
+    actions: [
+      { text: 'انصراف', value: false, cls: 'ghost' },
+      { text: 'تأیید', value: true, cls: 'primary' }
+    ]
+  });
+  return r === true;
+}
+
+/** پرسش متن */
+async function promptBox(title, label, value = '') {
+  const r = await showModal({
+    title,
+    fields: [{ key: 'v', label, type: 'text', value }],
+    actions: [
+      { text: 'انصراف', value: null, cls: 'ghost' },
+      { text: 'تأیید', value: 'ok', cls: 'primary', collect: true }
+    ]
+  });
+  if (!r || r.action !== 'ok') return null;
+  return clean(r.values.v);
+}
+
+/* ============================================================
+   ذخیره‌سازی — localStorage
+   ============================================================ */
+
+function safeParse(str, fallback) {
+  if (!str) return fallback;
+  try {
+    const v = JSON.parse(str);
+    return v == null ? fallback : v;
+  } catch (e) {
+    console.warn('[v10] JSON parse failed:', e);
+    return fallback;
+  }
+}
+
+function lsGet(key, fallback = null) {
+  try { return safeParse(localStorage.getItem(key), fallback); }
+  catch (e) { return fallback; }
+}
+
+function lsSet(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (e) {
+    console.error('[v10] LS write failed:', e);
+    setSaveIndicator('❌');
+    return false;
+  }
+}
+
+/* ---------- ذخیره‌ی STATE ---------- */
+function saveState() {
+  const ok = lsSet(K.STATE, APP.state);
+  if (ok) setSaveIndicator('✅');
+  APP.dirty = false;
+}
+
+/* ---------- ذخیره‌ی TOPICS (منبع حقیقت) ---------- */
+function saveTopics() {
+  // قبل از ذخیره، ساختار را validate می‌کنیم
+  APP.topics = normalizeTopics(APP.topics);
+  const ok = lsSet(K.TOPICS, APP.topics);
+  if (ok) setSaveIndicator('✅');
+}
+
+/* ---------- ذخیره‌ی تنظیمات ---------- */
+function saveSettings() {
+  lsSet(K.SETTINGS, APP.settings);
+}
+
+/* ---------- ذخیره‌ی تم ---------- */
+function saveTheme() {
+  lsSet(K.THEME, APP.theme);
+}
+
+/* ---------- ذخیره‌ی همه ---------- */
+function saveAll() {
+  saveTopics();
+  saveState();
+  saveSettings();
+  saveTheme();
+}
+
+/* ---------- بارگذاری از localStorage ---------- */
+function loadAll() {
+  // تم
+  APP.theme = lsGet(K.THEME, 'dark');
+  if (typeof APP.theme !== 'string') APP.theme = 'dark';
+  document.documentElement.dataset.theme = APP.theme;
+  updateThemeIcon();
+
+  // تنظیمات
+  const s = lsGet(K.SETTINGS, null);
+  APP.settings = Object.assign({ ...DEFAULT_SETTINGS }, s || {});
+  // اعتبارسنجی زنجیره
+  if (!Array.isArray(APP.settings.correctChain) ||
+      APP.settings.correctChain.length === 0) {
+    APP.settings.correctChain = [3, 7, 14, 26, 58, 125];
+  }
+
+  // State
+  const st = lsGet(K.STATE, null);
+  if (st && typeof st === 'object') {
+    APP.state = Object.assign(defaultState(), st);
+    if (!APP.state.cards) APP.state.cards = {};
+    if (!APP.state.history) APP.state.history = {};
+    if (!APP.state.readSubtopics) APP.state.readSubtopics = {};
+    if (!APP.state.dailyRecords) APP.state.dailyRecords = {};
+  } else {
+    APP.state = defaultState();
+  }
+
+  // Topics — منبع حقیقت
+  const tps = lsGet(K.TOPICS, []);
+  APP.topics = Array.isArray(tps) ? normalizeTopics(tps) : [];
+  console.log('[v10] loaded topics:', APP.topics.length,
+              'cards:', countAllCards());
+}
+
+/* ---------- اعتبارسنجی و بازسازی ساختار درس‌ها ---------- */
+function normalizeTopics(topics) {
+  if (!Array.isArray(topics)) return [];
+  return topics.map(t => {
+    if (!t || typeof t !== 'object') return null;
+    const topic = {
+      id: t.id || uid('t'),
+      name: clean(t.name) || 'بدون نام',
+      subtopics: Array.isArray(t.subtopics) ? t.subtopics : []
+    };
+    topic.subtopics = topic.subtopics.map(s => {
+      if (!s || typeof s !== 'object') return null;
+      const st = {
+        id: s.id || uid('s'),
+        name: clean(s.name) || 'بدون نام',
+        read: !!s.read,
+        cards: Array.isArray(s.cards) ? s.cards : []
+      };
+      st.cards = st.cards.map(c => {
+        if (!c || typeof c !== 'object') return null;
+        return {
+          id: c.id || uid('c'),
+          q: String(c.q == null ? '' : c.q),
+          a: String(c.a == null ? '' : c.a)
+        };
+      }).filter(Boolean);
+      return st;
+    }).filter(Boolean);
+    return topic;
+  }).filter(Boolean);
+}
+
+/* ---------- شمارش کل کارت‌ها ---------- */
+function countAllCards() {
+  let n = 0;
+  for (const t of APP.topics)
+    for (const s of t.subtopics) n += s.cards.length;
+  return n;
+}
+
+/* ---------- پیمایش همه‌ی کارت‌ها به‌صورت تخت ---------- */
+function allCards() {
+  const out = [];
+  for (const t of APP.topics) {
+    for (const s of t.subtopics) {
+      for (const c of s.cards) {
+        out.push({
+          cardId: c.id,
+          topicId: t.id,
+          subtopicId: s.id,
+          topicName: t.name,
+          subtopicName: s.name,
+          q: c.q,
+          a: c.a
+        });
+      }
+    }
+  }
+  return out;
+}
+
+/* ---------- یافتن کارت با شناسه ---------- */
+function findCard(cardId) {
+  for (const t of APP.topics) {
+    for (const s of t.subtopics) {
+      for (const c of s.cards) {
+        if (c.id === cardId) {
+          return { card: c, subtopic: s, topic: t };
+        }
+      }
+    }
+  }
+  return null;
+}
+
+/** یافتن درس با شناسه */
+function findTopic(id) { return APP.topics.find(t => t.id === id) || null; }
+/** یافتن مبحث با شناسه در یک درس مشخص */
+function findSubtopic(topicId, subId) {
+  const t = findTopic(topicId);
+  if (!t) return null;
+  return t.subtopics.find(s => s.id === subId) || null;
+}
+
+/* ---------- State یک کارت (با پیش‌فرض‌ها) ---------- */
+function cardState(cardId) {
+  let st = APP.state.cards[cardId];
+  if (!st || typeof st !== 'object') {
+    st = {
+      seen: 0,
+      lastSeen: null,
+      nextDue: null,
+      correctCount: 0,
+      partialCount: 0,
+      wrongCount: 0,
+      totalWrong: 0,
+      stepIndex: 0,
+      starred: false,
+      suspended: false,
+      deleted: false,
+      viewCount: 0,
+      lastWrongDate: null,
+      note: '',
+      todayCorrect: 0
+    };
+    APP.state.cards[cardId] = st;
+  }
+  // محافظت از فیلدهای گمشده
+  const def = {
+    seen: 0, correctCount: 0, partialCount: 0, wrongCount: 0,
+    totalWrong: 0, stepIndex: 0, starred: false, suspended: false,
+    deleted: false, viewCount: 0, todayCorrect: 0
+  };
+  for (const k in def) {
+    if (st[k] === undefined) st[k] = def[k];
+  }
+  return st;
+}
+
+/* ---------- نشانگر ذخیره‌سازی ---------- */
+function setSaveIndicator(sym) {
+  const el = document.getElementById('saveIndicator');
+  if (el) el.textContent = sym;
+}
+
+/** ذخیره‌ی هوشمند — بعد از هر پاسخ */
+function maybeAutoSave() {
+  APP.saveCounter++;
+  if (APP.saveCounter >= 5) {
+    APP.saveCounter = 0;
+    saveState();
+    saveTopics();
+  } else {
+    setSaveIndicator('🟡');
+  }
+}
+
+/* ============================================================
+   IndexedDB — پشتیبان موازی
+   ============================================================ */
+const DB = {
+  _db: null,
+  async open() {
+    if (this._db) return this._db;
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(K.DB, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains('kv')) {
+          db.createObjectStore('kv');
+        }
+      };
+      req.onsuccess = () => { this._db = req.result; resolve(this._db); };
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async set(key, value) {
+    try {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('kv', 'readwrite');
+        tx.objectStore('kv').put(value, key);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) { console.warn('[v10] IDB set failed:', e); }
+  },
+  async get(key) {
+    try {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('kv', 'readonly');
+        const r = tx.objectStore('kv').get(key);
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = () => reject(r.error);
+      });
+    } catch (e) { return null; }
+  }
+};
+
+/* ============================================================
+   sessionStorage — پشتیبان سبک
+   ============================================================ */
+function sessionBackup() {
+  try {
+    sessionStorage.setItem(K.STATE + '_sess',
+      JSON.stringify({ t: Date.now(), s: APP.state }));
+  } catch (e) { /* ignore */ }
+}
+
+/* ============================================================
+   شماره‌ی نمایش کارت + کمک‌کننده‌های منو
+   ============================================================ */
+
+/** آیا کارت سررسیده است؟ */
+function isDue(cardId) {
+  const st = cardState(cardId);
+  if (st.deleted || st.suspended) return false;
+  if (!st.seen) return false;
+  if (!st.nextDue) return false;
+  return st.nextDue <= today();
+}
+
+/** آیا کارت جدید است؟ */
+function isNew(cardId) {
+  const st = cardState(cardId);
+  return !st.seen && !st.deleted && !st.suspended;
+}
+
+/** آیا امروز درست زده شده؟ */
+function isTodayCorrect(cardId) {
+  const st = cardState(cardId);
+  return st.todayCorrect > 0;
+}
+
+/** آیا امروز غلط زده شده؟ */
+function isTodayWrong(cardId) {
+  const st = cardState(cardId);
+  return st.lastWrongDate === today();
+}
+
+/** فیلترهای منو */
+const FILTERS = {
+  all:       c => { const st = cardState(c.cardId); return !st.deleted && !st.suspended; },
+  due:       c => isDue(c.cardId),
+  new:       c => isNew(c.cardId),
+  started:   c => { const st = cardState(c.cardId); return st.seen === 1 && !st.deleted && !st.suspended; },
+  todayOK:   c => { const st = cardState(c.cardId); return isTodayCorrect(c.cardId) && !st.deleted; },
+  todayBad:  c => { const st = cardState(c.cardId); return isTodayWrong(c.cardId) && !st.deleted; },
+  hard:      c => { const st = cardState(c.cardId); return st.viewCount >= APP.settings.hardThreshold && !st.deleted && !st.suspended; },
+  starred:   c => cardState(c.cardId).starred && !cardState(c.cardId).deleted,
+  suspended: c => cardState(c.cardId).suspended && !cardState(c.cardId).deleted,
+  deleted:   c => cardState(c.cardId).deleted
+};
+
+/** شمارش کارت‌های منطبق با فیلتر */
+function countFilter(filterFn) {
+  let n = 0;
+  for (const c of allCards()) {
+    if (filterFn(c)) n++;
+  }
+  return n;
+}
+
+/* ============================================================
+   منوی اصلی (۱۳ دکمه)
+   ============================================================ */
+
+const MENU_ITEMS = [
+  { key: 'all',       ic: '🗂', txt: 'همه',              filter: FILTERS.all },
+  { key: 'due',       ic: '⏰', txt: 'سررسیده‌ها',        filter: FILTERS.due, panel: 'due' },
+  { key: 'new',       ic: '🆕', txt: 'کارت‌های جدید',     filter: FILTERS.new },
+  { key: 'started',   ic: '🎯', txt: 'استارت',           filter: FILTERS.started },
+  { key: 'todayOK',   ic: '🟢', txt: 'درست‌های امروز',    filter: FILTERS.todayOK },
+  { key: 'todayBad',  ic: '🔴', txt: 'غلط‌های امروز',     filter: FILTERS.todayBad },
+  { key: 'hard',      ic: '🔁', txt: 'سخت‌ها',            filter: FILTERS.hard },
+  { key: 'starred',   ic: '⭐', txt: 'ستاره‌دارها',       filter: FILTERS.starred },
+  { key: 'suspended', ic: '⏸', txt: 'تعلیق‌شده‌ها',      filter: FILTERS.suspended },
+  { key: 'deleted',   ic: '🗑', txt: 'حذف‌شده‌ها',        filter: FILTERS.deleted },
+  { key: 'lessons',   ic: '📚', txt: 'درس‌ها',           panel: 'lessons' },
+  { key: 'search',    ic: '🔍', txt: 'جستجوی موضوعی',    panel: 'search' },
+  { key: 'stats',     ic: '📊', txt: 'تابلوی آمار',       panel: 'stats' }
+];
+
+function renderHomeMenu() {
+  const grid = document.getElementById('menuGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  // شمارش‌های منو (فقط یک‌بار محاسبه‌ی همه‌ی کارت‌ها)
+  const cards = allCards();
+
+  MENU_ITEMS.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'menu-btn';
+    btn.dataset.key = item.key;
+
+    const cnt = item.filter
+      ? cards.filter(item.filter).length
+      : '';
+
+    btn.innerHTML =
+      `<span class="ic">${item.ic}</span>` +
+      `<span class="txt">${item.txt}</span>` +
+      (cnt !== '' ? `<span class="cnt">${toFa(cnt)}</span>` : '');
+
+    btn.addEventListener('click', () => handleMenuClick(item));
+    grid.appendChild(btn);
+  });
+
+  // پیشرفت هدر
+  updateHomeHeader();
+}
+
+function updateHomeHeader() {
+  const total = countAllCards();
+  const st = APP.state;
+  const mastered = st.masteredCount || 0;
+  const pct = total ? Math.round((mastered / total) * 100) : 0;
+
+  document.getElementById('homePct').textContent = toFa(pct) + '٪';
+  document.getElementById('homeBar').style.width = pct + '%';
+  document.getElementById('homeStats').textContent =
+    `${toFa(mastered)} / ${toFa(total)} کارت`;
+
+  const dueCount = countFilter(FILTERS.due);
+  const newCount = countFilter(FILTERS.new);
+  document.getElementById('homeStreak').textContent =
+    `⏰ ${toFa(dueCount)} سررسیده · 🆕 ${toFa(newCount)} جدید`;
+}
+
+/** هندل کلیک روی منو */
+function handleMenuClick(item) {
+  if (item.panel === 'lessons') { showView('lessons'); return; }
+  if (item.panel === 'search')  { showView('search'); return; }
+  if (item.panel === 'stats')   { showView('stats'); return; }
+  if (item.panel === 'due')     { showView('due'); return; }
+
+  // منوهای کارتی → استارت مطالعه
+  if (item.filter) {
+    const queue = allCards().filter(item.filter);
+    if (queue.length === 0) {
+      toast('کارتی در این دسته نیست', 'err');
+      return;
+    }
+    startStudy(queue, item.key);
+  }
+}
+
+/* ============================================================
+   ناوبری بین viewها
+   ============================================================ */
+
+const VIEW_TITLES = {
+  home:      'فلش‌کارت',
+  study:     '📖 مطالعه',
+  lessons:   '📚 درس‌ها',
+  subtopics: '📂 مبحث‌ها',
+  cards:     '🃏 کارت‌ها',
+  due:       '⏰ سررسیده‌ها',
+  search:    '🔍 جستجو',
+  stats:     '📊 آمار',
+  settings:  '⚙️ تنظیمات'
+};
+
+function showView(name, pushStack = true) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + name);
+  if (el) el.classList.add('active');
+
+  document.getElementById('pageTitle').textContent = VIEW_TITLES[name] || 'فلش‌کارت';
+
+  const back = document.getElementById('btnBack');
+  if (name === 'home') {
+    back.classList.add('hidden');
+    APP.viewStack = [];
+  } else {
+    back.classList.remove('hidden');
+    if (pushStack && APP.viewStack[APP.viewStack.length - 1] !== name) {
+      APP.viewStack.push(name);
+    }
+  }
+
+  // رندر تنبل (lazy)
+  if (name === 'home')       renderHomeMenu();
+  if (name === 'lessons')    renderLessons();
+  if (name === 'subtopics')  renderSubtopics();
+  if (name === 'cards')      renderCards();
+  if (name === 'due')        renderDuePanel();
+  if (name === 'search')     renderSearch();
+  if (name === 'stats')      renderStats();
+  if (name === 'settings')   renderSettings();
+
+  // اسکرول به بالا
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  APP.viewStack.pop();
+  const prev = APP.viewStack[APP.viewStack.length - 1] || 'home';
+  showView(prev, false);
+}
+
+/* ============================================================
+   تم
+   ============================================================ */
+function applyTheme(name) {
+  APP.theme = name;
+  document.documentElement.dataset.theme = name;
+  saveTheme();
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const icons = { dark: '🌙', light: '☀️', dim: '🌗' };
+  const el = document.getElementById('btnTheme');
+  if (el) el.textContent = icons[APP.theme] || '🌙';
+}
+
+function cycleTheme() {
+  const order = ['dark', 'light', 'dim'];
+  const i = order.indexOf(APP.theme);
+  applyTheme(order[(i + 1) % order.length]);
+}/* ============================================================
+   v10 — بخش ۲: پنل درس‌ها، مبحث‌ها، کارت‌ها
+   رفع باگ v9: renderLessons همیشه از APP.topics می‌خواند.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   رندر پنل درس‌ها
+   ------------------------------------------------------------ */
+function renderLessons() {
+  const list = document.getElementById('lessonsList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  // محافظ: اگر topics خراب بود، بازسازی کن
+  if (!Array.isArray(APP.topics)) {
+    console.warn('[v10] APP.topics not array, resetting');
+    APP.topics = [];
+  }
+  APP.topics = normalizeTopics(APP.topics);
+
+  if (APP.topics.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      هنوز درسی نساخته‌ای.<br>
+      با دکمه‌ی «➕ درس جدید» شروع کن، یا از «📁 بارگذاری JSON» استفاده کن.
+    </div>`;
+    return;
+  }
+
+  APP.topics.forEach((topic, tIdx) => {
+    try {
+      list.appendChild(buildLessonRow(topic, tIdx));
+    } catch (e) {
+      console.error('[v10] render lesson failed:', e, topic);
+    }
+  });
+}
+
+function buildLessonRow(topic, tIdx) {
+  const wrap = document.createElement('div');
+  wrap.className = 'list-item';
+  wrap.dataset.topicId = topic.id;
+
+  // آمار درس
+  let totalCards = 0, readCards = 0, dueCards = 0;
+  for (const s of topic.subtopics) {
+    for (const c of s.cards) {
+      totalCards++;
+      const st = cardState(c.id);
+      if (st.seen > 0) readCards++;
+      if (isDue(c.id)) dueCards++;
+    }
+  }
+  const pct = totalCards ? Math.round((readCards / totalCards) * 100) : 0;
+
+  // بدنه
+  const body = document.createElement('div');
+  body.className = 'body';
+  body.innerHTML = `
+    <div class="title">
+      <span>📚 ${escapeHtml(topic.name)}</span>
+    </div>
+    <div class="meta">
+      <span class="badge">📂 ${toFa(topic.subtopics.length)} مبحث</span>
+      <span class="badge">🃏 ${toFa(totalCards)} کارت</span>
+      ${dueCards ? `<span class="badge" style="background:var(--red);color:#fff">⏰ ${toFa(dueCards)} سررسیده</span>` : ''}
+    </div>
+    <div class="progress-mini"><i style="width:${pct}%"></i></div>
+    <div class="meta"><span class="muted">${toFa(pct)}٪ خوانده‌شده</span></div>
+  `;
+  wrap.appendChild(body);
+
+  // دکمه‌ها
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+
+  // ▶ باز کردن درس (نمایش مبحث‌ها)
+  const btnOpen = mkIconBtn('📂', 'مبحث‌ها', () => openTopic(topic.id));
+  actions.appendChild(btnOpen);
+
+  // ▶ مرور کل درس
+  const btnReview = mkIconBtn('▶', 'مرور کل درس', () => reviewTopic(topic.id));
+  actions.appendChild(btnReview);
+
+  // ⋮ سه‌نقطه
+  const btnMore = mkIconBtn('⋮', 'گزینه‌ها', () => lessonMenu(topic.id));
+  actions.appendChild(btnMore);
+
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+/** دکمه‌ی آیکون کوچک */
+function mkIconBtn(icon, title, onClick) {
+  const b = document.createElement('button');
+  b.textContent = icon;
+  b.title = title;
+  b.addEventListener('click', e => { e.stopPropagation(); onClick(); });
+  return b;
+}
+
+/** escape ساده برای HTML */
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ------------------------------------------------------------
+   منوی سه‌نقطه‌ی درس
+   ------------------------------------------------------------ */
+async function lessonMenu(topicId) {
+  const topic = findTopic(topicId);
+  if (!topic) return;
+
+  const r = await showModal({
+    title: '📚 ' + topic.name,
+    msg: 'یک عملیات را انتخاب کن',
+    actions: [
+      { text: '✏️ تغییر نام', value: 'rename', cls: 'ghost' },
+      { text: '⬆️ بالا', value: 'up', cls: 'ghost' },
+      { text: '⬇️ پایین', value: 'down', cls: 'ghost' },
+      { text: '🗑 حذف درس', value: 'delete', cls: 'danger' },
+      { text: 'انصراف', value: null, cls: 'ghost' }
+    ]
+  });
+
+  if (!r) return;
+
+  if (r === 'rename') {
+    const nn = await promptBox('تغییر نام درس', 'نام جدید', topic.name);
+    if (nn) { topic.name = nn; saveTopics(); renderLessons(); toast('ذخیره شد', 'ok'); }
+  }
+  else if (r === 'up')   { moveTopic(topicId, -1); }
+  else if (r === 'down') { moveTopic(topicId, +1); }
+  else if (r === 'delete') {
+    const ok = await confirmBox('حذف درس؟',
+      `درس «${topic.name}» و همه‌ی مبحث‌ها و کارت‌هایش حذف می‌شود. مطمئنی؟`);
+    if (!ok) return;
+    // حذف state کارت‌ها
+    for (const s of topic.subtopics)
+      for (const c of s.cards)
+        delete APP.state.cards[c.id];
+    APP.topics = APP.topics.filter(t => t.id !== topicId);
+    saveAll();
+    renderLessons();
+    toast('درس حذف شد', 'ok');
+  }
+}
+
+function moveTopic(id, delta) {
+  const i = APP.topics.findIndex(t => t.id === id);
+  if (i < 0) return;
+  const j = i + delta;
+  if (j < 0 || j >= APP.topics.length) return;
+  [APP.topics[i], APP.topics[j]] = [APP.topics[j], APP.topics[i]];
+  saveTopics();
+  renderLessons();
+}
+
+/* ------------------------------------------------------------
+   درس جدید
+   ------------------------------------------------------------ */
+async function newLesson() {
+  const name = await promptBox('درس جدید', 'نام درس');
+  if (!name) return;
+  APP.topics.push({
+    id: uid('t'),
+    name,
+    subtopics: []
+  });
+  saveTopics();
+  renderLessons();
+  toast('درس ساخته شد', 'ok');
+}
+
+/* ------------------------------------------------------------
+   باز کردن درس → نمایش مبحث‌ها
+   ------------------------------------------------------------ */
+function openTopic(topicId) {
+  APP.currentTopicId = topicId;
+  APP.currentSubtopicId = null;
+  APP.selectedCards.clear();
+  showView('subtopics');
+}
+
+function renderSubtopics() {
+  const list = document.getElementById('subtopicsList');
+  const title = document.getElementById('subtopicsTitle');
+  if (!list) return;
+
+  const topic = findTopic(APP.currentTopicId);
+  if (!topic) {
+    list.innerHTML = `<div class="empty-state">درسی انتخاب نشده.</div>`;
+    return;
+  }
+  title.textContent = '📂 ' + topic.name;
+  list.innerHTML = '';
+
+  if (topic.subtopics.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      این درس هنوز مبحثی ندارد.<br>
+      با «➕ مبحث جدید» اضافه کن.
+    </div>`;
+    return;
+  }
+
+  topic.subtopics.forEach((sub, idx) => {
+    try {
+      list.appendChild(buildSubtopicRow(topic, sub, idx));
+    } catch (e) {
+      console.error('[v10] render subtopic failed:', e, sub);
+    }
+  });
+}
+
+function buildSubtopicRow(topic, sub, idx) {
+  const wrap = document.createElement('div');
+  wrap.className = 'list-item';
+
+  // چک‌باکس خوندم
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = !!sub.read || !!APP.state.readSubtopics[sub.id];
+  cb.title = 'خوندم';
+  cb.addEventListener('change', () => {
+    sub.read = cb.checked;
+    APP.state.readSubtopics[sub.id] = cb.checked;
+    saveTopics();
+    saveState();
+  });
+  wrap.appendChild(cb);
+
+  // آمار مبحث
+  let total = sub.cards.length;
+  let due = 0, started = 0;
+  for (const c of sub.cards) {
+    if (isDue(c.id)) due++;
+    const st = cardState(c.id);
+    if (st.seen > 0) started++;
+  }
+
+  const body = document.createElement('div');
+  body.className = 'body';
+  body.innerHTML = `
+    <div class="title">
+      <span>📂 ${escapeHtml(sub.name)}</span>
+    </div>
+    <div class="meta">
+      <span class="badge">🃏 ${toFa(total)}</span>
+      ${due ? `<span class="badge" style="background:var(--red);color:#fff">⏰ ${toFa(due)}</span>` : ''}
+      <span class="badge">🎯 ${toFa(started)}</span>
+    </div>
+  `;
+  wrap.appendChild(body);
+
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+
+  // ▶ باز کردن کارت‌ها
+  actions.appendChild(mkIconBtn('🃏', 'کارت‌ها', () => openSubtopic(topic.id, sub.id)));
+
+  // ▶ مرور
+  actions.appendChild(mkIconBtn('▶', 'مرور این مبحث', () => reviewSubtopic(topic.id, sub.id)));
+
+  // 🎲 تصادفی
+  actions.appendChild(mkIconBtn('🎲', 'تصادفی', () => reviewSubtopic(topic.id, sub.id, true)));
+
+  // ⋮
+  actions.appendChild(mkIconBtn('⋮', 'گزینه‌ها', () => subtopicMenu(topic.id, sub.id)));
+
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+async function subtopicMenu(topicId, subId) {
+  const sub = findSubtopic(topicId, subId);
+  if (!sub) return;
+
+  const r = await showModal({
+    title: '📂 ' + sub.name,
+    msg: 'یک عملیات را انتخاب کن',
+    actions: [
+      { text: '➕ کارت جدید', value: 'addcard', cls: 'primary' },
+      { text: '✏️ تغییر نام', value: 'rename', cls: 'ghost' },
+      { text: '⬆️ بالا', value: 'up', cls: 'ghost' },
+      { text: '⬇️ پایین', value: 'down', cls: 'ghost' },
+      { text: '🗑 حذف مبحث', value: 'delete', cls: 'danger' },
+      { text: 'انصراف', value: null, cls: 'ghost' }
+    ]
+  });
+
+  if (!r) return;
+  const topic = findTopic(topicId);
+  if (!topic) return;
+  const i = topic.subtopics.findIndex(s => s.id === subId);
+
+  if (r === 'addcard') {
+    const q = await promptBox('کارت جدید', 'سؤال', '');
+    if (!q) return;
+    const a = await promptBox('کارت جدید', 'پاسخ', '');
+    if (a == null) return;
+    sub.cards.push({ id: uid('c'), q, a });
+    saveTopics();
+    renderSubtopics();
+    toast('کارت اضافه شد', 'ok');
+  }
+  else if (r === 'rename') {
+    const nn = await promptBox('تغییر نام', 'نام جدید', sub.name);
+    if (nn) { sub.name = nn; saveTopics(); renderSubtopics(); toast('ذخیره شد', 'ok'); }
+  }
+  else if (r === 'up' && i > 0) {
+    [topic.subtopics[i - 1], topic.subtopics[i]] =
+      [topic.subtopics[i], topic.subtopics[i - 1]];
+    saveTopics(); renderSubtopics();
+  }
+  else if (r === 'down' && i < topic.subtopics.length - 1) {
+    [topic.subtopics[i + 1], topic.subtopics[i]] =
+      [topic.subtopics[i], topic.subtopics[i + 1]];
+    saveTopics(); renderSubtopics();
+  }
+  else if (r === 'delete') {
+    const ok = await confirmBox('حذف مبحث؟',
+      `مبحث «${sub.name}» و ${sub.cards.length} کارتش حذف می‌شود.`);
+    if (!ok) return;
+    for (const c of sub.cards) delete APP.state.cards[c.id];
+    topic.subtopics = topic.subtopics.filter(s => s.id !== subId);
+    saveAll();
+    renderSubtopics();
+    toast('مبحث حذف شد', 'ok');
+  }
+}
+
+async function newSubtopic() {
+  const topic = findTopic(APP.currentTopicId);
+  if (!topic) return;
+  const name = await promptBox('مبحث جدید', 'نام مبحث');
+  if (!name) return;
+  topic.subtopics.push({
+    id: uid('s'),
+    name,
+    read: false,
+    cards: []
+  });
+  saveTopics();
+  renderSubtopics();
+  toast('مبحث ساخته شد', 'ok');
+}
+
+/* ------------------------------------------------------------
+   باز کردن مبحث → کارت‌ها
+   ------------------------------------------------------------ */
+function openSubtopic(topicId, subId) {
+  APP.currentTopicId = topicId;
+  APP.currentSubtopicId = subId;
+  APP.selectedCards.clear();
+  showView('cards');
+}
+
+function renderCards() {
+  const list = document.getElementById('cardsList');
+  const title = document.getElementById('cardsTitle');
+  const searchInput = document.getElementById('cardSearch');
+  if (!list) return;
+
+  const topic = findTopic(APP.currentTopicId);
+  const sub = topic ? topic.subtopics.find(s => s.id === APP.currentSubtopicId) : null;
+  if (!sub) {
+    list.innerHTML = `<div class="empty-state">مبحثی انتخاب نشده.</div>`;
+    title.textContent = '🃏 کارت‌ها';
+    return;
+  }
+  title.textContent = `🃏 ${topic.name} / ${sub.name}`;
+
+  // فیلتر جستجو
+  const q = (searchInput?.value || '').trim().toLowerCase();
+  let cards = sub.cards;
+  if (q) {
+    cards = cards.filter(c =>
+      (c.q || '').toLowerCase().includes(q) ||
+      (c.a || '').toLowerCase().includes(q)
+    );
+  }
+
+  list.innerHTML = '';
+  if (cards.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      ${q ? 'کارتی با این جستجو پیدا نشد.' : 'هنوز کارتی در این مبحث نیست.'}
+    </div>`;
+    updateBulkUI();
+    return;
+  }
+
+  cards.forEach(card => {
+    list.appendChild(buildCardRow(card));
+  });
+  updateBulkUI();
+}
+
+function buildCardRow(card) {
+  const wrap = document.createElement('div');
+  wrap.className = 'card-row';
+
+  // چک‌باکس انتخاب
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = APP.selectedCards.has(card.id);
+  cb.addEventListener('change', () => {
+    if (cb.checked) APP.selectedCards.add(card.id);
+    else APP.selectedCards.delete(card.id);
+    updateBulkUI();
+  });
+  wrap.appendChild(cb);
+
+  // متن
+  const body = document.createElement('div');
+  body.className = 'body';
+  body.style.flex = '1';
+  body.innerHTML = `
+    <div class="q">${escapeHtml(card.q || '(بدون سؤال)')}</div>
+    <div class="a">${escapeHtml(card.a || '(بدون پاسخ)')}</div>
+  `;
+  wrap.appendChild(body);
+
+  // دکمه‌ها
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+
+  actions.appendChild(mkIconBtn('✏️', 'ویرایش', () => editCard(card.id)));
+  actions.appendChild(mkIconBtn('🗑', 'حذف', () => deleteCard(card.id)));
+
+  wrap.appendChild(actions);
+  return wrap;
+}
+
+async function editCard(cardId) {
+  const loc = findCard(cardId);
+  if (!loc) return;
+  const q = await promptBox('ویرایش کارت', 'سؤال', loc.card.q);
+  if (q == null) return;
+  const a = await promptBox('ویرایش کارت', 'پاسخ', loc.card.a);
+  if (a == null) return;
+  loc.card.q = q;
+  loc.card.a = a;
+  saveTopics();
+  renderCards();
+  toast('ویرایش شد', 'ok');
+}
+
+async function deleteCard(cardId) {
+  const loc = findCard(cardId);
+  if (!loc) return;
+  const ok = await confirmBox('حذف کارت؟', 'این کارت برای همیشه حذف می‌شود.');
+  if (!ok) return;
+  loc.subtopic.cards = loc.subtopic.cards.filter(c => c.id !== cardId);
+  delete APP.state.cards[cardId];
+  APP.selectedCards.delete(cardId);
+  saveAll();
+  renderCards();
+  toast('حذف شد', 'ok');
+}
+
+async function newCard() {
+  const sub = findSubtopic(APP.currentTopicId, APP.currentSubtopicId);
+  if (!sub) return;
+  const q = await promptBox('کارت جدید', 'سؤال', '');
+  if (!q) return;
+  const a = await promptBox('کارت جدید', 'پاسخ', '');
+  if (a == null) return;
+  sub.cards.push({ id: uid('c'), q, a });
+  saveTopics();
+  renderCards();
+  toast('کارت اضافه شد', 'ok');
+}
+
+/* ------------------------------------------------------------
+   انتخاب گروهی
+   ------------------------------------------------------------ */
+function updateBulkUI() {
+  const bar = document.getElementById('bulkActions');
+  const cnt = document.getElementById('bulkCount');
+  if (!bar) return;
+  if (APP.selectedCards.size > 0) {
+    bar.style.display = 'flex';
+    cnt.textContent = toFa(APP.selectedCards.size) + ' انتخاب';
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+async function bulkDelete() {
+  if (APP.selectedCards.size === 0) return;
+  const ok = await confirmBox('حذف گروهی؟',
+    `${APP.selectedCards.size} کارت حذف می‌شود.`);
+  if (!ok) return;
+  const sub = findSubtopic(APP.currentTopicId, APP.currentSubtopicId);
+  if (!sub) return;
+  sub.cards = sub.cards.filter(c => !APP.selectedCards.has(c.id));
+  for (const id of APP.selectedCards) delete APP.state.cards[id];
+  APP.selectedCards.clear();
+  saveAll();
+  renderCards();
+  toast('حذف گروهی انجام شد', 'ok');
+}
+
+async function bulkMove() {
+  if (APP.selectedCards.size === 0) return;
+  // انتخاب مبحث مقصد از همان درس
+  const topic = findTopic(APP.currentTopicId);
+  if (!topic) return;
+  const others = topic.subtopics.filter(s => s.id !== APP.currentSubtopicId);
+  if (others.length === 0) {
+    toast('مبحث دیگری در این درس نیست', 'err');
+    return;
+  }
+  const r = await showModal({
+    title: '📂 انتقال گروهی',
+    msg: `انتقال ${APP.selectedCards.size} کارت به:`,
+    actions: others.slice(0, 8).map(s => ({
+      text: s.name, value: s.id, cls: 'ghost'
+    })).concat([{ text: 'انصراف', value: null, cls: 'ghost' }])
+  });
+  if (!r) return;
+  const dest = topic.subtopics.find(s => s.id === r);
+  const src = topic.subtopics.find(s => s.id === APP.currentSubtopicId);
+  if (!dest || !src) return;
+  const moving = src.cards.filter(c => APP.selectedCards.has(c.id));
+  src.cards = src.cards.filter(c => !APP.selectedCards.has(c.id));
+  dest.cards.push(...moving);
+  APP.selectedCards.clear();
+  saveTopics();
+  renderCards();
+  toast('منتقل شدند', 'ok');
+}
+
+function bulkCancel() {
+  APP.selectedCards.clear();
+  renderCards();
+}
+
+/* ------------------------------------------------------------
+   شروع مطالعه
+   ------------------------------------------------------------ */
+function startStudy(queue, context) {
+  if (!queue || queue.length === 0) {
+    toast('کارتی برای مرور نیست', 'err');
+    return;
+  }
+  APP.studyQueue = queue.slice();
+  APP.studyIndex = 0;
+  APP.studyContext = context || 'all';
+  APP.studyAnswerShown = false;
+  showView('study');
+  renderStudyCard();
+}
+
+function reviewTopic(topicId) {
+  const topic = findTopic(topicId);
+  if (!topic) return;
+  const queue = [];
+  for (const s of topic.subtopics)
+    for (const c of s.cards)
+      queue.push(cardToQueueItem(topic, s, c));
+  startStudy(queue, 'topic:' + topicId);
+}
+
+function reviewSubtopic(topicId, subId, random = false) {
+  const topic = findTopic(topicId);
+  const sub = topic ? topic.subtopics.find(s => s.id === subId) : null;
+  if (!sub) return;
+  let queue = sub.cards.map(c => cardToQueueItem(topic, sub, c));
+  if (random) queue = shuffleArray(queue);
+  startStudy(queue, 'sub:' + subId);
+}
+
+function cardToQueueItem(topic, sub, card) {
+  return {
+    cardId: card.id,
+    topicId: topic.id,
+    subtopicId: sub.id,
+    topicName: topic.name,
+    subtopicName: sub.name,
+    q: card.q,
+    a: card.a
+  };
+}
+
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function reviewCardsPanel() {
+  reviewSubtopic(APP.currentTopicId, APP.currentSubtopicId, false);
+}
+
+function randomCardsPanel() {
+  reviewSubtopic(APP.currentTopicId, APP.currentSubtopicId, true);
+}
+
+/* ------------------------------------------------------------
+   مارک همه خوانده
+   ------------------------------------------------------------ */
+async function markAllRead() {
+  const sub = findSubtopic(APP.currentTopicId, APP.currentSubtopicId);
+  if (!sub) return;
+  const ok = await confirmBox('همه خوانده؟',
+    'همه‌ی کارت‌های این مبحث «دیده‌شده» علامت می‌خورند.');
+  if (!ok) return;
+  for (const c of sub.cards) {
+    const st = cardState(c.id);
+    st.seen = 1;
+    st.lastSeen = today();
+  }
+  saveState();
+  renderCards();
+  toast('همه خوانده شدند', 'ok');
+}/* ============================================================
+   v10 — بخش ۳: مطالعه (SRS) + پنل سررسیده + جستجو + آمار
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   جملات انگیزشی و تشویقی
+   ------------------------------------------------------------ */
+const MOTIVATIONS = [
+  'هر کارت، یک قدم به جلو. 🚀',
+  'کم‌کم، بیشتر از هیچ. ✨',
+  'امروز یه کارت بیشتر از دیروز. 🌱',
+  'حافظه با تکرار ساخته می‌شه. 🧠',
+  'کوتاه ولی پیوسته، بهتر از زیاد و پراکنده. 🎯',
+  'تو داری پیشرفت می‌کنی، حتی اگه حسش نکنی. 💪',
+  'هر اشتباه، یه فرصت یادگیریه. 📘',
+  'مرور امروز، آرامش فردا. 🌤',
+  'بذار مغزت کارش رو بکنه. ⚙️',
+  'تو از دیروزت قوی‌تری. 🔥'
+];
+
+const ENCOURAGEMENTS = [
+  'آفرین! 👏', 'عالی بود! 🌟', 'دقیقاً! ✅', 'همینه! 🎉',
+  'درسته! 💚', 'ادامه بده! 🚀', 'چه حافظه‌ای! 🧠',
+  'محکم و استوار! 💪', 'بارک‌الله! ✨', 'بی‌نقص! 🏆',
+  'کامل و درست! 🎯', 'همینطور پیش برو! 🔥', 'قوی بود! ⚡',
+  'ماشاالله! 🌸', 'خوب بلدی! 📚'
+];
+
+function randomMotivation() {
+  return MOTIVATIONS[Math.floor(Math.random() * MOTIVATIONS.length)];
+}
+
+function randomEncouragement() {
+  return ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
+}
+
+function updateMotivation() {
+  const el = document.getElementById('motivation');
+  if (el) el.textContent = randomMotivation();
+}
+
+/* ------------------------------------------------------------
+   رندر کارت مطالعه
+   ------------------------------------------------------------ */
+function renderStudyCard() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) {
+    // پایان صف
+    endStudy();
+    return;
+  }
+
+  const card = findCard(q.cardId);
+  if (!card) {
+    // کارت پاک شده، رد شو
+    APP.studyIndex++;
+    renderStudyCard();
+    return;
+  }
+
+  const st = cardState(q.cardId);
+
+  // شماره + پیشرفت
+  document.getElementById('studyProgress').textContent =
+    `${toFa(APP.studyIndex + 1)} / ${toFa(APP.studyQueue.length)} — ${q.topicName} / ${q.subtopicName}`;
+
+  // سؤال
+  const qEl = document.getElementById('cardQ');
+  qEl.textContent = q.q || '(بدون سؤال)';
+
+  // پاسخ مخفی
+  const aEl = document.getElementById('cardA');
+  aEl.textContent = q.a || '(بدون پاسخ)';
+  aEl.classList.add('hidden');
+
+  // یادداشت موعد
+  const dueNote = document.getElementById('dueNote');
+  dueNote.classList.add('hidden');
+
+  // هینت
+  document.getElementById('showHint').style.display = 'block';
+
+  // گوشه‌ها
+  const meta = document.getElementById('cardMeta');
+  let dueTxt = '';
+  if (st.nextDue) {
+    dueTxt = `📅 ${st.nextDue}`;
+  } else if (st.seen === 0) {
+    dueTxt = '🆕 جدید';
+  }
+  meta.innerHTML = `
+    <div>${toFa(APP.studyIndex + 1)} از ${toFa(APP.studyQueue.length)}</div>
+    <div style="opacity:.75">${escapeHtml(q.topicName)}</div>
+    <div>${dueTxt}</div>
+  `;
+
+  // تعداد نمایش
+  document.getElementById('cardViews').textContent = '👁 ' + toFa(st.viewCount);
+
+  // ستاره
+  const btnStar = document.getElementById('btnStar');
+  btnStar.classList.toggle('on', !!st.starred);
+  btnStar.textContent = st.starred ? '⭐' : '☆';
+
+  // تعلیق
+  const btnSus = document.getElementById('btnSuspend');
+  btnSus.classList.toggle('susp', !!st.suspended);
+  btnSus.textContent = st.suspended ? '⏸' : '⏸';
+
+  // حذف
+  const btnDel = document.getElementById('btnDelete');
+  btnDel.classList.toggle('del', !!st.deleted);
+  btnDel.textContent = '🗑';
+
+  // تشویقی
+  document.getElementById('encourage').classList.add('hidden');
+
+  // دکمه‌های پاسخ غیرفعال تا نمایش پاسخ
+  setAnswerButtonsEnabled(false);
+
+  // نمایش پاسخ اگر قبلاً نشان داده بودیم (نباید بشه، ولی برای اطمینان)
+  APP.studyAnswerShown = false;
+
+  // افزایش viewCount
+  st.viewCount = (st.viewCount || 0) + 1;
+  saveState();
+}
+
+function setAnswerButtonsEnabled(enabled) {
+  document.getElementById('btnCorrect').disabled = !enabled;
+  document.getElementById('btnPartial').disabled = !enabled;
+  document.getElementById('btnWrong').disabled  = !enabled;
+  // رد همیشه فعال
+  document.getElementById('btnSkip').disabled = false;
+}
+
+function showAnswer() {
+  if (APP.studyAnswerShown) return;
+  APP.studyAnswerShown = true;
+  document.getElementById('cardA').classList.remove('hidden');
+  document.getElementById('showHint').style.display = 'none';
+  setAnswerButtonsEnabled(true);
+}
+
+/* ------------------------------------------------------------
+   پاسخ‌دهی (SRS)
+   ------------------------------------------------------------ */
+function answerCorrect() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) return;
+  const st = cardState(q.cardId);
+  const chain = APP.settings.correctChain;
+
+  // اگر stepIndex از زنجیره بزرگ‌تر است، در انتهای زنجیره بمان
+  const idx = Math.min(st.stepIndex || 0, chain.length - 1);
+  const days = chain[idx];
+
+  st.correctCount = (st.correctCount || 0) + 1;
+  st.seen = (st.seen || 0) + 1;
+  st.lastSeen = today();
+  st.nextDue = addDays(today(), days);
+  st.stepIndex = Math.min(idx + 1, chain.length - 1);
+  st.todayCorrect = (st.todayCorrect || 0) + 1;
+
+  // history
+  const t = today();
+  if (!APP.state.history[t]) APP.state.history[t] = { correct: 0, partial: 0, wrong: 0 };
+  APP.state.history[t].correct++;
+
+  // dailyRecord
+  if (!APP.state.dailyRecords[t]) APP.state.dailyRecords[t] = { total: 0, newCards: 0 };
+  APP.state.dailyRecords[t].total++;
+
+  // اگر به انتهای زنجیره رسید → حفظه
+  if (st.stepIndex >= chain.length - 1 && st.correctCount >= chain.length) {
+    // فقط یک‌بار بشمار
+    if (!st._masteredMarked) {
+      st._masteredMarked = true;
+      APP.state.masteredCount = (APP.state.masteredCount || 0) + 1;
+    }
+  }
+
+  saveState();
+
+  // تشویقی
+  const enc = document.getElementById('encourage');
+  enc.textContent = randomEncouragement();
+  enc.classList.remove('hidden');
+
+  // یادداشت موعد
+  const dueNote = document.getElementById('dueNote');
+  dueNote.textContent = `✅ این کارت ${toFa(days)} روز دیگر مرور می‌شود.`;
+  dueNote.classList.remove('hidden');
+
+  // نمایش و بعد برو کارت بعد
+  showAnswer();
+  setTimeout(nextCard, 850);
+}
+
+function answerPartial() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) return;
+  const st = cardState(q.cardId);
+  const days = APP.settings.partialDays;
+
+  st.partialCount = (st.partialCount || 0) + 1;
+  st.seen = (st.seen || 0) + 1;
+  st.lastSeen = today();
+  st.nextDue = addDays(today(), days);
+  st.todayCorrect = 0; // partial، correct حساب نمی‌شود
+
+  const t = today();
+  if (!APP.state.history[t]) APP.state.history[t] = { correct: 0, partial: 0, wrong: 0 };
+  APP.state.history[t].partial++;
+  if (!APP.state.dailyRecords[t]) APP.state.dailyRecords[t] = { total: 0, newCards: 0 };
+  APP.state.dailyRecords[t].total++;
+
+  saveState();
+
+  const dueNote = document.getElementById('dueNote');
+  dueNote.textContent = `🟡 این کارت ${toFa(days)} روز دیگر مرور می‌شود.`;
+  dueNote.classList.remove('hidden');
+
+  showAnswer();
+  setTimeout(nextCard, 850);
+}
+
+function answerWrong() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) return;
+  const st = cardState(q.cardId);
+  const days = APP.settings.wrongDays;
+
+  st.wrongCount = (st.wrongCount || 0) + 1;
+  st.totalWrong = (st.totalWrong || 0) + 1;
+  st.seen = (st.seen || 0) + 1;
+  st.lastSeen = today();
+  st.nextDue = addDays(today(), days);
+  st.lastWrongDate = today();
+  st.stepIndex = 0;
+  st.todayCorrect = 0;
+
+  const t = today();
+  if (!APP.state.history[t]) APP.state.history[t] = { correct: 0, partial: 0, wrong: 0 };
+  APP.state.history[t].wrong++;
+  if (!APP.state.dailyRecords[t]) APP.state.dailyRecords[t] = { total: 0, newCards: 0 };
+  APP.state.dailyRecords[t].total++;
+
+  saveState();
+
+  const dueNote = document.getElementById('dueNote');
+  dueNote.textContent = `🔴 این کارت ${toFa(days)} روز دیگر مرور می‌شود.`;
+  dueNote.classList.remove('hidden');
+
+  showAnswer();
+  setTimeout(nextCard, 850);
+}
+
+function skipCard() {
+  nextCard();
+}
+
+function nextCard() {
+  APP.studyIndex++;
+  APP.studyAnswerShown = false;
+  if (APP.studyIndex >= APP.studyQueue.length) {
+    endStudy();
+    return;
+  }
+  renderStudyCard();
+}
+
+function prevCard() {
+  if (APP.studyIndex <= 0) return;
+  APP.studyIndex--;
+  APP.studyAnswerShown = false;
+  renderStudyCard();
+}
+
+function endStudy() {
+  toast('🎉 پایان این دور!', 'ok');
+  APP.studyQueue = [];
+  APP.studyIndex = 0;
+  APP.studyContext = null;
+  updateMotivation();
+  // برگرد به منوی خانه
+  showView('home', false);
+  APP.viewStack = [];
+}
+
+/** افزودن روز به تاریخ */
+function addDays(dateStr, days) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dd}`;
+}
+
+/* ------------------------------------------------------------
+   ستاره / تعلیق / حذف
+   ------------------------------------------------------------ */
+function toggleStar() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) return;
+  const st = cardState(q.cardId);
+  st.starred = !st.starred;
+  saveState();
+  const btn = document.getElementById('btnStar');
+  btn.classList.toggle('on', st.starred);
+  btn.textContent = st.starred ? '⭐' : '☆';
+  toast(st.starred ? 'ستاره‌دار شد' : 'از ستاره درآمد');
+}
+
+function toggleSuspend() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) return;
+  const st = cardState(q.cardId);
+  st.suspended = !st.suspended;
+  saveState();
+  const btn = document.getElementById('btnSuspend');
+  btn.classList.toggle('susp', st.suspended);
+  toast(st.suspended ? 'معلق شد' : 'از تعلیق درآمد');
+}
+
+async function toggleDelete() {
+  const q = APP.studyQueue[APP.studyIndex];
+  if (!q) return;
+  const st = cardState(q.cardId);
+  const ok = await confirmBox(
+    st.deleted ? 'بازگردانی کارت؟' : 'حذف کارت؟',
+    st.deleted ? 'این کارت به لیست فعال برمی‌گردد.' : 'این کارت به لیست حذف‌شده‌ها می‌رود.'
+  );
+  if (!ok) return;
+  st.deleted = !st.deleted;
+  saveState();
+  toast(st.deleted ? 'به حذف‌شده‌ها رفت' : 'بازگردانده شد', 'ok');
+  // اگر حذف شد، برو بعدی
+  if (st.deleted) {
+    setTimeout(nextCard, 400);
+  }
+}
+
+/* ------------------------------------------------------------
+   پنل سررسیده‌ها
+   ------------------------------------------------------------ */
+function renderDuePanel() {
+  const list = document.getElementById('dueList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  // گروه‌بندی بر اساس درس
+  const groups = {};
+  let totalDue = 0;
+  for (const c of allCards()) {
+    if (!isDue(c.cardId)) continue;
+    totalDue++;
+    if (!groups[c.topicId]) {
+      groups[c.topicId] = {
+        topicName: c.topicName,
+        topicId: c.topicId,
+        count: 0,
+        subtopics: {}
+      };
+    }
+    groups[c.topicId].count++;
+    if (!groups[c.topicId].subtopics[c.subtopicId]) {
+      groups[c.topicId].subtopics[c.subtopicId] = {
+        name: c.subtopicName,
+        count: 0
+      };
+    }
+    groups[c.topicId].subtopics[c.subtopicId].count++;
+  }
+
+  if (totalDue === 0) {
+    list.innerHTML = `<div class="empty-state">
+      🎉 هیچ کارتی سررسیده نیست. آفرین!
+    </div>`;
+    return;
+  }
+
+  // خلاصه‌ی بالا
+  const summary = document.createElement('div');
+  summary.className = 'muted mb-14';
+  summary.textContent = `مجموع: ${toFa(totalDue)} کارت سررسیده`;
+  list.appendChild(summary);
+
+  // دکمه‌ی مرور همه
+  Object.values(groups).forEach(g => {
+    const row = document.createElement('div');
+    row.className = 'list-item';
+    row.innerHTML = `
+      <div class="body">
+        <div class="title">📚 ${escapeHtml(g.topicName)}</div>
+        <div class="meta">
+          <span class="badge" style="background:var(--red);color:#fff">
+            ⏰ ${toFa(g.count)} سررسیده
+          </span>
+          <span class="badge">📂 ${toFa(Object.keys(g.subtopics).length)} مبحث</span>
+        </div>
+      </div>
+    `;
+    const actions = document.createElement('div');
+    actions.className = 'actions';
+
+    // ▶ مرور این درس
+    actions.appendChild(mkIconBtn('▶', 'مرور', () => {
+      const queue = allCards().filter(c =>
+        c.topicId === g.topicId && isDue(c.cardId));
+      startStudy(queue, 'due:' + g.topicId);
+    }));
+    row.appendChild(actions);
+
+    // زیرمجموعه‌ها
+    const subWrap = document.createElement('div');
+    subWrap.className = 'sub';
+    Object.entries(g.subtopics).forEach(([subId, sub]) => {
+      const subRow = document.createElement('div');
+      subRow.className = 'muted';
+      subRow.style.cssText = 'display:flex;align-items:center;gap:8px;padding:4px 0';
+      subRow.innerHTML = `📂 ${escapeHtml(sub.name)} <span class="badge">${toFa(sub.count)}</span>`;
+      const b = mkIconBtn('▶', 'مرور مبحث', () => {
+        const queue = allCards().filter(c =>
+          c.subtopicId === subId && isDue(c.cardId));
+        startStudy(queue, 'due:' + subId);
+      });
+      subRow.appendChild(b);
+      subWrap.appendChild(subRow);
+    });
+    row.querySelector('.body').appendChild(subWrap);
+
+    list.appendChild(row);
+  });
+}
+
+function reviewAllDue() {
+  const queue = allCards().filter(c => isDue(c.cardId));
+  if (queue.length === 0) {
+    toast('کارتی سررسیده نیست', 'err');
+    return;
+  }
+  startStudy(queue, 'due-all');
+}
+
+/* ------------------------------------------------------------
+   جستجوی موضوعی (درس + مبحث)
+   ------------------------------------------------------------ */
+function renderSearch() {
+  const input = document.getElementById('globalSearch');
+  const results = document.getElementById('searchResults');
+  if (!input || !results) return;
+
+  const q = (input.value || '').trim().toLowerCase();
+  results.innerHTML = '';
+
+  if (!q) {
+    results.innerHTML = `<div class="empty-state">
+      نام درس یا مبحث را تایپ کن...
+    </div>`;
+    return;
+  }
+
+  let found = 0;
+
+  // جستجو در درس‌ها
+  APP.topics.forEach(topic => {
+    if (topic.name.toLowerCase().includes(q)) {
+      found++;
+      results.appendChild(buildSearchResult({
+        icon: '📚',
+        title: topic.name,
+        sub: `${toFa(topic.subtopics.length)} مبحث`,
+        onClick: () => openTopic(topic.id)
+      }));
+    }
+    // جستجو در مبحث‌ها
+    topic.subtopics.forEach(sub => {
+      if (sub.name.toLowerCase().includes(q)) {
+        found++;
+        results.appendChild(buildSearchResult({
+          icon: '📂',
+          title: sub.name,
+          sub: `${topic.name} · ${toFa(sub.cards.length)} کارت`,
+          onClick: () => openSubtopic(topic.id, sub.id)
+        }));
+      }
+    });
+  });
+
+  if (found === 0) {
+    results.innerHTML = `<div class="empty-state">چیزی پیدا نشد.</div>`;
+  }
+}
+
+function buildSearchResult({ icon, title, sub, onClick }) {
+  const row = document.createElement('div');
+  row.className = 'list-item';
+  row.style.cursor = 'pointer';
+  row.innerHTML = `
+    <div class="body">
+      <div class="title">${icon} ${escapeHtml(title)}</div>
+      <div class="meta"><span>${escapeHtml(sub)}</span></div>
+    </div>
+  `;
+  row.addEventListener('click', onClick);
+  return row;
+}
+
+/* ------------------------------------------------------------
+   تابلوی آمار
+   ------------------------------------------------------------ */
+function renderStats() {
+  const body = document.getElementById('statsBody');
+  if (!body) return;
+
+  const cards = allCards();
+  const total = cards.length;
+  const chain = APP.settings.correctChain;
+
+  // شمارش‌ها
+  let mastered = 0, started = 0, newC = 0, due = 0;
+  let starred = 0, suspended = 0, deleted = 0;
+
+  // توزیع پله‌ها
+  const stepDist = {};
+  chain.forEach((d, i) => stepDist[i] = 0);
+  stepDist['mastered'] = 0;
+
+  for (const c of cards) {
+    const st = cardState(c.cardId);
+    if (st.deleted) { deleted++; continue; }
+    if (st.suspended) suspended++;
+    if (st.starred) starred++;
+    if (st.seen === 0) newC++;
+    else started++;
+    if (st.seen > 0 && st.stepIndex >= chain.length - 1) mastered++;
+    if (isDue(c.cardId)) due++;
+
+    // پله
+    if (st.seen > 0) {
+      const si = Math.min(st.stepIndex || 0, chain.length - 1);
+      if (st.stepIndex >= chain.length - 1) stepDist['mastered']++;
+      else stepDist[si] = (stepDist[si] || 0) + 1;
+    }
+  }
+
+  const pct = total ? Math.round((mastered / total) * 100) : 0;
+
+  // آمار امروز
+  const t = today();
+  const hist = APP.state.history[t] || { correct: 0, partial: 0, wrong: 0 };
+  const todayTotal = hist.correct + hist.partial + hist.wrong;
+
+  // رکوردها
+  let maxTotal = 0, maxNew = 0, maxTotalDate = '', maxNewDate = '';
+  for (const [date, rec] of Object.entries(APP.state.dailyRecords || {})) {
+    if ((rec.total || 0) > maxTotal) { maxTotal = rec.total; maxTotalDate = date; }
+    if ((rec.newCards || 0) > maxNew) { maxNew = rec.newCards; maxNewDate = date; }
+  }
+
+  // HTML
+  body.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="num">${toFa(pct)}٪</div>
+        <div class="lbl">📈 پیشرفت کل</div>
+      </div>
+      <div class="stat-box purple">
+        <div class="num">${toFa(mastered)}</div>
+        <div class="lbl">🧠 حفظه</div>
+      </div>
+      <div class="stat-box green">
+        <div class="num">${toFa(started)}</div>
+        <div class="lbl">🎯 استارت</div>
+      </div>
+      <div class="stat-box yellow">
+        <div class="num">${toFa(newC)}</div>
+        <div class="lbl">🆕 جدید</div>
+      </div>
+      <div class="stat-box red">
+        <div class="num">${toFa(due)}</div>
+        <div class="lbl">⏰ سررسیده</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">${toFa(total)}</div>
+        <div class="lbl">📚 کل کارت</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">${toFa(starred)}</div>
+        <div class="lbl">⭐ ستاره‌دار</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">${toFa(suspended)}</div>
+        <div class="lbl">⏸ تعلیق</div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>📅 آمار امروز (${t})</h3>
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="num">${toFa(hist.correct)}</div>
+          <div class="lbl">✅ درست</div>
+        </div>
+        <div class="stat-box yellow">
+          <div class="num">${toFa(hist.partial)}</div>
+          <div class="lbl">🟡 حدودی</div>
+        </div>
+        <div class="stat-box red">
+          <div class="num">${toFa(hist.wrong)}</div>
+          <div class="lbl">🔴 غلط</div>
+        </div>
+        <div class="stat-box">
+          <div class="num">${toFa(todayTotal)}</div>
+          <div class="lbl">📊 کل مرور</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>🪜 توزیع پله‌ها</h3>
+      ${chain.map((d, i) => {
+        const n = stepDist[i] || 0;
+        const w = total ? Math.round((n / total) * 100) : 0;
+        return `<div class="step-bar">
+          <span class="lbl">پله ${toFa(d)} روز</span>
+          <div class="track"><i style="width:${w}%"></i></div>
+          <span class="num">${toFa(n)}</span>
+        </div>`;
+      }).join('')}
+      <div class="step-bar">
+        <span class="lbl">🧠 حفظه</span>
+        <div class="track"><i style="width:${total ? Math.round((stepDist.mastered / total) * 100) : 0}%"></i></div>
+        <span class="num">${toFa(stepDist.mastered)}</span>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h3>🏆 رکوردها</h3>
+      <div class="muted">بیشترین مرور در یک روز: <b>${toFa(maxTotal)}</b> ${maxTotalDate ? '('+maxTotalDate+')' : ''}</div>
+      <div class="muted mt-8">بیشترین کارت جدید در یک روز: <b>${toFa(maxNew)}</b> ${maxNewDate ? '('+maxNewDate+')' : ''}</div>
+    </div>
+
+    <div class="stats-section">
+      <h3>🗑 حذف‌شده‌ها</h3>
+      <div class="muted">${toFa(deleted)} کارت در سبد حذف.</div>
+    </div>
+  `;
+}
+
+/* ------------------------------------------------------------
+   پیشنهاد هوشمند
+   ------------------------------------------------------------ */
+function updateSuggestion() {
+  const box = document.getElementById('suggestBox');
+  const txt = document.getElementById('suggestText');
+  if (!box || !txt) return;
+
+  // اولویت ۱: درس‌های نخوانده
+  for (const t of APP.topics) {
+    for (const s of t.subtopics) {
+      if (s.read) continue;
+      if (s.cards.length === 0) continue;
+      const hasNew = s.cards.some(c => isNew(c.id));
+      if (hasNew) {
+        box.style.display = 'flex';
+        txt.textContent = `${t.name} / ${s.name} — کارت جدید داری`;
+        box.onclick = () => reviewSubtopic(t.id, s.id, true);
+        return;
+      }
+    }
+  }
+
+  // اولویت ۲: سررسیده‌ها
+  const dueQueue = allCards().filter(c => isDue(c.cardId));
+  if (dueQueue.length > 0) {
+    box.style.display = 'flex';
+    const first = dueQueue[0];
+    txt.textContent = `${first.topicName} / ${first.subtopicName} — ${toFa(dueQueue.length)} سررسیده`;
+    box.onclick = () => startStudy(dueQueue, 'suggest-due');
+    return;
+  }
+
+  box.style.display = 'none';
+}
+
+/* ------------------------------------------------------------
+   پاک کردن امروز برای کارت‌های correct امروز (در ابتدای روز)
+   ------------------------------------------------------------ */
+function resetTodayCorrectIfNewDay() {
+  const t = today();
+  const lastDay = APP.state.lastDay || null;
+  if (lastDay === t) return;
+  APP.state.lastDay = t;
+  // صفر کردن todayCorrect
+  for (const id in APP.state.cards) {
+    APP.state.cards[id].todayCorrect = 0;
+  }
+  saveState();
+}/* ============================================================
+   v10 — بخش ۴: تنظیمات، JSON، ادغام، init، میانبرها
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   رندر پنل تنظیمات
+   ------------------------------------------------------------ */
+function renderSettings() {
+  document.getElementById('setPartial').value = APP.settings.partialDays;
+  document.getElementById('setWrong').value   = APP.settings.wrongDays;
+  document.getElementById('setHard').value    = APP.settings.hardThreshold;
+  document.getElementById('setChain').value   = APP.settings.correctChain.join(',');
+}
+
+async function saveSettingsFromUI() {
+  const p = parseInt(document.getElementById('setPartial').value, 10);
+  const w = parseInt(document.getElementById('setWrong').value, 10);
+  const h = parseInt(document.getElementById('setHard').value, 10);
+  const chainRaw = document.getElementById('setChain').value;
+
+  const chain = chainRaw.split(',')
+    .map(s => parseInt(s.trim(), 10))
+    .filter(n => Number.isFinite(n) && n > 0);
+
+  if (!Number.isFinite(p) || p < 1) { toast('بازه حدودی نامعتبر', 'err'); return; }
+  if (!Number.isFinite(w) || w < 1) { toast('بازه غلط نامعتبر', 'err'); return; }
+  if (!Number.isFinite(h) || h < 1) { toast('آستانه سخت‌ها نامعتبر', 'err'); return; }
+  if (chain.length === 0)           { toast('زنجیره درست خالی است', 'err'); return; }
+
+  APP.settings.partialDays  = p;
+  APP.settings.wrongDays    = w;
+  APP.settings.hardThreshold = h;
+  APP.settings.correctChain = chain;
+  saveSettings();
+  toast('تنظیمات ذخیره شد', 'ok');
+}
+
+/* ------------------------------------------------------------
+   Export Backup (دانلود JSON)
+   ------------------------------------------------------------ */
+function exportBackup() {
+  const data = {
+    _v: 'v10',
+    _type: 'backup',
+    _date: new Date().toISOString(),
+    topics: APP.topics,
+    state: APP.state,
+    settings: APP.settings,
+    theme: APP.theme
+  };
+  const json = JSON.stringify(data, null, 2);
+  downloadJSON(json, `flashcard-backup-${today()}.json`);
+
+  APP.state.lastExportDate = today();
+  saveState();
+  toast('پشتیبان دانلود شد', 'ok');
+}
+
+function downloadJSON(text, filename) {
+  const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ------------------------------------------------------------
+   Import Backup (فایل انتخاب‌شده)
+   ------------------------------------------------------------ */
+function importBackupFile(file) {
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!data || typeof data !== 'object') throw new Error('bad json');
+
+      const ok = await confirmBox('وارد کردن پشتیبان؟',
+        'داده‌های فعلی با محتوای فایل جایگزین می‌شوند. مطمئنی؟');
+      if (!ok) return;
+
+      if (Array.isArray(data.topics)) {
+        APP.topics = normalizeTopics(data.topics);
+      }
+      if (data.state && typeof data.state === 'object') {
+        APP.state = Object.assign(defaultState(), data.state);
+      }
+      if (data.settings && typeof data.settings === 'object') {
+        APP.settings = Object.assign({ ...DEFAULT_SETTINGS }, data.settings);
+      }
+      if (typeof data.theme === 'string') {
+        APP.theme = data.theme;
+        document.documentElement.dataset.theme = data.theme;
+        updateThemeIcon();
+      }
+      saveAll();
+      toast('پشتیبان وارد شد', 'ok');
+      showView('home', false);
+      APP.viewStack = [];
+    } catch (e) {
+      console.error('[v10] import failed:', e);
+      toast('فایل پشتیبان نامعتبر است', 'err');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ------------------------------------------------------------
+   بارگذاری JSON درسی (چند فایل + ادغام هوشمند)
+   ------------------------------------------------------------ */
+async function loadLessonJSON(files) {
+  if (!files || files.length === 0) return;
+
+  let addedCards = 0, addedTopics = 0, addedSubs = 0, dupCards = 0;
+
+  for (const file of files) {
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const items = Array.isArray(data) ? data : [data];
+
+      for (const item of items) {
+        const r = mergeLessonItem(item);
+        addedCards += r.cards;
+        addedTopics += r.topics;
+        addedSubs += r.subs;
+        dupCards += r.dup;
+      }
+    } catch (e) {
+      console.error('[v10] load json failed:', file.name, e);
+      toast(`فایل ${file.name} نامعتبر است`, 'err');
+    }
+  }
+
+  saveTopics();
+  renderLessons();
+  toast(`✅ ${toFa(addedTopics)} درس، ${toFa(addedSubs)} مبحث، ${toFa(addedCards)} کارت جدید (${toFa(dupCards)} تکراری)`, 'ok');
+}
+
+/** ادغام یک آیتم درس */
+function mergeLessonItem(item) {
+  const result = { topics: 0, subs: 0, cards: 0, dup: 0 };
+
+  if (!item || typeof item !== 'object') return result;
+
+  const topicName = clean(item.topic || item.name || item.title || '');
+  if (!topicName) return result;
+
+  // یافتن یا ساختن درس
+  let topic = APP.topics.find(t => t.name === topicName);
+  if (!topic) {
+    topic = { id: uid('t'), name: topicName, subtopics: [] };
+    APP.topics.push(topic);
+    result.topics++;
+  }
+
+  const subtopics = Array.isArray(item.subtopics) ? item.subtopics : [];
+
+  for (const s of subtopics) {
+    if (!s || typeof s !== 'object') continue;
+    const subName = clean(s.name || s.title || '');
+    if (!subName) continue;
+
+    let sub = topic.subtopics.find(x => x.name === subName);
+    if (!sub) {
+      sub = { id: uid('s'), name: subName, read: false, cards: [] };
+      topic.subtopics.push(sub);
+      result.subs++;
+    }
+
+    const cards = Array.isArray(s.cards) ? s.cards : [];
+    for (const c of cards) {
+      if (!c || typeof c !== 'object') continue;
+      const q = clean(c.q || c.question || '');
+      const a = clean(c.a || c.answer || '');
+      if (!q) continue;
+
+      // تکراری؟
+      const dup = sub.cards.find(ex => clean(ex.q) === q && clean(ex.a) === a);
+      if (dup) { result.dup++; continue; }
+
+      // مشابه؟ (q یکسان، a متفاوت)
+      const similar = sub.cards.find(ex => clean(ex.q) === q && clean(ex.a) !== a);
+      if (similar) {
+        // به‌جای پرسش، پاسخ را با • ادغام می‌کنیم (رفتار امن)
+        if (!similar.a.includes(a)) {
+          similar.a = similar.a + ' • ' + a;
+        }
+        result.dup++;
+        continue;
+      }
+
+      sub.cards.push({ id: uid('c'), q, a });
+      result.cards++;
+    }
+  }
+
+  return result;
+}
+
+/* ------------------------------------------------------------
+   ساخت JSON خالی
+   ------------------------------------------------------------ */
+function makeEmptyJSON() {
+  const tmpl = {
+    topic: "نام درس",
+    subtopics: [
+      {
+        name: "نام مبحث",
+        cards: [
+          { q: "سؤال نمونه", a: "پاسخ نمونه" }
+        ]
+      }
+    ]
+  };
+  downloadJSON(JSON.stringify(tmpl, null, 2), 'flashcard-template.json');
+  toast('فایل نمونه دانلود شد', 'ok');
+}
+
+/* ------------------------------------------------------------
+   ادغام کارت‌های مشابه (سؤال یکسان، پاسخ متفاوت)
+   ------------------------------------------------------------ */
+async function mergeSimilarCards() {
+  const groups = {}; // { qLower: [{cardId, topic, sub, card}, ...] }
+
+  for (const t of APP.topics) {
+    for (const s of t.subtopics) {
+      for (const c of s.cards) {
+        const key = clean(c.q).toLowerCase();
+        if (!key) continue;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push({ topic: t, sub: s, card: c });
+      }
+    }
+  }
+
+  // فقط گروه‌هایی که پاسخ متفاوت دارند
+  const conflict = Object.values(groups).filter(g => {
+    if (g.length < 2) return false;
+    const answers = new Set(g.map(x => clean(x.card.a)));
+    return answers.size > 1;
+  });
+
+  if (conflict.length === 0) {
+    toast('کارت مشابهی پیدا نشد', 'ok');
+    return;
+  }
+
+  // نمایش لیست گروه‌ها
+  const listHtml = conflict.slice(0, 20).map((g, i) => {
+    const answers = g.map(x => clean(x.card.a)).join(' • ');
+    return `<div style="font-size:.82rem;margin-bottom:6px;padding:6px;background:var(--bg3);border-radius:6px">
+      <b>${toFa(i + 1)}.</b> ${escapeHtml(g[0].card.q)}<br>
+      <span style="opacity:.7">${toFa(g.length)} پاسخ: ${escapeHtml(answers)}</span>
+    </div>`;
+  }).join('');
+
+  const r = await showModal({
+    title: '🔗 ادغام کارت‌های مشابه',
+    msg: `${toFa(conflict.length)} گروه پیدا شد. پاسخ‌ها با «•» ادغام می‌شوند و پیشرفت از صفر شروع می‌شود.`,
+    actions: [
+      { text: 'لغو', value: null, cls: 'ghost' },
+      { text: 'ادغام همه', value: 'all', cls: 'danger' }
+    ]
+  });
+
+  if (r !== 'all') return;
+
+  let mergedCount = 0;
+  for (const g of conflict) {
+    // کارت اول میزبان است
+    const host = g[0];
+    const answers = new Set();
+    for (const x of g) answers.add(clean(x.card.a));
+    const finalAnswer = Array.from(answers).join(' • ');
+
+    host.card.a = finalAnswer;
+
+    // بقیه را حذف کن
+    for (let i = 1; i < g.length; i++) {
+      const x = g[i];
+      x.sub.cards = x.sub.cards.filter(c => c.id !== x.card.id);
+      delete APP.state.cards[x.card.id];
+    }
+
+    // ریست پیشرفت میزبان
+    const st = cardState(host.card.id);
+    st.seen = 0;
+    st.stepIndex = 0;
+    st.correctCount = 0;
+    st.partialCount = 0;
+    st.wrongCount = 0;
+    st.nextDue = null;
+    st.todayCorrect = 0;
+
+    mergedCount++;
+  }
+
+  saveAll();
+  toast(`${toFa(mergedCount)} گروه ادغام شد`, 'ok');
+  showView('home', false);
+  APP.viewStack = [];
+}
+
+/* ------------------------------------------------------------
+   وضعیت ذخیره‌سازی
+   ------------------------------------------------------------ */
+async function showStorageInfo() {
+  let lsSize = 0, lsItems = 0;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith('fc_main_')) continue;
+      const v = localStorage.getItem(k) || '';
+      lsSize += (k.length + v.length) * 2;
+      lsItems++;
+    }
+  } catch (e) {}
+
+  let idbOk = 'نامشخص';
+  try {
+    const db = await DB.open();
+    idbOk = db ? '✅ فعال' : '❌';
+  } catch (e) { idbOk = '❌'; }
+
+  let sessOk = 'نامشخص';
+  try {
+    sessionStorage.setItem('__test__', '1');
+    sessionStorage.removeItem('__test__');
+    sessOk = '✅ فعال';
+  } catch (e) { sessOk = '❌'; }
+
+  const totalCards = countAllCards();
+  const stateCards = Object.keys(APP.state.cards || {}).length;
+
+  showModal({
+    title: 'ℹ️ وضعیت ذخیره‌سازی',
+    msg:
+      `📦 localStorage: ${toFa(lsItems)} کلید، ${(lsSize/1024).toFixed(1)} KB\n` +
+      `🗄 IndexedDB: ${idbOk}\n` +
+      `🧠 sessionStorage: ${sessOk}\n\n` +
+      `📚 کل کارت‌ها: ${toFa(totalCards)}\n` +
+      `📊 رکورد state: ${toFa(stateCards)}\n\n` +
+      `آخرین خروجی: ${APP.state.lastExportDate || 'ندارد'}\n` +
+      `آخرین پشتیبان: ${APP.state.lastBackupDate || 'ندارد'}`,
+    actions: [{ text: 'بستن', value: null, cls: 'primary' }]
+  });
+}
+
+/* ------------------------------------------------------------
+   ریست کامل (۳ تأیید)
+   ------------------------------------------------------------ */
+async function resetAll() {
+  const ok1 = await confirmBox('⚠️ ریست کامل؟',
+    'همه‌ی درس‌ها، کارت‌ها و آمار پاک می‌شوند. این عملیات قابل بازگشت نیست.');
+  if (!ok1) return;
+
+  const ok2 = await confirmBox('تأیید دوم',
+    'پیشنهاد: قبل از ریست، پشتیبان بگیر. ادامه می‌دهی؟');
+  if (!ok2) return;
+
+  const r3 = await showModal({
+    title: 'تأیید نهایی',
+    msg: 'برای تأیید نهایی، کلمه «ریست» را تایپ کن.',
+    fields: [{ key: 'v', label: 'تأیید', type: 'text', placeholder: 'ریست' }],
+    actions: [
+      { text: 'انصراف', value: null, cls: 'ghost' },
+      { text: 'پاک کن', value: 'ok', cls: 'danger', collect: true }
+    ]
+  });
+
+  if (!r3 || r3.action !== 'ok') return;
+  if (clean(r3.values.v) !== 'ریست') {
+    toast('کلمه تأیید اشتباه بود', 'err');
+    return;
+  }
+
+  try {
+    localStorage.removeItem(K.STATE);
+    localStorage.removeItem(K.TOPICS);
+    localStorage.removeItem(K.SETTINGS);
+    localStorage.removeItem(K.THEME);
+    localStorage.removeItem(K.BACKUP);
+    sessionStorage.clear();
+    const db = await DB.open();
+    if (db) db.transaction('kv', 'readwrite').objectStore('kv').clear();
+  } catch (e) { console.warn(e); }
+
+  APP.topics = [];
+  APP.state = defaultState();
+  APP.settings = { ...DEFAULT_SETTINGS };
+  saveAll();
+  toast('ریست انجام شد', 'ok');
+  showView('home', false);
+  APP.viewStack = [];
+}
+
+/* ------------------------------------------------------------
+   میانبرهای صفحه‌کلید
+   ------------------------------------------------------------ */
+function installKeyboard() {
+  document.addEventListener('keydown', e => {
+    // اگر در input هستیم، میانبرها را نادیده بگیر
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+    if (e.target.isContentEditable) return;
+
+    // فقط در view مطالعه
+    const studyActive = document.getElementById('view-study').classList.contains('active');
+    if (!studyActive) return;
+
+    switch (e.key) {
+      case '5':
+        e.preventDefault(); showAnswer(); break;
+      case '1':
+        if (!document.getElementById('btnCorrect').disabled) { e.preventDefault(); answerCorrect(); }
+        break;
+      case '2':
+        if (!document.getElementById('btnPartial').disabled) { e.preventDefault(); answerPartial(); }
+        break;
+      case '3':
+        if (!document.getElementById('btnWrong').disabled) { e.preventDefault(); answerWrong(); }
+        break;
+      case '4':
+        e.preventDefault(); skipCard(); break;
+      case 'ArrowLeft':
+        e.preventDefault(); prevCard(); break;
+      case 'ArrowRight':
+        e.preventDefault(); nextCard(); break;
+    }
+  });
+}
+
+/* ------------------------------------------------------------
+   Auto-save (visibility, beforeunload, interval)
+   ------------------------------------------------------------ */
+function installAutoSave() {
+  // هنگام مخفی شدن تب
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      sessionBackup();
+      saveTopics();
+      saveState();
+    }
+  });
+
+  // هنگام بستن
+  window.addEventListener('beforeunload', () => {
+    sessionBackup();
+    saveTopics();
+    saveState();
+  });
+
+  // هر ۳۰ ثانیه اگر dirty بود
+  setInterval(() => {
+    if (APP.dirty) {
+      saveTopics();
+      saveState();
+      APP.dirty = false;
+    }
+  }, 30000);
+}
+
+/* ------------------------------------------------------------
+   پشتیبان هفتگی (جمعه‌ها)
+   ------------------------------------------------------------ */
+function checkWeeklyBackup() {
+  const d = new Date();
+  const isFriday = d.getDay() === 5;
+  if (!isFriday) return;
+
+  const t = today();
+  if (APP.state.lastBackupDate === t) return;
+
+  // هشدار ملایم
+  const remind = !APP.state.lastExportDate ||
+                 (diffDays(APP.state.lastExportDate, t) >= 3);
+  if (remind) {
+    setTimeout(() => {
+      toast('📅 جمعه است! یادت نره پشتیبان بگیری.', 'ok');
+    }, 2500);
+  }
+
+  APP.state.lastBackupDate = t;
+  saveState();
+}
+
+function diffDays(fromStr, toStr) {
+  const a = new Date(fromStr + 'T00:00:00').getTime();
+  const b = new Date(toStr + 'T00:00:00').getTime();
+  return Math.abs(Math.round((b - a) / 86400000));
+}
+
+/* ------------------------------------------------------------
+   اتصال دکمه‌ها و init
+   ------------------------------------------------------------ */
+function wireButtons() {
+  // Topbar
+  document.getElementById('btnBack').addEventListener('click', goBack);
+  document.getElementById('btnTheme').addEventListener('click', cycleTheme);
+
+  // Home
+  // (منو در renderHomeMenu داینامیک ساخته می‌شود)
+
+  // Study
+  document.getElementById('cardBox').addEventListener('click', e => {
+    // اگر روی دکمه‌های گوشه کلیک شد، نادیده بگیر
+    if (e.target.closest('button')) return;
+    showAnswer();
+  });
+  document.getElementById('btnCorrect').addEventListener('click', answerCorrect);
+  document.getElementById('btnPartial').addEventListener('click', answerPartial);
+  document.getElementById('btnWrong').addEventListener('click', answerWrong);
+  document.getElementById('btnSkip').addEventListener('click', skipCard);
+  document.getElementById('btnStar').addEventListener('click', toggleStar);
+  document.getElementById('btnSuspend').addEventListener('click', toggleSuspend);
+  document.getElementById('btnDelete').addEventListener('click', toggleDelete);
+
+  // Lessons panel
+  document.getElementById('btnNewLesson').addEventListener('click', newLesson);
+  document.getElementById('btnReviewSelected').addEventListener('click', () => {
+    // اگر درس/مبحثی انتخاب نشده، پیشنهاد مرور همه
+    toast('برای مرور انتخاب‌شده، ابتدا یک درس را باز کن', 'err');
+  });
+  document.getElementById('btnLoadJsonLessons').addEventListener('click', () => {
+    pickJSONFiles(loadLessonJSON);
+  });
+
+  // Subtopics panel
+  document.getElementById('btnNewSubtopic').addEventListener('click', newSubtopic);
+  document.getElementById('btnReviewTopic').addEventListener('click', () => {
+    reviewTopic(APP.currentTopicId);
+  });
+
+  // Cards panel
+  document.getElementById('btnNewCard').addEventListener('click', newCard);
+  document.getElementById('btnReviewCards').addEventListener('click', reviewCardsPanel);
+  document.getElementById('btnRandomCards').addEventListener('click', randomCardsPanel);
+  document.getElementById('btnMarkAllRead').addEventListener('click', markAllRead);
+  document.getElementById('cardSearch').addEventListener('input', renderCards);
+  document.getElementById('btnBulkDelete').addEventListener('click', bulkDelete);
+  document.getElementById('btnBulkMove').addEventListener('click', bulkMove);
+  document.getElementById('btnBulkCancel').addEventListener('click', bulkCancel);
+
+  // Due panel
+  document.getElementById('btnReviewAllDue').addEventListener('click', reviewAllDue);
+
+  // Search
+  document.getElementById('globalSearch').addEventListener('input', renderSearch);
+
+  // Settings
+  document.getElementById('btnSaveSettings').addEventListener('click', saveSettingsFromUI);
+  document.getElementById('btnExport').addEventListener('click', exportBackup);
+  document.getElementById('btnImportFile').addEventListener('click', () => {
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (f) importBackupFile(f);
+    e.target.value = '';
+  });
+  document.getElementById('btnLoadJsonSettings').addEventListener('click', () => {
+    pickJSONFiles(loadLessonJSON);
+  });
+  document.getElementById('btnEmptyJson').addEventListener('click', makeEmptyJSON);
+  document.getElementById('btnMerge').addEventListener('click', mergeSimilarCards);
+  document.getElementById('btnStorageInfo').addEventListener('click', showStorageInfo);
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+
+  // Theme buttons
+  document.querySelectorAll('[data-theme-set]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyTheme(btn.dataset.themeSet);
+      toast('تم تغییر کرد', 'ok');
+    });
+  });
+}
+
+/** انتخاب فایل JSON (چند فایل) */
+function pickJSONFiles(cb) {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json,application/json';
+  inp.multiple = true;
+  inp.addEventListener('change', () => {
+    if (inp.files && inp.files.length) cb(Array.from(inp.files));
+  });
+  inp.click();
+}
+
+/* ------------------------------------------------------------
+   init
+   ------------------------------------------------------------ */
+function init() {
+  console.log('[v10] booting…');
+
+  // ۱. بارگذاری داده
+  loadAll();
+
+  // ۲. پاک کردن todayCorrect اگر روز عوض شده
+  resetTodayCorrectIfNewDay();
+
+  // ۳. رندر منو
+  renderHomeMenu();
+
+  // ۴. جمله انگیزشی
+  updateMotivation();
+  // هر ۳۰ ثانیه عوض شود
+  setInterval(updateMotivation, 30000);
+
+  // ۵. پیشنهاد
+  updateSuggestion();
+
+  // ۶. اتصال دکمه‌ها
+  wireButtons();
+
+  // ۷. میانبرها
+  installKeyboard();
+
+  // ۸. auto-save
+  installAutoSave();
+
+  // ۹. پشتیبان هفتگی
+  checkWeeklyBackup();
+
+  // ۱۰. IndexedDB پشتیبان موازی
+  DB.set('topics', APP.topics).catch(() => {});
+
+  // ۱۱. نمایش view پیش‌فرض
+  showView('home', false);
+
+  console.log('[v10] ready. topics:', APP.topics.length,
+              'cards:', countAllCards());
+}
+
+/* ------------------------------------------------------------
+   شروع
+   ------------------------------------------------------------ */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
