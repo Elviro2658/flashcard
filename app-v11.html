@@ -500,7 +500,7 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='ArrowRight'){if(session.current<session.queue.length-1){session.current++;render()}}
 });
 document.querySelectorAll('.menu button[data-mode]').forEach(function(b){b.addEventListener('click',function(){const m=b.dataset.mode;if(m==='due'){showDuePanel()}else{startSession(m)}})});
-function goMenu(){hideAllPanels();$('mainMenu').style.display='block';$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';updateMenuCounts()}
+function goMenu(){hideAllPanels();$('mainMenu').style.display='block';$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';updateMenuCounts()var di=$('dashboardInline');if(di)di.classList.add('show')}
 $('btnBackMenu').addEventListener('click',goMenu);/* ==== پنل درس‌ها ==== */
 function showTopicsPanel(){hideAllPanels();$('topicsPanel').classList.add('show');renderTopicsList()}
 function renderTopicsList(){
