@@ -690,7 +690,7 @@ async function init(){
   else if(saveStatus.ls||saveStatus.idb)showSaveIndicator(saveStatus.ls,saveStatus.idb);
   else{const el=$('saveIndicator');el.textContent='⚠️ ذخیره‌سازی در دسترس نیست';el.className='save-indicator err'}
 }
-init();
+setTimeout(function(){alert('TOPICS: '+TOPICS.length+' | Cards: '+getAllCards().length+' | FirstName: '+(TOPICS[0]?TOPICS[0].name:'-'))},3000);init();
 </script>
 </body>
 </html>
