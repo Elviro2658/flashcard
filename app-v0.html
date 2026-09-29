@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فلش‌کارت v10</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f172a;--card:#1e293b;--bd:#334155;--tx:#e2e8f0;--mt:#94a3b8;--ac:#3b82f6;--ok:#4ade80;--pt:#fbbf24;--wr:#f87171;--an:#fcd34d}
+body.light{--bg:#f1f5f9;--card:#fff;--bd:#cbd5e1;--tx:#0f172a;--mt:#64748b;--an:#b45309}
+body.night{--bg:#000;--card:#0a0a0a;--bd:#1a1a1a;--tx:#8a8a8a;--mt:#5a5a5a;--an:#a36f00}
+body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:10px;transition:background .3s,color .3s}
+.topbar{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.topbar h1{font-size:.82rem;color:var(--mt)}
+.topbar .clock{font-size:.7rem;color:var(--mt)}
+.topbar .btns{display:flex;gap:4px;flex-wrap:wrap}
+.topbar button{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:5px 8px;font-family:inherit;font-size:.7rem;cursor:pointer;transition:background .15s}
+.topbar button:hover{background:var(--bd)}
+.topbar button.upload-btn{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.save-indicator{width:100%;max-width:900px;text-align:center;font-size:.68rem;color:var(--mt);margin-bottom:6px;min-height:14px}
+.save-indicator.ok{color:#4ade80}.save-indicator.warn{color:#fbbf24}.save-indicator.err{color:#f87171}
+.menu{width:100%;max-width:900px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.menu h2{font-size:.85rem;margin-bottom:8px;color:var(--mt)}
+.menu .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px}
+.menu button{background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:9px;padding:9px 6px;font-family:inherit;font-size:.75rem;cursor:pointer;transition:transform .1s,background .15s}
+.menu button:hover{background:var(--bd);transform:translateY(-1px)}
+.menu button small{display:block;color:var(--mt);font-size:.6rem;margin-top:2px}
+.welcome{width:100%;max-width:900px;background:var(--card);border:1px solid var(--bd);border-radius:11px;padding:9px 12px;margin-bottom:8px;font-size:.8rem;text-align:center}
+.welcome b{color:var(--ac)}
+.welcome.empty{color:var(--mt);font-style:italic}
+.stats-bar{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;width:100%;max-width:900px;margin-bottom:6px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:5px 10px;text-align:center;min-width:65px;flex:1}
+.stat .num{font-size:1.05rem;font-weight:700}
+.stat .lbl{font-size:.6rem;color:var(--mt)}
+.stat.c .num{color:var(--ok)}.stat.p .num{color:var(--pt)}.stat.w .num{color:var(--wr)}
+.stat.pr .num{color:var(--ac)}.stat.rm .num{color:#fbbf24}
+.progress-track{width:100%;max-width:900px;height:7px;background:var(--card);border-radius:99px;overflow:hidden;margin-bottom:10px;border:1px solid var(--bd)}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);transition:width .3s}
+.card{background:var(--card);border-radius:16px;padding:28px 20px 56px;min-height:300px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.2);cursor:pointer;position:relative;border:1px solid var(--bd);width:100%;max-width:900px;transition:transform .15s;user-select:none}
+.card:active{transform:scale(.99)}
+.card.revealed{cursor:default}
+.card .meta{position:absolute;top:8px;right:12px;left:12px;display:flex;justify-content:space-between;font-size:.65rem;color:var(--mt)}
+.card .star{position:absolute;top:6px;left:12px;font-size:1.3rem;cursor:pointer;opacity:.5;transition:opacity .15s,transform .1s;z-index:2}
+.card .star:hover{opacity:1;transform:scale(1.15)}
+.card .star.on{opacity:1;color:#fbbf24}
+.card .praise{position:absolute;top:40px;right:12px;font-size:1rem;font-weight:700;color:var(--ok);opacity:0;transition:opacity .3s;pointer-events:none;z-index:3;text-align:right;max-width:60%}
+.card .praise.show{opacity:1}
+.card .tools{position:absolute;bottom:8px;left:10px;display:flex;gap:5px;z-index:2}
+.card .tools button{background:var(--bg);color:var(--mt);border:1px solid var(--bd);border-radius:7px;padding:4px 9px;font-family:inherit;font-size:.68rem;cursor:pointer;transition:background .15s,color .15s}
+.card .tools button:hover{background:var(--bd);color:var(--tx)}
+.card .viewcount{position:absolute;bottom:12px;right:12px;font-size:.65rem;color:var(--mt);opacity:.7}
+.card .note-badge{position:absolute;top:32px;left:12px;font-size:.9rem;opacity:.6;cursor:pointer}
+.card .question{font-size:1.12rem;line-height:1.9;font-weight:600;padding:0 8px;margin-bottom:6px}
+.card .hint{margin-top:24px;font-size:.75rem;color:var(--mt);border-top:1px dashed var(--bd);padding-top:12px;width:100%}
+.card .answer{margin-top:8px;padding-top:6px;width:100%;font-size:1.5rem;line-height:2.1;color:var(--an);display:none;font-weight:600;white-space:pre-line}
+.card.revealed .answer{display:block}
+.card.revealed .hint{display:none}
+.answer-label{display:inline-block;font-size:.72rem;color:var(--mt);background:var(--bg);padding:2px 10px;border-radius:99px;margin-bottom:6px;font-weight:400}
+.next-due{font-size:.7rem;color:var(--ok);margin-top:8px;text-align:center;display:none;font-weight:700}
+.card.revealed .next-due.show{display:block}
+.actions{display:flex;gap:6px;margin-top:12px;width:100%;max-width:900px;opacity:0;pointer-events:none;transition:opacity .2s}
+.actions.show{opacity:1;pointer-events:auto}
+.actions button{flex:1;padding:12px 5px;border:none;border-radius:11px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:inherit;transition:filter .15s,transform .1s}
+.actions button:active{transform:scale(.97)}
+.btn-correct{background:#16a34a;color:#fff}
+.btn-partial{background:#d97706;color:#fff}
+.btn-wrong{background:#dc2626;color:#fff}
+.btn-skip{background:#475569;color:#fff;flex:0 0 auto;padding:12px 12px;font-size:.75rem}
+.nav-row{display:flex;gap:6px;margin-top:10px;width:100%;max-width:900px;justify-content:center;flex-wrap:wrap}
+.nav-row button{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:6px 12px;font-family:inherit;font-size:.75rem;cursor:pointer}
+.nav-row button:hover{background:var(--bd)}
+.nav-row button:disabled{opacity:.35;cursor:not-allowed}
+.summary{display:none;width:100%;max-width:900px;background:var(--card);border-radius:14px;padding:20px;text-align:center;border:1px solid var(--bd)}
+.summary.show{display:block}
+.summary h2{margin-bottom:10px;font-size:1rem}
+.summary .big{font-size:2rem;font-weight:800;margin:5px 0;color:var(--ok)}
+.summary .row{display:flex;justify-content:center;gap:16px;margin:12px 0;flex-wrap:wrap}
+.summary .row .num{font-size:1.3rem;font-weight:700}
+.summary .row .lbl{font-size:.7rem;color:var(--mt)}
+.summary .btn-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.summary button{padding:10px 18px;border:none;border-radius:9px;background:var(--ac);color:#fff;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+.summary button.neutral{background:#475569}
+.search-box{width:100%;max-width:900px;margin-bottom:8px;display:none}
+.search-box.show{display:block}
+.search-box input{width:100%;padding:9px 12px;border-radius:9px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-family:inherit;font-size:.85rem}
+.search-results{max-height:220px;overflow-y:auto;margin-top:5px;border-radius:9px;border:1px solid var(--bd);background:var(--card)}
+.search-results div{padding:8px 10px;border-bottom:1px solid var(--bd);font-size:.78rem;cursor:pointer}
+.search-results div:hover{background:var(--bg)}
+.settings{display:none;width:100%;max-width:900px;background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--bd);margin-bottom:10px}
+.settings.show{display:block}
+.settings h3{font-size:.88rem;margin-bottom:8px}
+.settings label{display:block;font-size:.72rem;color:var(--mt);margin:6px 0 3px}
+.settings input{width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.82rem}
+.settings .row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.settings .row button{flex:1;padding:8px;border:none;border-radius:7px;background:var(--ac);color:#fff;font-family:inherit;font-size:.75rem;cursor:pointer;transition:filter .15s;min-width:130px}
+.settings .row button:hover{filter:brightness(1.1)}
+.settings .row button.danger{background:#dc2626}
+.settings .row button.neutral{background:#475569}
+.settings .row button.green{background:#16a34a}
+.settings .row button.purple{background:#7c3aed}
+.weekly-chart{display:flex;gap:3px;align-items:flex-end;height:50px;margin-top:8px}
+.weekly-chart .bar{flex:1;background:var(--ac);border-radius:3px 3px 0 0;min-height:3px}
+.weekly-chart .bar-lbl{font-size:.55rem;color:var(--mt);text-align:center;margin-top:3px}
+.backup-notice{display:none;width:100%;max-width:900px;padding:9px 12px;background:#78350f;color:#fde68a;border-radius:9px;font-size:.75rem;margin-bottom:8px;text-align:center}
+.backup-notice.show{display:block}
+.backup-notice button{background:#fbbf24;color:#000;border:none;border-radius:5px;padding:3px 9px;margin-right:6px;font-family:inherit;font-size:.72rem;cursor:pointer;font-weight:700}
+.friday-notice{display:none;width:100%;max-width:900px;padding:10px 14px;background:#166534;color:#dcfce7;border-radius:9px;font-size:.8rem;margin-bottom:8px;text-align:center}
+.friday-notice.show{display:block}
+.friday-notice button{background:#4ade80;color:#000;border:none;border-radius:5px;padding:4px 12px;margin:0 4px;font-family:inherit;font-size:.75rem;cursor:pointer;font-weight:700}
+.friday-notice button.no{background:#475569;color:#fff}
+.panel{width:100%;max-width:900px;background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--bd);margin-bottom:10px;display:none}
+.panel.show{display:block}
+.panel h2{font-size:.95rem;margin-bottom:12px}
+.panel .close-btn{float:left;background:transparent;border:1px solid var(--bd);color:var(--mt);border-radius:6px;padding:3px 9px;cursor:pointer;font-family:inherit;font-size:.72rem}
+.back-btn{background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 12px;font-family:inherit;font-size:.75rem;cursor:pointer;margin-bottom:10px;font-weight:600}
+.topic-item{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px}
+.topic-item .head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.topic-item .name{font-weight:600;font-size:.88rem;display:flex;align-items:center;gap:6px;flex:1;cursor:pointer}
+.topic-item .name .arrow{color:var(--mt);font-size:.7rem;transition:transform .2s}
+.topic-item.open .name .arrow{transform:rotate(90deg)}
+.topic-item .progress-pill{font-size:.65rem;background:rgba(59,130,246,.2);color:#93c5fd;padding:2px 8px;border-radius:99px;font-weight:700}
+.topic-item .actions{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.topic-item .actions .review-btn{background:var(--ac);color:#fff;border:1px solid var(--ac);border-radius:6px;padding:4px 10px;font-family:inherit;font-size:.7rem;cursor:pointer;font-weight:600}
+.topic-item .actions .dots-menu{position:relative}
+.topic-item .actions .dots-menu>button{background:var(--card);border:1px solid var(--bd);color:var(--tx);border-radius:6px;padding:4px 10px;font-family:inherit;font-size:.85rem;cursor:pointer;font-weight:700}
+.topic-item .actions .dots-menu>button:hover{background:var(--bd)}
+.topic-item .actions .dots-menu .dropdown{display:none;position:absolute;top:100%;left:0;background:var(--card);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:50;min-width:180px;padding:4px 0;margin-top:4px}
+.topic-item .actions .dots-menu.open .dropdown{display:block}
+.topic-item .actions .dots-menu .dropdown button{display:block;width:100%;text-align:right;background:transparent;border:none;padding:8px 12px;color:var(--tx);font-size:.78rem;border-radius:0;font-family:inherit;cursor:pointer}
+.topic-item .actions .dots-menu .dropdown button:hover{background:var(--bd)}
+.topic-item .actions .dots-menu .dropdown button.danger{color:#f87171}
+.topic-item .actions .dots-menu .dropdown button.danger:hover{background:#7f1d1d}
+.topic-item .subtopics{margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);display:none}
+.topic-item.open .subtopics{display:block}
+.subtopic-item{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.subtopic-item.read{opacity:.6}
+.subtopic-item .sub-name{font-size:.82rem;flex:1;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.subtopic-item .sub-actions{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.subtopic-item .sub-actions button{background:var(--bg);border:1px solid var(--bd);color:var(--tx);border-radius:5px;padding:3px 8px;font-family:inherit;font-size:.68rem;cursor:pointer}
+.subtopic-item .sub-actions button:hover{background:var(--bd)}
+.subtopic-item .sub-actions button.primary{background:var(--ac);color:#fff;border-color:var(--ac)}
+.subtopic-item .sub-actions button.rand{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.subtopic-item input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+.subtopic-item .card-count{font-size:.68rem;color:var(--mt);background:var(--bg);padding:2px 7px;border-radius:99px}
+.subtopic-item .due-count{font-size:.68rem;color:#fbbf24;background:rgba(251,191,36,.15);padding:2px 7px;border-radius:99px}
+.subtopic-item .start-count{font-size:.68rem;color:#a78bfa;background:rgba(167,139,250,.15);padding:2px 7px;border-radius:99px}
+.subtopic-item .sub-dots{position:relative}
+.subtopic-item .sub-dots>button{background:var(--bg);border:1px solid var(--bd);color:var(--tx);border-radius:5px;padding:3px 10px;font-family:inherit;font-size:.85rem;cursor:pointer;font-weight:700}
+.subtopic-item .sub-dots>button:hover{background:var(--bd)}
+.subtopic-item .sub-dots .dropdown{display:none;position:absolute;top:100%;left:0;background:var(--card);border:1px solid var(--bd);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:50;min-width:180px;padding:4px 0;margin-top:4px}
+.subtopic-item .sub-dots.open .dropdown{display:block}
+.subtopic-item .sub-dots .dropdown button{display:block;width:100%;text-align:right;background:transparent;border:none;padding:8px 12px;color:var(--tx);font-size:.78rem;border-radius:0;font-family:inherit;cursor:pointer}
+.subtopic-item .sub-dots .dropdown button:hover{background:var(--bd)}
+.subtopic-item .sub-dots .dropdown button.danger{color:#f87171}
+.subtopic-item .sub-dots .dropdown button.danger:hover{background:#7f1d1d}
+.panel .top-actions{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.panel .top-actions button{background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.78rem;cursor:pointer;font-weight:600}
+.panel .top-actions button.green{background:#16a34a}
+.panel .top-actions button.purple{background:#7c3aed}
+.panel .top-actions button.neutral{background:#475569}
+.panel .top-actions input[type="text"]{flex:1;padding:7px 10px;border-radius:7px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.82rem;min-width:120px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;justify-content:center;align-items:center;padding:16px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:14px;padding:20px;max-width:520px;width:100%;border:1px solid var(--bd);max-height:90vh;overflow-y:auto}
+.modal h3{margin-bottom:12px;font-size:1rem}
+.modal label{display:block;font-size:.72rem;color:var(--mt);margin:8px 0 3px}
+.modal input,.modal textarea,.modal select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;resize:vertical}
+.modal .row{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.modal .row button{flex:1;padding:9px;border:none;border-radius:8px;font-family:inherit;font-size:.82rem;cursor:pointer;font-weight:600}
+.modal .row button.primary{background:var(--ac);color:#fff}
+.modal .row button.danger{background:#dc2626;color:#fff}
+.modal .row button.neutral{background:#475569;color:#fff}
+.alert-bar{background:#1e40af;color:#dbeafe;padding:10px 12px;border-radius:9px;font-size:.8rem;margin-bottom:10px;text-align:center;display:none}
+.alert-bar.show{display:block}
+.alert-bar.ok{background:#166534;color:#dcfce7}
+.alert-bar.warn{background:#78350f;color:#fef3c7}
+.alert-bar.err{background:#7f1d1d;color:#fee2e2}
+.shortcut-hint{font-size:.65rem;color:var(--mt);text-align:center;margin-top:6px}
+.motivation{width:100%;max-width:900px;text-align:center;padding:14px 16px;margin-top:12px;font-size:.82rem;color:var(--ac);font-style:italic;line-height:1.7;border-top:1px dashed var(--bd);opacity:.9}
+.suggest-bar{width:100%;max-width:900px;text-align:center;padding:10px;margin-top:8px;font-size:.82rem}
+.suggest-bar button{background:linear-gradient(135deg,#7c3aed,#3b82f6);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer;transition:transform .1s}
+.suggest-bar button:hover{transform:translateY(-2px)}
+.due-topics-list{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:8px}
+.due-topic-row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--bd);gap:8px;flex-wrap:wrap}
+.due-topic-row:last-child{border-bottom:none}
+.due-topic-row .tname{font-size:.85rem;font-weight:600;flex:1}
+.due-topic-row .tcount{font-size:.72rem;color:#fbbf24;background:rgba(251,191,36,.15);padding:2px 8px;border-radius:99px}
+.due-topic-row button{background:var(--ac);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-family:inherit;font-size:.75rem;cursor:pointer;font-weight:600}
+.dashboard{width:100%;max-width:900px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:10px;display:none}
+.dashboard.show{display:block}
+.dashboard h2{font-size:.95rem;margin-bottom:12px;color:var(--ac)}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.dash-item{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center}
+.dash-item .num{font-size:1.4rem;font-weight:700;color:var(--ac)}
+.dash-item .lbl{font-size:.68rem;color:var(--mt);margin-top:3px}
+.dash-item.ok .num{color:var(--ok)}
+.dash-item.pt .num{color:var(--pt)}
+.dash-item.wr .num{color:var(--wr)}
+.dash-item.brain .num{color:#a78bfa}
+.dash-item.trophy .num{color:#fbbf24}
+.dash-section{margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)}
+.dash-section h3{font-size:.82rem;color:var(--mt);margin-bottom:8px}
+.step-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.step-item{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 2px;text-align:center}
+.step-item .snum{font-size:1.1rem;font-weight:700}
+.step-item .slbl{font-size:.55rem;color:var(--mt);margin-top:2px}
+.cards-list{max-height:500px;overflow-y:auto;border:1px solid var(--bd);border-radius:10px;padding:8px;background:var(--bg)}
+.cards-list .subtopic-item{margin-bottom:4px}
+.subtopic-item.selected{background:rgba(59,130,246,.15);border-color:var(--ac)}
+.mass-actions{display:none;position:sticky;bottom:0;background:var(--card);border:1px solid var(--ac);border-radius:10px;padding:10px;margin-top:8px;gap:6px;flex-wrap:wrap}
+.mass-actions.show{display:flex}
+.mass-actions button{flex:1;padding:8px;border:none;border-radius:7px;font-family:inherit;font-size:.75rem;cursor:pointer;font-weight:600;min-width:100px}
+.mass-actions .danger{background:#dc2626;color:#fff}
+.mass-actions .primary{background:var(--ac);color:#fff}
+.mass-actions .neutral{background:#475569;color:#fff}
+.end-subtopic{display:none;width:100%;max-width:900px;background:var(--card);border-radius:14px;padding:20px;text-align:center;border:1px solid var(--bd);margin-top:10px}
+.end-subtopic.show{display:block}
+.end-subtopic h2{font-size:1rem;margin-bottom:14px;color:var(--ok)}
+.end-subtopic .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.end-subtopic .btn-row button{padding:10px 18px;border:none;border-radius:9px;background:var(--ac);color:#fff;font-family:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+.end-subtopic .btn-row button.green{background:#16a34a}
+.end-subtopic .btn-row button.neutral{background:#475569}
+.end-subtopic .btn-row button.purple{background:#7c3aed}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>📚 فلش‌کارت v10</h1>
+  <div class="btns">
+    <span class="clock" id="clock"></span>
+    <button class="upload-btn" id="btnUploadTop" title="بارگذاری JSON">📁</button>
+    <button id="btnSearch" title="جستجو">🔍</button>
+    <button id="btnTheme" title="تم">🌗</button>
+    <button id="btnSettings" title="تنظیمات">⚙</button>
+    <button id="btnBackMenu" title="منوی اصلی">🏠</button>
+  </div>
+</div>
+
+<div class="save-indicator" id="saveIndicator">آماده</div>
+
+<div class="backup-notice" id="backupNotice">
+  ⚠️ مدت زیادی از آخرین پشتیبان‌گیری گذشته.
+  <button id="btnQuickExport">📤 همین حالا خروجی بگیر</button>
+</div>
+
+<div class="friday-notice" id="fridayNotice">
+  📅 امروز جمعه‌ست! وقت پشتیبان‌گیری.
+  <button id="btnFridayYes">📤 بله، الان</button>
+  <button class="no" id="btnFridayNo">✕ بعداً</button>
+</div>
+
+<div class="alert-bar" id="alertBar"></div>
+
+<div class="search-box" id="searchBox">
+  <input type="text" id="searchInput" placeholder="جستجو در سؤال و پاسخ...">
+  <div class="search-results" id="searchResults"></div>
+</div>
+
+<div class="settings" id="settings">
+  <h3>⚙ تنظیمات</h3>
+  <label>بازه «حدودی» (روز)</label>
+  <input type="number" id="setPartial" value="2" min="1">
+  <label>زنجیره «درست» (با کاما)</label>
+  <input type="text" id="setCorrect" value="3,7,14,26,58,125">
+  <label>بازه «غلط» (روز)</label>
+  <input type="number" id="setWrong" value="1" min="1">
+  <label>آستانه «سخت‌ها» (تعداد نمایش)</label>
+  <input type="number" id="setHardThreshold" value="7" min="1">
+  <div class="row">
+    <button class="green" id="btnSaveSettings">💾 ذخیره تنظیمات</button>
+    <button class="purple" id="btnUploadSettings">📁 بارگذاری JSON</button>
+  </div>
+  <div class="row">
+    <button class="neutral" id="btnExport">📤 خروجی پشتیبان</button>
+    <button class="neutral" id="btnImport">📥 وارد کردن پشتیبان</button>
+  </div>
+  <div class="row">
+    <button class="neutral" id="btnEmptyTemplate">📝 ساخت JSON خالی</button>
+    <button class="purple" id="btnMergeSimilar">🔗 ادغام کارت‌های مشابه</button>
+  </div>
+  <div class="row">
+    <button class="neutral" id="btnShowStorageInfo">ℹ️ وضعیت ذخیره‌سازی</button>
+    <button class="danger" id="btnResetAll">🗑 ریست کامل (۳ تأیید)</button>
+  </div>
+  <input type="file" id="fileInput" accept=".json" style="display:none">
+  <input type="file" id="fileInputCards" accept=".json" multiple style="display:none">
+</div>
+
+<div class="menu" id="mainMenu">
+  <h2>🎯 حالت مرور</h2>
+  <div class="grid">
+    <button data-mode="all">🗂 همه<small id="cntAll"></small></button>
+    <button data-mode="due">⏰ سررسیده‌ها<small id="cntDue"></small></button>
+    <button data-mode="new">🆕 کارت‌های جدید<small id="cntNew"></small></button>
+    <button data-mode="start">🎯 استارت<small id="cntStart"></small></button>
+    <button data-mode="todayCorrect">🟢 درست‌های امروز<small id="cntTodayCorrect"></small></button>
+    <button data-mode="todayWrong">🔴 غلط‌های امروز<small id="cntTodayWrong"></small></button>
+    <button data-mode="hard">🔁 سخت‌ها<small id="cntHard"></small></button>
+    <button data-mode="starred">⭐ ستاره‌دارها<small id="cntStar"></small></button>
+    <button data-mode="suspended">⏸ تعلیق‌شده‌ها<small id="cntSusp"></small></button>
+    <button data-mode="deleted">🗑 حذف‌شده‌ها<small id="cntDel"></small></button>
+    <button id="btnTopicsMenu">📚 درس‌ها<small id="cntTopics"></small></button>
+    <button id="btnSubjectSearch">🔍 جستجوی موضوعی<small>درس و مبحث</small></button>
+    <button id="btnDashboard">📊 تابلوی آمار<small>آمار کامل</small></button>
+  </div>
+</div>
+
+<div class="welcome" id="welcome"></div>
+
+<div class="stats-bar">
+  <div class="stat c"><div class="num" id="sCorrect">0</div><div class="lbl">✅ درست</div></div>
+  <div class="stat p"><div class="num" id="sPartial">0</div><div class="lbl">🟡 حدودی</div></div>
+  <div class="stat w"><div class="num" id="sWrong">0</div><div class="lbl">🔴 غلط</div></div>
+  <div class="stat rm"><div class="num" id="sRemaining">0</div><div class="lbl">باقی‌مانده</div></div>
+  <div class="stat pr"><div class="num" id="sProgress">0%</div><div class="lbl">پیشرفت</div></div>
+</div>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="card" id="card">
+  <div class="meta"><span id="cardIndex"></span><span id="cardDue"></span></div>
+  <div class="star" id="starBtn">☆</div>
+  <div class="praise" id="praise"></div>
+  <div class="note-badge" id="noteBadge" style="display:none" title="یادداشت دارد">📝</div>
+  <div class="question" id="question"></div>
+  <div class="hint">برای دیدن پاسخ روی کارت بزنید (یا کلید 5)</div>
+  <div class="answer" id="answer"></div>
+  <div class="next-due" id="nextDueInfo"></div>
+  <div class="viewcount" id="viewCount"></div>
+  <div class="tools">
+    <button id="btnSuspend">⏸ تعلیق</button>
+    <button id="btnDelete">🗑 حذف</button>
+  </div>
+</div>
+
+<div class="actions" id="actions">
+  <button class="btn-correct" id="btnCorrect">✅ درست (1)</button>
+  <button class="btn-partial" id="btnPartial">🟡 حدودی (2)</button>
+  <button class="btn-wrong" id="btnWrong">🔴 غلط (3)</button>
+  <button class="btn-skip" id="btnSkip">⏭ (4)</button>
+</div>
+
+<div class="shortcut-hint" id="shortcutHint">5=پاسخ | 1=درست | 2=حدودی | 3=غلط | 4=رد | ← →=جابه‌جایی</div>
+
+<div class="nav-row">
+  <button id="btnPrev">◀ قبلی</button>
+  <button id="btnNext">بعدی ▶</button>
+</div>
+
+<div class="end-subtopic" id="endSubtopic">
+  <h2>🎉 پایان این مبحث!</h2>
+  <div id="endSubtopicStats"></div>
+  <div class="btn-row">
+    <button class="purple" id="btnEndChart">📊 نمودار ستونی</button>
+    <button class="green" id="btnEndBack">🔙 بازگشت به منوی درسی</button>
+    <button class="neutral" id="btnEndHome">🏠 صفحه اصلی</button>
+  </div>
+</div>
+
+<div class="panel" id="topicsPanel">
+  <button class="close-btn" id="btnCloseTopics">✕ بستن</button>
+  <h2>📚 درس‌ها و مبحث‌ها</h2>
+  <div class="top-actions">
+    <button class="green" id="btnAddTopic">➕ درس جدید</button>
+    <button class="purple" id="btnReviewSelected">▶ مرور مبحث‌های انتخاب‌شده</button>
+    <button class="neutral" id="btnUploadTopic">📁 بارگذاری JSON</button>
+  </div>
+  <div id="topicsList"></div>
+</div>
+
+<div class="panel" id="duePanel">
+  <button class="close-btn" id="btnCloseDue">✕ بستن</button>
+  <h2>⏰ سررسیده‌ها</h2>
+  <div class="top-actions">
+    <button class="green" id="btnReviewAllDue">▶ مرور همه سررسیده‌ها پشت سر هم</button>
+  </div>
+  <div id="dueTopicsList"></div>
+</div>
+
+<div class="panel" id="dashboardPanel">
+  <button class="close-btn" id="btnCloseDashboard">✕ بستن</button>
+  <h2>📊 تابلوی آمار</h2>
+  <div id="dashboardContent"></div>
+</div>
+
+<div class="panel" id="subjectSearchPanel">
+  <button class="close-btn" id="btnCloseSubjectSearch">✕ بستن</button>
+  <h2>🔍 جستجوی موضوعی</h2>
+  <div class="top-actions">
+    <input type="text" id="subjectSearchInput" placeholder="نام درس یا مبحث...">
+  </div>
+  <div id="subjectSearchResults"></div>
+</div>
+
+<div class="panel" id="topicPanel" style="display:none">
+  <button class="back-btn" id="btnBackFromTopic">◀ بازگشت به درس‌ها</button>
+  <h2 id="topicDetailTitle"></h2>
+  <div class="top-actions">
+    <button class="green" id="btnAddSubtopic">➕ مبحث جدید</button>
+    <button class="purple" id="btnReviewSubtopic">▶ مرور همه مبحث‌ها</button>
+  </div>
+  <div id="subtopicsList"></div>
+</div>
+
+<div class="panel" id="subtopicPanel" style="display:none">
+  <button class="back-btn" id="btnBackFromSubtopic">◀ بازگشت به مبحث‌های درس</button>
+  <h2 id="subtopicDetailTitle"></h2>
+  <div class="top-actions">
+    <button class="green" id="btnAddCard">➕ کارت جدید</button>
+    <button class="purple" id="btnReviewThisSubtopic">▶ مرور این مبحث</button>
+    <button class="neutral" id="btnMarkAllRead">📌 مارک همه خوانده</button>
+    <input type="text" id="subtopicSearchInput" placeholder="🔍 جستجو در کارت‌ها...">
+  </div>
+  <div class="cards-list" id="cardsList"></div>
+  <div class="mass-actions" id="massActions">
+    <button class="danger" id="btnMassDelete">🗑 حذف گروهی</button>
+    <button class="primary" id="btnMassMove">📂 انتقال گروهی</button>
+    <button class="neutral" id="btnMassCancel">✕ لغو انتخاب</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="motivation" id="motivation"></div>
+
+<div class="suggest-bar" id="suggestBar"></div>
+
+<div class="dashboard" id="dashboardBox">
+  <h2>📊 تابلوی آمار</h2>
+  <div id="dashboardMain"></div>
+</div>
+
+<script>const MOTIVATIONS=["هر کارتی که می‌زنی، یک قدم به هدفت نزدیک‌تری.","موفقیت یعنی تکرارِ روزهای سخت.","امروز یاد بگیری، فردا بدرخشی.","سخت است، اما تو از سختی قوی‌تری.","هر صفحه، پله‌ای به سوی موفقیت.","لحظه‌ای که خسته می‌شوی، دقیقاً همان‌جاست که باید ادامه بدهی.","به یاد داشته باش چرا شروع کردی.","هیچ موفقیتی اتفاقی نیست.","دانش، سلاح توست. آن را تیز نگه دار.","کمی بهتر از دیروز، کافی است.","آدم‌های بزرگ، کارهای کوچک را هر روز انجام می‌دهند.","امتحان فقط یک ایستگاه است، نه مقصد.","هر شکست، یک درس است.","همه چیز با یک تصمیم شروع می‌شود.","سخت‌ترین قدم، برداشتن قدم اول است.","خودت را با هیچ‌کس مقایسه نکن؛ فقط با دیروزِ خودت.","امروز که بخوانی، فردا که افتخار کنی.","اگر امروز خسته‌ای، پس داری درست پیش می‌روی.","پشت هر کارتی، دانشی است که یک روز به کارت می‌آید.","با هر مرور، یک حافظه‌ی قوی‌تر می‌سازی.","بزرگ‌ترین سرمایه‌ات، ذهنِ آموزش‌پذیرت است.","آرام باش، عمیق بخوان، محکم بمان.","یادگیری، دویدن نیست؛ پیاده‌رویِ منظم است.","یک کارت بیشتر، یک قدم بیشتر.","امشب بخوان تا فردا بدرخشی.","دقیقاً همان جایی هستی که باید باشی.","به خودت فرصت بده تا قوی شوی.","هیچ‌کس از اول ماهر نبوده.","پروسه را دوست بدار، نه فقط نتیجه را.","هر روز یک قدم؛ سالی ۳۶۵ قدم.","به یاد بیاور روزی که این آرزو فقط یک آرزو بود.","خودت را باور داشته باش؛ بیشتر از آنچه فکر می‌کنی توان داری.","کسی که تلاش می‌کند، هرگز نمی‌بازد.","هر تمرین، یک قدم به تسلط.","دانستن، بهترین حس دنیاست.","آرام، پیوسته، پیروز.","خستگی امروز، غرور فردا.","ذهنت می‌تواند؛ فقط کمی تمرین لازم دارد.","بدنت خسته است، اما روحت تشنه‌ی موفقیت.","وقتی انگیزه نداری، به مسیرت نگاه کن.","تنها رقیب واقعی‌ات، دیروزِ خودت است.","با هر مرور، به هدفت نزدیک‌تر می‌شوی.","هدفت را جلوی چشمت نگه دار.","سخت است، اما غیرممکن نیست.","همیشه یک قدم دیگر.","بدان که تلاشت ارزشمند است.","استراحت هم بخشی از مطالعه است.","قوی باش، چون یک روز به تو نیاز خواهند داشت.","دانش، آزادی است.","وقتی درست جواب می‌دهی، جشن بگیر؛ وقتی غلط، درس بگیر.","هیچ کارتی هدر نمی‌رود؛ همه چیز در ذهن انبار می‌شود.","مهربان با خودت باش، اما سست نه.","با آرامش، اما پیوسته.","مسیر سخت است، اما مقصد زیبا.","خودت را تحسین کن که داری تلاش می‌کنی.","تو از این مرحله هم عبور می‌کنی.","به یاد بیاور اولین روزی که تصمیم گرفتی.","هر تیک، یک پیروزی کوچک.","عمرت را وقف چیزی کن که ارزشش را دارد.","بهترین روز برای شروع، امروز است.","وقتی ناامید می‌شوی، به خودت یادآوری کن که چقدر راه آمده‌ای.","خیلی چیزها یاد گرفته‌ای، بیش از آنکه فکر می‌کنی.","سرعت مهم نیست؛ استقامت مهم است.","با تمرکز، نه با فشار.","یک کارت، یک نفس عمیق، یک لبخند.","موفقیت تو، نتیجه‌ی عادت‌های کوچک روزانه است.","بخوان، بخوان، بخوان؛ ذهن تشنه، ذهن قوی می‌سازد.","حتی در روزهای سخت، یک قدم کوچک کافی است.","این مسیر ارزشش را دارد. تو هم همینطور.","هیچ‌وقت دیر نیست برای شروع دوباره.","تو قوی‌تر از آنی هستی که فکر می‌کنی."];
+const PRAISES=["آفرین!","عالی!","احسنت!","دمت گرم!","معرکه!","حرف نداری!","قوی!","بی‌نظیر!","شگفت‌انگیز!","کامل!","درجه یک!","استاد!","نابغه!","دقیق!","همیشه بدرخش!","افتخار می‌کنم!","ادامه بده!","آتیش زدی!","ترکوندی!","کارت حرف نداره!","این شد!","قدرت!","پرقدرت!","حرفه‌ای!","عالی بود!","خیلی خوب!","محشر!","غوغا!","فوقالعاده!","همینه!","دقیقاً!","از این بهتر نمی‌شه!","بی‌رقیب!","تکرارنشدنی!","درس خوندنت حرف داره!","همیشه موفق باشی!","بهت افتخار می‌کنم!","چه سرعت!","چه دقتی!","چه حافظه!","استادانه!","بی‌همتا!","یگانه!","مسلط!","قابل تحسین!","درخشان!","بی‌مثال!","منحصر به فرد!","پیشرفت عالیه!","داری پرواز می‌کنی!","به قله نزدیک شدی!","عالی پیش می‌ری!","ادامه بده، عالی می‌شی!","چشم‌گیر!","قابل تقدیر!","تشویق!","براوو!","باریکلا!","دست مریزاد!","افرین بر تو!","به به!","چه هوش!","چه تلاش!","پشتکار!","ایول!","با کلاس!","تمیز!","همچین ادامه بده!","بی‌رحم بخون!","قوی‌تر از دیروز!","پیشرفت فوق‌العاده!","بهت می‌بالی!","کاری کردی کارستان!","سزاوار موفقیتی!","داری تاریخ می‌سازی!","آینده‌ات روشن!","پله‌پله بالا می‌ری!","خستگی ناپذیر!","مثال زدنی!","کوشش!","ستودنی!","آفرین بر پشتکارت!","وقتی می‌خوای، می‌شه!","نشان دادی!","عالی کار کردی!","دقیق و محکم!","با اعتماد به نفس!","آرام و مسلط!","عالی و بی‌رقیب!","دقیقاً بری قله!","آن کارت مطیع تو شد!","مقاومت کرد ولی تو بردی!","یک قدم نزدیک‌تر!","کارت‌ها ازت می‌ترسن!"];
+const DEFAULT_SETTINGS={partialDays:2,correctSteps:[3,7,14,26,58,125],wrongDays:1,hardThreshold:7};
+let SETTINGS=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+const STORAGE_KEY='fc_main_state';
+const SETTINGS_KEY='fc_main_settings';
+const TOPICS_KEY='fc_main_topics';
+const THEME_KEY='fc_main_theme';
+const BACKUP_KEY='fc_main_backup';
+const IDB_NAME='fc_main_db';
+const IDB_STORE='state';
+let STATE=null;
+let TOPICS=[];
+function emptyCardState(){return{seen:false,lastSeen:null,nextDue:null,correctCount:0,partialCount:0,wrongCount:0,totalWrong:0,stepIndex:0,starred:false,suspended:false,deleted:false,viewCount:0,lastWrongDate:null,note:'',todayCorrect:false}}
+function freshState(){return{cards:{},history:{},readSubtopics:{},dailyRecords:{},lastModified:Date.now(),masteredCount:0,totalCards:0}}
+function makeId(){return'id_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)}
+function saveLS(key,data){try{localStorage.setItem(key,JSON.stringify(data));return true}catch(e){return false}}
+function loadLS(key){try{const r=localStorage.getItem(key);return r?JSON.parse(r):null}catch(e){return null}}
+function saveSS(key,data){try{sessionStorage.setItem(key,JSON.stringify(data))}catch(e){}}
+function loadSS(key){try{const r=sessionStorage.getItem(key);return r?JSON.parse(r):null}catch(e){return null}}
+let idb=null;
+function openIDB(){return new Promise((res,rej)=>{const r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(IDB_STORE))db.createObjectStore(IDB_STORE)};r.onsuccess=e=>{idb=e.target.result;res(idb)};r.onerror=e=>rej(e.target.error)})}
+function saveIDB(data){if(!idb)return Promise.resolve(false);return new Promise(res=>{try{const tx=idb.transaction(IDB_STORE,'readwrite');tx.objectStore(IDB_STORE).put(data,'main');tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)}catch(e){res(false)}})}
+function loadIDB(){if(!idb)return Promise.resolve(null);return new Promise(res=>{try{const tx=idb.transaction(IDB_STORE,'readonly');const rq=tx.objectStore(IDB_STORE).get('main');rq.onsuccess=()=>res(rq.result||null);rq.onerror=()=>res(null)}catch(e){res(null)}})}
+let saveStatus={ls:false,idb:false,lastSave:null};
+let saveCounter=0;
+async function saveState(silent){if(!STATE)return;STATE.lastModified=Date.now();STATE.masteredCount=calcMastered();STATE.totalCards=getAllCards().length;saveCounter++;const lsOk=saveLS(STORAGE_KEY,STATE);saveStatus.ls=lsOk;saveSS(STORAGE_KEY,STATE);let idbOk=false;if(saveCounter%3===0||saveCounter===1){idbOk=await saveIDB(STATE);saveStatus.idb=idbOk}else idbOk=saveStatus.idb;saveStatus.lastSave=new Date();if(!silent)showSaveIndicator(lsOk,idbOk)}
+function saveTopics(){saveLS(TOPICS_KEY,TOPICS);saveSS(TOPICS_KEY,TOPICS)}
+function showSaveIndicator(ls,idb){const el=document.getElementById('saveIndicator');if(!el)return;el.className='save-indicator';if(ls&&idb){el.textContent='✅ ذخیره شد — '+new Date().toLocaleTimeString('fa-IR');el.classList.add('ok')}else if(ls||idb){el.textContent='🟡 ذخیره (یک لایه)';el.classList.add('warn')}else{el.textContent='❌ ذخیره نشد!';el.classList.add('err')}clearTimeout(window._saveTimer);window._saveTimer=setTimeout(()=>{el.textContent='آماده';el.className='save-indicator'},3500)}
+function showAlert(msg,type){const el=document.getElementById('alertBar');if(!el)return;el.textContent=msg;el.className='alert-bar show '+(type||'');clearTimeout(window._alertTimer);window._alertTimer=setTimeout(()=>{el.classList.remove('show')},4000)}
+async function loadState(){let d=loadLS(STORAGE_KEY);if(!d)d=await loadIDB();if(!d)d=loadSS(STORAGE_KEY);if(!d)d=freshState();if(!d.cards)d.cards={};if(!d.history)d.history={};if(!d.readSubtopics)d.readSubtopics={};if(!d.dailyRecords)d.dailyRecords={};return d}
+function loadTopics(){let t=loadLS(TOPICS_KEY);if(!t)t=loadSS(TOPICS_KEY);if(!t)t=[];return t}
+function loadSettings(){try{const s=loadLS(SETTINGS_KEY);if(s){if(s.partialDays)SETTINGS.partialDays=s.partialDays;if(s.correctSteps&&Array.isArray(s.correctSteps))SETTINGS.correctSteps=s.correctSteps;if(s.wrongDays)SETTINGS.wrongDays=s.wrongDays;if(s.hardThreshold)SETTINGS.hardThreshold=s.hardThreshold}}catch(e){}document.getElementById('setPartial').value=SETTINGS.partialDays;document.getElementById('setCorrect').value=SETTINGS.correctSteps.join(',');document.getElementById('setWrong').value=SETTINGS.wrongDays;document.getElementById('setHardThreshold').value=SETTINGS.hardThreshold}
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+function addDays(dateStr,days){const d=new Date(dateStr);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
+function daysBetween(a,b){return Math.round((new Date(b)-new Date(a))/86400000)}
+function daysUntil(d){return daysBetween(today(),d)}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function cardKey(q,a){return(q||'').trim()+'|||'+(a||'').trim()}
+function escapeHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function getAllCards(){const list=[];TOPICS.forEach(t=>{(t.subtopics||[]).forEach(st=>{(st.cards||[]).forEach(c=>{list.push({key:cardKey(c.q,c.a),q:c.q,a:c.a,topicId:t.id,topicName:t.name,subtopicId:st.id,subtopicName:st.name})})})});return list}
+function findCardByKey(key){const all=getAllCards();return all.find(x=>x.key===key)}
+function getCardState(key){if(!STATE.cards[key])STATE.cards[key]=emptyCardState();return STATE.cards[key]}
+function calcMastered(){const all=getAllCards();let m=0;all.forEach(c=>{if(getCardState(c.key).correctCount>0)m++});return m}
+function overallProgress(){const all=getAllCards();if(all.length===0)return 0;return Math.round(calcMastered()/all.length*100)}
+function updateClock(){const d=new Date();$('clock').textContent=d.toLocaleDateString('fa-IR')+' — '+d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})}
+setInterval(updateClock,1000);updateClock();
+function isActive(key){const s=getCardState(key);return!s.deleted&&!s.suspended}
+function isDeleted(key){return getCardState(key).deleted===true}
+function isSuspended(key){return getCardState(key).suspended===true}
+function isNew(key){const s=getCardState(key);return!s.seen&&!s.deleted&&!s.suspended}
+function isDue(key){const s=getCardState(key);if(s.deleted||s.suspended)return false;if(!s.seen||!s.nextDue)return false;return s.nextDue<=today()}
+function isHard(key){const s=getCardState(key);return!s.deleted&&!s.suspended&&s.viewCount>=SETTINGS.hardThreshold}
+function isStarred(key){const s=getCardState(key);return!s.deleted&&!s.suspended&&s.starred===true}
+function isTodaySeen(key){const s=getCardState(key);return!s.deleted&&!s.suspended&&s.lastSeen===today()}
+function isTodayWrong(key){const s=getCardState(key);return!s.deleted&&!s.suspended&&s.lastWrongDate===today()}
+function isStart(key){const s=getCardState(key);return!s.deleted&&!s.suspended&&s.viewCount===1}
+function isTodayCorrect(key){const s=getCardState(key);return!s.deleted&&!s.suspended&&s.lastSeen===today()&&s.todayCorrect===true}
+function isSubtopicRead(topicId,subtopicId){if(!STATE.readSubtopics)STATE.readSubtopics={};return STATE.readSubtopics[topicId+'|'+subtopicId]===true}
+function setSubtopicRead(topicId,subtopicId,val){if(!STATE.readSubtopics)STATE.readSubtopics={};STATE.readSubtopics[topicId+'|'+subtopicId]=val;saveState(true)}
+function countBy(fn){const all=getAllCards();let n=0;all.forEach(c=>{if(fn(c.key))n++});return n}
+function countDueInTopic(topicId){let n=0;const all=getAllCards();all.forEach(c=>{if(c.topicId===topicId&&isDue(c.key))n++});return n}
+function countReadInTopic(topicId){let n=0;const all=getAllCards();all.forEach(c=>{if(c.topicId===topicId&&getCardState(c.key).seen)n++});return n}
+function countStartInTopic(topicId){let n=0;const all=getAllCards();all.forEach(c=>{if(c.topicId===topicId&&isStart(c.key))n++});return n}
+function countDueInTopicSub(topicId,subtopicId){let n=0;const all=getAllCards();all.forEach(c=>{if(c.topicId===topicId&&c.subtopicId===subtopicId&&isDue(c.key))n++});return n}
+function countStartInTopicSub(topicId,subtopicId){let n=0;const all=getAllCards();all.forEach(c=>{if(c.topicId===topicId&&c.subtopicId===subtopicId&&isStart(c.key))n++});return n}
+function updateMenuCounts(){const total=getAllCards().length;$('cntAll').textContent=countBy(isActive)+' کارت';$('cntDue').textContent=countBy(isDue)+' کارت';$('cntNew').textContent=countBy(isNew)+' کارت';$('cntStart').textContent=countBy(isStart)+' کارت';$('cntTodayCorrect').textContent=countBy(isTodayCorrect)+' کارت';$('cntTodayWrong').textContent=countBy(isTodayWrong)+' کارت';$('cntHard').textContent=countBy(isHard)+' کارت';$('cntStar').textContent=countBy(isStarred)+' کارت';$('cntSusp').textContent=countBy(isSuspended)+' کارت';$('cntDel').textContent=countBy(isDeleted)+' کارت';$('cntTopics').textContent=TOPICS.length+' درس';if(total===0){$('welcome').className='welcome empty';$('welcome').textContent='📭 هنوز کارتی نداری. از منوی «📚 درس‌ها» شروع کن یا فایل JSON بارگذاری کن.'}else{$('welcome').className='welcome';const d=countBy(isDue),n=countBy(isNew);$('welcome').innerHTML=`📅 امروز <b>${d}</b> کارت سررسیده و <b>${n}</b> کارت جدید داری.`}}
+function buildQueue(mode,filterKeys){const all=getAllCards();let keys=[];all.forEach(c=>{if(filterKeys&&!filterKeys.includes(c.key))return;if(mode==='all'&&isActive(c.key))keys.push(c.key);else if(mode==='random'&&isActive(c.key))keys.push(c.key);else if(mode==='due'&&isDue(c.key))keys.push(c.key);else if(mode==='new'&&isNew(c.key))keys.push(c.key);else if(mode==='start'&&isStart(c.key))keys.push(c.key);else if(mode==='todayCorrect'&&isTodayCorrect(c.key))keys.push(c.key);else if(mode==='todayWrong'&&isTodayWrong(c.key))keys.push(c.key);else if(mode==='hard'&&isHard(c.key))keys.push(c.key);else if(mode==='starred'&&isStarred(c.key))keys.push(c.key);else if(mode==='suspended'&&isSuspended(c.key))keys.push(c.key);else if(mode==='deleted'&&isDeleted(c.key))keys.push(c.key);else if(mode==='custom'&&isActive(c.key))keys.push(c.key)});if(mode==='random')keys=shuffle(keys);return keys}
+let session={mode:'all',queue:[],current:0,revealed:false,stats:{correct:0,partial:0,wrong:0},subtopicId:null,isSingleSubtopic:false,topicId:null};
+function hideAllPanels(){$('mainMenu').style.display='none';$('topicsPanel').classList.remove('show');$('duePanel').classList.remove('show');$('subjectSearchPanel').classList.remove('show');$('topicPanel').classList.remove('show');$('subtopicPanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('summary')&&$('summary').classList.remove('show');$('endSubtopic').classList.remove('show')}
+function startSession(mode,filterKeys){const q=buildQueue(mode,filterKeys);if(q.length===0){showAlert('کارتی برای این حالت وجود ندارد.','warn');return}session={mode,queue:q,current:0,revealed:false,stats:{correct:0,partial:0,wrong:0},subtopicId:null,isSingleSubtopic:false,topicId:null};hideAllPanels();$('card').style.display='flex';$('actions').style.display='flex';document.querySelector('.nav-row').style.display='flex';$('shortcutHint').style.display='block';render()}
+function startSubtopicSession(topicId,subtopicId){const t=TOPICS.find(x=>x.id===topicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===subtopicId);if(!st)return;const keys=(st.cards||[]).map(c=>cardKey(c.q,c.a));if(keys.length===0){showAlert('این مبحث کارتی ندارد.','warn');return}session={mode:'custom',queue:keys,current:0,revealed:false,stats:{correct:0,partial:0,wrong:0},subtopicId:subtopicId,isSingleSubtopic:true,topicId:topicId};hideAllPanels();$('card').style.display='flex';$('actions').style.display='flex';document.querySelector('.nav-row').style.display='flex';$('shortcutHint').style.display='block';render()}
+function render(){if(session.queue.length===0){showSummary();return}const key=session.queue[session.current];const cardData=findCardByKey(key);if(!cardData){nextCard();return}const s=getCardState(key);$('cardIndex').textContent=`کارت ${session.current+1} از ${session.queue.length}`;$('question').textContent=cardData.q;$('answer').innerHTML=`<div class="answer-label">پاسخ</div>${cardData.a}`;let dueText='';if(s.deleted)dueText='🗑 حذف‌شده';else if(s.suspended)dueText='⏸ معلق';else if(!s.seen)dueText='🆕 جدید';else if(s.nextDue){const d=daysUntil(s.nextDue);if(d<=0)dueText='⏰ سررسیده';else if(d===1)dueText='فردا';else dueText=`${d} روز دیگر`}const ctxText=cardData.topicName?`${cardData.topicName} › ${cardData.subtopicName}`:'';$('cardDue').textContent=(ctxText?ctxText+' | ':'')+dueText;$('viewCount').textContent=s.viewCount>0?`👁 ${s.viewCount} بار`:'';$('noteBadge').style.display=s.note?'block':'none';$('nextDueInfo').classList.remove('show');$('nextDueInfo').textContent='';$('praise').classList.remove('show');$('starBtn').textContent=s.starred?'★':'☆';$('starBtn').classList.toggle('on',s.starred);$('btnSuspend').textContent=s.suspended?'▶ بازگرداندن':'⏸ تعلیق';$('btnDelete').textContent=s.deleted?'↩ بازگرداندن':'🗑 حذف';session.revealed=false;$('card').classList.remove('revealed');$('actions').classList.remove('show');$('btnPrev').disabled=session.current===0;$('btnNext').disabled=session.current===session.queue.length-1;updateStats()}
+function updateStats(){const st=session.stats;$('sCorrect').textContent=st.correct;$('sPartial').textContent=st.partial;$('sWrong').textContent=st.wrong;$('sRemaining').textContent=session.queue.length-session.current-1;const p=overallProgress();$('sProgress').textContent=p+'%';$('progressFill').style.width=p+'%'}
+function showPraise(){const p=PRAISES[Math.floor(Math.random()*PRAISES.length)];const el=$('praise');el.textContent='✨ '+p;el.classList.add('show');clearTimeout(window._praiseTimer);window._praiseTimer=setTimeout(()=>{el.classList.remove('show')},2500)}
+function updateDailyRecord(td){if(!STATE.dailyRecords)STATE.dailyRecords={};if(!STATE.dailyRecords[td])STATE.dailyRecords[td]={total:0,newCards:0};STATE.dailyRecords[td].total++;const key=session.queue[session.current];const s=getCardState(key);if((s.viewCount||0)===1)STATE.dailyRecords[td].newCards++}
+function answerCard(type){const key=session.queue[session.current];const s=getCardState(key);const td=today();if(s.deleted||s.suspended){nextCard();return}s.seen=true;s.lastSeen=td;s.viewCount=(s.viewCount||0)+1;if(type==='wrong')s.todayCorrect=false;let nxtTxt='';if(type==='correct'){s.correctCount++;s.todayCorrect=true;const si=Math.min(s.stepIndex,SETTINGS.correctSteps.length-1);const days=SETTINGS.correctSteps[si];s.nextDue=addDays(td,days);s.stepIndex=Math.min(s.stepIndex+1,SETTINGS.correctSteps.length-1);session.stats.correct++;nxtTxt=`✅ این کارت ${days} روز دیگر مرور می‌شود.`;showPraise()}else if(type==='partial'){s.partialCount++;s.nextDue=addDays(td,SETTINGS.partialDays);session.stats.partial++;nxtTxt=`🟡 این کارت ${SETTINGS.partialDays} روز دیگر مرور می‌شود.`}else if(type==='wrong'){s.wrongCount++;s.totalWrong++;s.nextDue=addDays(td,SETTINGS.wrongDays);s.stepIndex=0;s.lastWrongDate=td;session.stats.wrong++;nxtTxt=`🔴 این کارت فردا دوباره مرور می‌شود.`}if(!STATE.history[td])STATE.history[td]={correct:0,partial:0,wrong:0};STATE.history[td][type]++;updateDailyRecord(td);saveState(true);$('nextDueInfo').textContent=nxtTxt;$('nextDueInfo').classList.add('show');setTimeout(nextCard,1400)}
+function nextCard(){if(session.current<session.queue.length-1){session.current++;render()}else{if(session.isSingleSubtopic){showEndSubtopic()}else{showSummary()}}}
+function showSummary(){const st=session.stats;const total=st.correct+st.partial+st.wrong;const pct=total?Math.round(st.correct/total*100):0;$('sumPct').textContent=pct+'%';$('sumCorrect').textContent=st.correct;$('sumPartial').textContent=st.partial;$('sumWrong').textContent=st.wrong;$('sumTotal').textContent=total;$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';$('summary').classList.add('show');updateMenuCounts()}
+$('card').addEventListener('click',e=>{if(e.target.closest('.star')||e.target.closest('.tools')||e.target.closest('.note-badge'))return;if(session.revealed)return;session.revealed=true;$('card').classList.add('revealed');$('actions').classList.add('show')});
+$('noteBadge').addEventListener('click',e=>{e.stopPropagation();const key=session.queue[session.current];const s=getCardState(key);const n=prompt('یادداشت این کارت:',s.note||'');if(n===null)return;s.note=n;saveState(true);$('noteBadge').style.display=s.note?'block':'none';showAlert('✅ یادداشت ذخیره شد.','ok')});
+$('btnCorrect').addEventListener('click',()=>answerCard('correct'));
+$('btnPartial').addEventListener('click',()=>answerCard('partial'));
+$('btnWrong').addEventListener('click',()=>answerCard('wrong'));
+$('btnSkip').addEventListener('click',()=>nextCard());
+$('btnPrev').addEventListener('click',()=>{if(session.current>0){session.current--;render()}});
+$('btnNext').addEventListener('click',()=>{if(session.current<session.queue.length-1){session.current++;render()}});
+$('starBtn').addEventListener('click',e=>{e.stopPropagation();const key=session.queue[session.current];const s=getCardState(key);s.starred=!s.starred;saveState(true);$('starBtn').textContent=s.starred?'★':'☆';$('starBtn').classList.toggle('on',s.starred);updateMenuCounts()});
+$('btnSuspend').addEventListener('click',e=>{e.stopPropagation();const key=session.queue[session.current];const s=getCardState(key);if(s.deleted){showAlert('این کارت حذف شده است.','warn');return}if(s.suspended){s.suspended=false;saveState(true);showAlert('✅ بازگردانده شد.','ok')}else{if(!confirm('معلق شود؟'))return;s.suspended=true;saveState(true);showAlert('⏸ معلق شد.','warn')}render();updateMenuCounts()});
+$('btnDelete').addEventListener('click',e=>{e.stopPropagation();const key=session.queue[session.current];const s=getCardState(key);if(s.deleted){s.deleted=false;saveState(true);showAlert('✅ بازگردانده شد.','ok')}else{if(!confirm('این کارت به «حذف‌شده‌ها» برود؟'))return;s.deleted=true;saveState(true);showAlert('🗑 به حذف‌شده‌ها منتقل شد.','warn')}render();updateMenuCounts()});
+document.addEventListener('keydown',e=>{
+  if($('card').style.display==='none')return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(e.key==='5'){e.preventDefault();if(!session.revealed){session.revealed=true;$('card').classList.add('revealed');$('actions').classList.add('show')}}
+  else if(e.key==='1'&&session.revealed)answerCard('correct');
+  else if(e.key==='2'&&session.revealed)answerCard('partial');
+  else if(e.key==='3'&&session.revealed)answerCard('wrong');
+  else if(e.key==='4')nextCard();
+  else if(e.key==='ArrowLeft'){if(session.current>0){session.current--;render()}}
+  else if(e.key==='ArrowRight'){if(session.current<session.queue.length-1){session.current++;render()}}
+});
+document.querySelectorAll('.menu button[data-mode]').forEach(b=>{b.addEventListener('click',()=>{const m=b.dataset.mode;if(m==='due'){showDuePanel()}else{startSession(m)}})});
+function goMenu(){$('mainMenu').style.display='block';$('summary').classList.remove('show');$('endSubtopic').classList.remove('show');$('topicsPanel').classList.remove('show');$('duePanel').classList.remove('show');$('subjectSearchPanel').classList.remove('show');$('topicPanel').classList.remove('show');$('subtopicPanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';updateMenuCounts();renderDashboard();renderSuggestBar()}
+$('btnBackMenu').addEventListener('click',goMenu);/* ==== پنل درس‌ها ==== */
+function showTopicsPanel(){$('mainMenu').style.display='none';$('duePanel').classList.remove('show');$('topicPanel').classList.remove('show');$('subtopicPanel').classList.remove('show');$('subjectSearchPanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';$('summary').classList.remove('show');$('endSubtopic').classList.remove('show');$('topicsPanel').classList.add('show');renderTopicsList()}
+function renderTopicsList(){const wrap=$('topicsList');if(TOPICS.length===0){wrap.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt)">هنوز درسی ساخته نشده.</div>';return}let html='';TOPICS.forEach(t=>{const subCount=(t.subtopics||[]).length;const cardCount=(t.subtopics||[]).reduce((s,st)=>s+(st.cards||[]).length,0);const readCount=countReadInTopic(t.id);const pct=cardCount>0?Math.round(readCount/cardCount*100):0;html+=`<div class="topic-item" data-topic="${t.id}"><div class="head"><div class="name" data-toggle="${t.id}"><span class="arrow">▶</span><span>📚 ${escapeHtml(t.name)}</span><span class="progress-pill">${pct}% خوانده</span><span style="font-size:.7rem;color:var(--mt)">(${subCount} مبحث، ${cardCount} کارت)</span></div><div class="actions"><button class="review-btn" data-review-topic="${t.id}">▶ مرور</button><div class="dots-menu"><button>⋮</button><div class="dropdown"><button data-edit-topic="${t.id}">✏ تغییر نام</button><button data-up-topic="${t.id}">▲ بالا</button><button data-down-topic="${t.id}">▼ پایین</button><button class="danger" data-del-topic="${t.id}">🗑 حذف درس</button></div></div></div></div><div class="subtopics" id="subs_${t.id}">${renderSubtopics(t)}</div></div>`});wrap.innerHTML=html;bindTopicsEvents()}
+function renderSubtopics(topic){if(!topic.subtopics||topic.subtopics.length===0){return'<div style="text-align:center;padding:10px;color:var(--mt);font-size:.78rem">مبحثی ندارد</div>'}let html='';topic.subtopics.forEach(st=>{const isRead=isSubtopicRead(topic.id,st.id);const dueN=countDueInTopicSub(topic.id,st.id);const startN=countStartInTopicSub(topic.id,st.id);html+=`<div class="subtopic-item ${isRead?'read':''}"><input type="checkbox" data-sub-read="${topic.id}|${st.id}" ${isRead?'checked':''} title="خوانده‌شده"><div class="sub-name">📂 ${escapeHtml(st.name)} <span class="card-count">${(st.cards||[]).length} کارت</span>${dueN>0?`<span class="due-count">${dueN} سررسیده</span>`:''}${startN>0?`<span class="start-count">${startN} استارت</span>`:''}</div><div class="sub-actions"><button class="primary" data-review-sub="${topic.id}|${st.id}">▶ مرور</button><button class="rand" data-rand-sub="${topic.id}|${st.id}">🎲</button><div class="sub-dots"><button>⋮</button><div class="dropdown"><button data-add-card="${topic.id}|${st.id}">➕ کارت جدید</button><button data-edit-sub="${topic.id}|${st.id}">✏ تغییر نام</button><button data-move-sub="${topic.id}|${st.id}">📂 جابه‌جا</button><button data-up-sub="${topic.id}|${st.id}">▲ بالا</button><button data-down-sub="${topic.id}|${st.id}">▼ پایین</button><button class="danger" data-del-sub="${topic.id}|${st.id}">🗑 حذف مبحث</button></div></div></div></div>`});return html}
+function bindTopicsEvents(){
+  document.querySelectorAll('[data-toggle]').forEach(el=>{el.addEventListener('click',e=>{if(e.target.closest('input,button'))return;const item=el.closest('.topic-item');item.classList.toggle('open')})});
+  document.querySelectorAll('.dots-menu>button').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const dm=b.parentElement;document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(x=>{if(x!==dm)x.classList.remove('open')});dm.classList.toggle('open')})});
+  document.querySelectorAll('.sub-dots>button').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const dm=b.parentElement;document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(x=>{if(x!==dm)x.classList.remove('open')});dm.classList.toggle('open')})});
+  document.querySelectorAll('[data-sub-read]').forEach(cb=>{cb.addEventListener('change',e=>{e.stopPropagation();const parts=cb.dataset.subRead.split('|');setSubtopicRead(parts[0],parts[1],cb.checked);renderTopicsList()})});
+  document.querySelectorAll('[data-review-topic]').forEach(b=>{b.addEventListener('click',()=>{const t=TOPICS.find(x=>x.id===b.dataset.reviewTopic);if(!t)return;const keys=[];(t.subtopics||[]).forEach(st=>(st.cards||[]).forEach(c=>keys.push(cardKey(c.q,c.a))));if(keys.length===0){showAlert('این درس کارتی ندارد.','warn');return}startSession('custom',keys)})});
+  document.querySelectorAll('[data-review-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.reviewSub.split('|');startSubtopicSession(parts[0],parts[1])})});
+  document.querySelectorAll('[data-rand-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.randSub.split('|');const t=TOPICS.find(x=>x.id===parts[0]);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===parts[1]);if(!st)return;let keys=(st.cards||[]).map(c=>cardKey(c.q,c.a));if(keys.length===0){showAlert('این مبحث کارتی ندارد.','warn');return}keys=shuffle(keys);session={mode:'random',queue:keys,current:0,revealed:false,stats:{correct:0,partial:0,wrong:0},subtopicId:parts[1],isSingleSubtopic:false,topicId:parts[0]};hideAllPanels();$('card').style.display='flex';$('actions').style.display='flex';document.querySelector('.nav-row').style.display='flex';$('shortcutHint').style.display='block';render()})});
+  document.querySelectorAll('[data-add-card]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.addCard.split('|');openCardModal(parts[0],parts[1],null)})});
+  document.querySelectorAll('[data-edit-topic]').forEach(b=>{b.addEventListener('click',()=>openTopicModal(b.dataset.editTopic))});
+  document.querySelectorAll('[data-edit-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.editSub.split('|');openSubtopicModal(parts[0],parts[1])})});
+  document.querySelectorAll('[data-del-topic]').forEach(b=>{b.addEventListener('click',()=>{const t=TOPICS.find(x=>x.id===b.dataset.delTopic);if(!t)return;if(!confirm('درس «'+t.name+'» و همه مبحث‌های آن حذف شود؟'))return;TOPICS=TOPICS.filter(x=>x.id!==b.dataset.delTopic);saveTopics();renderTopicsList();updateMenuCounts();showAlert('🗑 حذف شد.','warn')})});
+  document.querySelectorAll('[data-del-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.delSub.split('|');const t=TOPICS.find(x=>x.id===parts[0]);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===parts[1]);if(!st)return;if(!confirm('مبحث «'+st.name+'» حذف شود؟'))return;t.subtopics=t.subtopics.filter(x=>x.id!==parts[1]);saveTopics();renderTopicsList();updateMenuCounts()})});
+  document.querySelectorAll('[data-up-topic]').forEach(b=>{b.addEventListener('click',()=>{const i=TOPICS.findIndex(x=>x.id===b.dataset.upTopic);if(i>0){const tmp=TOPICS[i-1];TOPICS[i-1]=TOPICS[i];TOPICS[i]=tmp;saveTopics();renderTopicsList()}})});
+  document.querySelectorAll('[data-down-topic]').forEach(b=>{b.addEventListener('click',()=>{const i=TOPICS.findIndex(x=>x.id===b.dataset.downTopic);if(i<TOPICS.length-1){const tmp=TOPICS[i+1];TOPICS[i+1]=TOPICS[i];TOPICS[i]=tmp;saveTopics();renderTopicsList()}})});
+  document.querySelectorAll('[data-up-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.upSub.split('|');const t=TOPICS.find(x=>x.id===parts[0]);if(!t)return;const i=t.subtopics.findIndex(x=>x.id===parts[1]);if(i>0){const tmp=t.subtopics[i-1];t.subtopics[i-1]=t.subtopics[i];t.subtopics[i]=tmp;saveTopics();renderTopicsList()}})});
+  document.querySelectorAll('[data-down-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.downSub.split('|');const t=TOPICS.find(x=>x.id===parts[0]);if(!t)return;const i=t.subtopics.findIndex(x=>x.id===parts[1]);if(i<t.subtopics.length-1){const tmp=t.subtopics[i+1];t.subtopics[i+1]=t.subtopics[i];t.subtopics[i]=tmp;saveTopics();renderTopicsList()}})});
+  document.querySelectorAll('[data-move-sub]').forEach(b=>{b.addEventListener('click',()=>{const parts=b.dataset.moveSub.split('|');openMoveSubtopicModal(parts[0],parts[1])})});
+}
+$('btnReviewSelected').addEventListener('click',()=>{const checks=document.querySelectorAll('[data-sub-read]:checked');if(checks.length===0){showAlert('هیچ مبحثی انتخاب نشده.','warn');return}const keys=[];checks.forEach(ch=>{const parts=ch.dataset.subRead.split('|');const t=TOPICS.find(x=>x.id===parts[0]);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===parts[1]);if(!st)return;(st.cards||[]).forEach(c=>keys.push(cardKey(c.q,c.a)))});if(keys.length===0){showAlert('مبحث‌های انتخابی کارتی ندارند.','warn');return}startSession('custom',keys)});
+$('btnAddTopic').addEventListener('click',()=>openTopicModal(null));
+function openTopicModal(topicId){const t=topicId?TOPICS.find(x=>x.id===topicId):null;const modal=$('modalContent');modal.innerHTML='<h3>'+(t?'✏ ویرایش درس':'➕ درس جدید')+'</h3><label>نام درس</label><input type="text" id="modalTopicName" value="'+(t?escapeHtml(t.name):'')+'" placeholder="مثلاً: ریاضی"><div class="row"><button class="primary" id="modalSaveTopic">💾 ذخیره</button><button class="neutral" id="modalCancelTopic">انصراف</button></div>';$('modalOverlay').classList.add('show');$('modalTopicName').focus();$('modalCancelTopic').addEventListener('click',closeModal);$('modalSaveTopic').addEventListener('click',()=>{const name=$('modalTopicName').value.trim();if(!name){alert('نام درس را وارد کنید.');return}if(t){t.name=name}else{TOPICS.push({id:makeId(),name,subtopics:[]})}saveTopics();closeModal();renderTopicsList();updateMenuCounts();showAlert('✅ ذخیره شد.','ok')})}
+function openSubtopicModal(topicId,subtopicId){const t=TOPICS.find(x=>x.id===topicId);if(!t)return;const st=subtopicId?(t.subtopics||[]).find(x=>x.id===subtopicId):null;const modal=$('modalContent');modal.innerHTML='<h3>'+(st?'✏ ویرایش مبحث':'➕ مبحث جدید')+'</h3><label>نام مبحث</label><input type="text" id="modalSubName" value="'+(st?escapeHtml(st.name):'')+'" placeholder="مثلاً: فصل اول"><div class="row"><button class="primary" id="modalSaveSub">💾 ذخیره</button><button class="neutral" id="modalCancelSub">انصراف</button></div>';$('modalOverlay').classList.add('show');$('modalSubName').focus();$('modalCancelSub').addEventListener('click',closeModal);$('modalSaveSub').addEventListener('click',()=>{const name=$('modalSubName').value.trim();if(!name){alert('نام مبحث را وارد کنید.');return}if(!t.subtopics)t.subtopics=[];if(st){st.name=name}else{t.subtopics.push({id:makeId(),name,cards:[]})}saveTopics();closeModal();renderTopicsList();updateMenuCounts();showAlert('✅ ذخیره شد.','ok')})}
+function openCardModal(topicId,subtopicId,cardKeyOld){const t=TOPICS.find(x=>x.id===topicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===subtopicId);if(!st)return;const cards=st.cards||[];const idx=cardKeyOld?cards.findIndex(c=>cardKey(c.q,c.a)===cardKeyOld):-1;const oldCard=idx>=0?cards[idx]:null;const modal=$('modalContent');modal.innerHTML='<h3>'+(oldCard?'✏ ویرایش کارت':'➕ کارت جدید')+'</h3><label>سؤال</label><textarea id="modalQ" rows="3">'+(oldCard?escapeHtml(oldCard.q):'')+'</textarea><label>پاسخ</label><textarea id="modalA" rows="3">'+(oldCard?escapeHtml(oldCard.a):'')+'</textarea><div class="row"><button class="primary" id="modalSaveCard">💾 ذخیره</button><button class="neutral" id="modalCancelCard">انصراف</button></div>';$('modalOverlay').classList.add('show');$('modalQ').focus();$('modalCancelCard').addEventListener('click',closeModal);$('modalSaveCard').addEventListener('click',()=>{const q=$('modalQ').value.trim();const a=$('modalA').value.trim();if(!q||!a){alert('سؤال و پاسخ را وارد کنید.');return}if(oldCard){const oldK=cardKey(oldCard.q,oldCard.a);const newK=cardKey(q,a);if(oldK!==newK&&getAllCards().some(c=>c.key===newK)){showAlert('این کارت قبلاً وجود دارد.','warn');return}if(oldK!==newK&&STATE.cards[oldK]){STATE.cards[newK]=STATE.cards[oldK];delete STATE.cards[oldK]}oldCard.q=q;oldCard.a=a}else{const k=cardKey(q,a);if(getAllCards().some(c=>c.key===k)){showAlert('این کارت قبلاً وجود دارد.','warn');return}if(!st.cards)st.cards=[];st.cards.push({q:q,a:a})}saveTopics();saveState(true);closeModal();renderTopicsList();if($('subtopicPanel').classList.contains('show'))renderSubtopicDetail();updateMenuCounts();showAlert('✅ ذخیره شد.','ok')})}
+function openMoveSubtopicModal(topicId,subtopicId){const t=TOPICS.find(x=>x.id===topicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===subtopicId);if(!st)return;const modal=$('modalContent');let opts='';TOPICS.forEach(x=>{opts+='<option value="'+x.id+'"'+(x.id===topicId?' selected':'')+'>'+escapeHtml(x.name)+'</option>'});modal.innerHTML='<h3>📂 جابه‌جا کردن مبحث</h3><label>به کدام درس؟</label><select id="moveSubToTopic">'+opts+'</select><div class="row"><button class="primary" id="modalMoveSub">💾 اعمال</button><button class="neutral" id="modalCancelMoveSub">انصراف</button></div>';$('modalOverlay').classList.add('show');$('modalCancelMoveSub').addEventListener('click',closeModal);$('modalMoveSub').addEventListener('click',()=>{const targetId=$('moveSubToTopic').value;if(targetId===topicId){closeModal();return}const target=TOPICS.find(x=>x.id===targetId);if(!target)return;if(!target.subtopics)target.subtopics=[];const i=t.subtopics.findIndex(x=>x.id===subtopicId);const item=t.subtopics.splice(i,1)[0];target.subtopics.push(item);saveTopics();closeModal();renderTopicsList();showAlert('✅ جابه‌جا شد.','ok')})}
+function closeModal(){$('modalOverlay').classList.remove('show')}
+$('modalOverlay').addEventListener('click',e=>{if(e.target.id==='modalOverlay')closeModal()});
+
+/* ==== پنل درس (نمایش مبحث‌ها) ==== */
+let currentTopicDetailId=null;
+function openTopicDetail(topicId){currentTopicDetailId=topicId;const t=TOPICS.find(x=>x.id===topicId);if(!t)return;$('mainMenu').style.display='none';$('topicsPanel').classList.remove('show');$('subtopicPanel').classList.remove('show');$('duePanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('topicPanel').classList.add('show');$('topicDetailTitle').textContent='📚 '+t.name;renderTopicDetail()}
+function renderTopicDetail(){const t=TOPICS.find(x=>x.id===currentTopicDetailId);if(!t)return;const wrap=$('subtopicsList');const subs=t.subtopics||[];if(subs.length===0){wrap.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)">هنوز مبحثی ندارد.</div>';return}let html='';subs.forEach(st=>{html+='<div class="subtopic-item"><div class="sub-name">📂 '+escapeHtml(st.name)+' <span class="card-count">'+(st.cards||[]).length+' کارت</span></div><div class="sub-actions"><button class="primary" data-open-sub="'+st.id+'">📋 نمایش کارت‌ها</button><button data-add-card2="'+st.id+'">➕ کارت</button><button data-edit-sub2="'+st.id+'">✏</button><button class="danger" data-del-sub2="'+st.id+'">🗑</button></div></div>'});wrap.innerHTML=html;wrap.querySelectorAll('[data-open-sub]').forEach(b=>{b.addEventListener('click',()=>openSubtopicDetail(currentTopicDetailId,b.dataset.openSub))});wrap.querySelectorAll('[data-add-card2]').forEach(b=>{b.addEventListener('click',()=>openCardModal(currentTopicDetailId,b.dataset.addCard2,null))});wrap.querySelectorAll('[data-edit-sub2]').forEach(b=>{b.addEventListener('click',()=>openSubtopicModal(currentTopicDetailId,b.dataset.editSub2))});wrap.querySelectorAll('[data-del-sub2]').forEach(b=>{b.addEventListener('click',()=>{if(!confirm('مبحث حذف شود؟'))return;t.subtopics=t.subtopics.filter(x=>x.id!==b.dataset.delSub2);saveTopics();renderTopicDetail();updateMenuCounts()})})}
+$('btnAddSubtopic').addEventListener('click',()=>openSubtopicModal(currentTopicDetailId,null));
+$('btnReviewSubtopic').addEventListener('click',()=>{const t=TOPICS.find(x=>x.id===currentTopicDetailId);if(!t)return;const keys=[];(t.subtopics||[]).forEach(st=>(st.cards||[]).forEach(c=>keys.push(cardKey(c.q,c.a))));if(keys.length===0){showAlert('این درس کارتی ندارد.','warn');return}startSession('custom',keys)});
+$('btnBackFromTopic').addEventListener('click',()=>{$('topicPanel').classList.remove('show');showTopicsPanel()});
+$('btnCloseTopics').addEventListener('click',goMenu);
+$('btnTopicsMenu').addEventListener('click',showTopicsPanel);
+
+/* ==== پنل مبحث ==== */
+let currentTopicId=null;
+let currentSubtopicId=null;
+let selectedCardKeys=new Set();
+function openSubtopicDetail(topicId,subtopicId){currentTopicId=topicId;currentSubtopicId=subtopicId;const t=TOPICS.find(x=>x.id===topicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===subtopicId);if(!st)return;selectedCardKeys.clear();$('mainMenu').style.display='none';$('topicsPanel').classList.remove('show');$('topicPanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('subtopicPanel').classList.add('show');$('subtopicDetailTitle').textContent='📂 '+t.name+' › '+st.name;$('subtopicSearchInput').value='';renderSubtopicDetail()}
+function renderSubtopicDetail(){const t=TOPICS.find(x=>x.id===currentTopicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===currentSubtopicId);if(!st)return;const cards=st.cards||[];const q=($('subtopicSearchInput').value||'').trim();const filtered=q?cards.map((c,i)=>({c:c,i:i})).filter(x=>x.c.q.includes(q)||x.c.a.includes(q)):cards.map((c,i)=>({c:c,i:i}));const wrap=$('cardsList');if(filtered.length===0){wrap.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)">کارتی یافت نشد.</div>';$('massActions').classList.remove('show');return}let html='';filtered.forEach(item=>{const c=item.c;const i=item.i;const k=cardKey(c.q,c.a);const s=getCardState(k);const sel=selectedCardKeys.has(k)?'selected':'';html+='<div class="subtopic-item '+sel+'"><input type="checkbox" data-card-sel="'+encodeURIComponent(k)+'" '+(sel?'checked':'')+'><div class="sub-name">🃏 <b>'+(i+1)+'.</b> '+escapeHtml(c.q.slice(0,80))+(c.q.length>80?'…':'')+' <span style="font-size:.65rem;color:var(--mt);margin-right:6px">👁 '+(s.viewCount||0)+'</span></div><div class="sub-actions"><button data-edit-card="'+i+'">✏</button><button class="danger" data-del-card="'+i+'">🗑</button></div></div>'});wrap.innerHTML=html;wrap.querySelectorAll('[data-card-sel]').forEach(cb=>{cb.addEventListener('change',()=>{const k=decodeURIComponent(cb.dataset.cardSel);if(cb.checked)selectedCardKeys.add(k);else selectedCardKeys.delete(k);renderSubtopicDetail()})});wrap.querySelectorAll('[data-edit-card]').forEach(b=>{b.addEventListener('click',()=>{const i=parseInt(b.dataset.editCard);openCardModal(currentTopicId,currentSubtopicId,cardKey(cards[i].q,cards[i].a))})});wrap.querySelectorAll('[data-del-card]').forEach(b=>{b.addEventListener('click',()=>{const i=parseInt(b.dataset.delCard);if(!confirm('این کارت به «حذف‌شده‌ها» برود؟'))return;const k=cardKey(cards[i].q,cards[i].a);getCardState(k).deleted=true;saveState(true);renderSubtopicDetail();updateMenuCounts()})});if(selectedCardKeys.size>0)$('massActions').classList.add('show');else $('massActions').classList.remove('show')}
+$('subtopicSearchInput').addEventListener('input',renderSubtopicDetail);
+$('btnAddCard').addEventListener('click',()=>openCardModal(currentTopicId,currentSubtopicId,null));
+$('btnReviewThisSubtopic').addEventListener('click',()=>{startSubtopicSession(currentTopicId,currentSubtopicId)});
+$('btnMarkAllRead').addEventListener('click',()=>{const t=TOPICS.find(x=>x.id===currentTopicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===currentSubtopicId);if(!st)return;if(!confirm('همه کارت‌های این مبحث به عنوان خوانده‌شده علامت بزنم؟'))return;(st.cards||[]).forEach(c=>{const k=cardKey(c.q,c.a);getCardState(k).seen=true});setSubtopicRead(currentTopicId,currentSubtopicId,true);saveState(true);renderSubtopicDetail();renderTopicsList();updateMenuCounts();showAlert('📌 علامت‌گذاری شد.','ok')});
+$('btnBackFromSubtopic').addEventListener('click',()=>{selectedCardKeys.clear();$('massActions').classList.remove('show');$('subtopicPanel').classList.remove('show');openTopicDetail(currentTopicId)});
+$('btnMassCancel').addEventListener('click',()=>{selectedCardKeys.clear();renderSubtopicDetail()});
+$('btnMassDelete').addEventListener('click',()=>{if(selectedCardKeys.size===0)return;if(!confirm(selectedCardKeys.size+' کارت به «حذف‌شده‌ها» بروند؟'))return;selectedCardKeys.forEach(k=>{getCardState(k).deleted=true});saveState(true);selectedCardKeys.clear();renderSubtopicDetail();updateMenuCounts();showAlert('🗑 حذف گروهی انجام شد.','warn')});
+$('btnMassMove').addEventListener('click',()=>{if(selectedCardKeys.size===0)return;const modal=$('modalContent');let opts='';TOPICS.forEach(x=>{opts+='<option value="'+x.id+'"'+(x.id===currentTopicId?' selected':'')+'>'+escapeHtml(x.name)+'</option>'});modal.innerHTML='<h3>📂 انتقال گروهی ('+selectedCardKeys.size+' کارت)</h3><label>به کدام درس؟</label><select id="massMoveTopic">'+opts+'</select><label>به کدام مبحث؟</label><select id="massMoveSub"></select><div class="row"><button class="primary" id="modalMassMove">💾 انتقال</button><button class="neutral" id="modalCancelMassMove">انصراف</button></div>';$('modalOverlay').classList.add('show');function refreshSubOpts(){const tid=$('massMoveTopic').value;const tt=TOPICS.find(x=>x.id===tid);if(!tt){$('massMoveSub').innerHTML='';return}let so='';(tt.subtopics||[]).forEach(s=>{so+='<option value="'+s.id+'">'+escapeHtml(s.name)+'</option>'});$('massMoveSub').innerHTML=so||'<option value="">(مبحثی ندارد)</option>'}refreshSubOpts();$('massMoveTopic').addEventListener('change',refreshSubOpts);$('modalCancelMassMove').addEventListener('click',closeModal);$('modalMassMove').addEventListener('click',()=>{const targetTid=$('massMoveTopic').value;const targetSid=$('massMoveSub').value;if(!targetSid){showAlert('مبحث مقصد را انتخاب کنید.','warn');return}const targetT=TOPICS.find(x=>x.id===targetTid);if(!targetT)return;const targetSt=(targetT.subtopics||[]).find(x=>x.id===targetSid);if(!targetSt)return;const srcT=TOPICS.find(x=>x.id===currentTopicId);const srcSt=(srcT.subtopics||[]).find(x=>x.id===currentSubtopicId);const moved=[];srcSt.cards=(srcSt.cards||[]).filter(c=>{const k=cardKey(c.q,c.a);if(selectedCardKeys.has(k)){moved.push(c);return false}return true});if(!targetSt.cards)targetSt.cards=[];moved.forEach(c=>targetSt.cards.push(c));saveTopics();closeModal();selectedCardKeys.clear();$('massActions').classList.remove('show');renderSubtopicDetail();renderTopicsList();showAlert('📂 '+moved.length+' کارت منتقل شد.','ok')})});
+
+/* ==== پایان زیرمبحث ==== */
+function showEndSubtopic(){const st=session.stats;const total=st.correct+st.partial+st.wrong;const pct=total?Math.round(st.correct/total*100):0;let html='<div style="font-size:.85rem;margin-bottom:10px">عملکرد در این مبحث:</div><div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:12px"><div><div style="font-size:1.3rem;font-weight:700;color:#4ade80">'+st.correct+'</div><div style="font-size:.65rem;color:var(--mt)">درست</div></div><div><div style="font-size:1.3rem;font-weight:700;color:#fbbf24">'+st.partial+'</div><div style="font-size:.65rem;color:var(--mt)">حدودی</div></div><div><div style="font-size:1.3rem;font-weight:700;color:#f87171">'+st.wrong+'</div><div style="font-size:.65rem;color:var(--mt)">غلط</div></div><div><div style="font-size:1.3rem;font-weight:700;color:#60a5fa">'+pct+'%</div><div style="font-size:.65rem;color:var(--mt)">درصد</div></div></div>';$('endSubtopicStats').innerHTML=html;$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';$('endSubtopic').classList.add('show');updateMenuCounts()}
+$('btnEndChart').addEventListener('click',()=>{const st=session.stats;const total=st.correct+st.partial+st.wrong;const maxVal=Math.max(st.correct,st.partial,st.wrong,1);const hC=Math.round(st.correct/maxVal*70);const hP=Math.round(st.partial/maxVal*70);const hW=Math.round(st.wrong/maxVal*70);const chartHtml='<div style="padding:14px"><div style="font-size:.85rem;color:var(--mt);margin-bottom:10px">📊 نمودار عملکرد ('+new Date().toLocaleDateString('en-GB')+')</div><div style="display:flex;gap:8px;align-items:flex-end;height:90px;justify-content:center"><div style="text-align:center"><div style="width:40px;height:'+hC+'px;background:#16a34a;border-radius:4px 4px 0 0;min-height:4px;margin:0 auto"></div><div style="font-size:.7rem;color:#4ade80;margin-top:4px">'+st.correct+'</div><div style="font-size:.65rem;color:var(--mt)">درست</div></div><div style="text-align:center"><div style="width:40px;height:'+hP+'px;background:#d97706;border-radius:4px 4px 0 0;min-height:4px;margin:0 auto"></div><div style="font-size:.7rem;color:#fbbf24;margin-top:4px">'+st.partial+'</div><div style="font-size:.65rem;color:var(--mt)">حدودی</div></div><div style="text-align:center"><div style="width:40px;height:'+hW+'px;background:#dc2626;border-radius:4px 4px 0 0;min-height:4px;margin:0 auto"></div><div style="font-size:.7rem;color:#f87171;margin-top:4px">'+st.wrong+'</div><div style="font-size:.65rem;color:var(--mt)">غلط</div></div></div><div style="font-size:.75rem;color:var(--mt);margin-top:10px;text-align:center">کل: '+total+' کارت</div></div>';const modal=$('modalContent');modal.innerHTML='<h3>📊 نمودار عملکرد</h3>'+chartHtml+'<div class="row"><button class="primary" id="modalEndChartClose">✕ بستن</button></div>';$('modalOverlay').classList.add('show');$('modalEndChartClose').addEventListener('click',closeModal)});
+$('btnEndBack').addEventListener('click',()=>{$('endSubtopic').classList.remove('show');if(session.topicId)openTopicDetail(session.topicId);else showTopicsPanel()});
+$('btnEndHome').addEventListener('click',()=>{$('endSubtopic').classList.remove('show');goMenu()});/* ==== جستجوی موضوعی ==== */
+$('btnSubjectSearch').addEventListener('click',()=>{$('mainMenu').style.display='none';$('topicsPanel').classList.remove('show');$('duePanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('subjectSearchPanel').classList.add('show');renderSubjectSearch('');$('subjectSearchInput').focus()});
+$('btnCloseSubjectSearch').addEventListener('click',goMenu);
+$('subjectSearchInput').addEventListener('input',e=>{renderSubjectSearch(e.target.value.trim())});
+function renderSubjectSearch(q){const wrap=$('subjectSearchResults');if(!q){wrap.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)">نام درس یا مبحث را بنویسید...</div>';return}const results=[];TOPICS.forEach(t=>{if(t.name.includes(q)){results.push({type:'topic',topic:t})}(t.subtopics||[]).forEach(st=>{if(st.name.includes(q)){results.push({type:'sub',topic:t,sub:st})}})});if(results.length===0){wrap.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)">نتیجه‌ای یافت نشد.</div>';return}let html='';results.forEach(r=>{if(r.type==='topic'){const cc=(r.topic.subtopics||[]).reduce((s,st)=>s+(st.cards||[]).length,0);html+='<div class="subtopic-item" data-clickable="1" data-go-topic="'+r.topic.id+'" style="cursor:pointer"><div class="sub-name">📚 <b>'+escapeHtml(r.topic.name)+'</b> <span class="card-count">'+cc+' کارت</span></div><div class="sub-actions"><button class="primary" data-goto-topic="'+r.topic.id+'">📋 نمایش</button></div></div>'}else{html+='<div class="subtopic-item" data-clickable="1" data-go-sub="'+r.topic.id+'|'+r.sub.id+'" style="cursor:pointer"><div class="sub-name">📂 '+escapeHtml(r.topic.name)+' › <b>'+escapeHtml(r.sub.name)+'</b> <span class="card-count">'+(r.sub.cards||[]).length+' کارت</span></div><div class="sub-actions"><button class="primary" data-goto-sub="'+r.topic.id+'|'+r.sub.id+'">📋 نمایش</button></div></div>'}});wrap.innerHTML=html;wrap.querySelectorAll('[data-goto-topic]').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();openTopicDetail(b.dataset.gotoTopic)})});wrap.querySelectorAll('[data-goto-sub]').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const p=b.dataset.gotoSub.split('|');openSubtopicDetail(p[0],p[1])})});wrap.querySelectorAll('[data-clickable]').forEach(el=>{el.addEventListener('click',()=>{if(el.dataset.goTopic)openTopicDetail(el.dataset.goTopic);else if(el.dataset.goSub){const p=el.dataset.goSub.split('|');openSubtopicDetail(p[0],p[1])}})})}
+
+/* ==== بارگذاری JSON ==== */
+function handleJSONUpload(text){let data;try{data=JSON.parse(text)}catch(e){return{added:0,skipped:0,warned:0,error:'فایل نامعتبر'}}let added=0,skipped=0,warned=0;const mergeCard=function(topic,subName,q,a){if(!q||!a)return;let st=(topic.subtopics||[]).find(x=>x.name===subName);if(!st){st={id:makeId(),name:subName||'بدون مبحث',cards:[]};if(!topic.subtopics)topic.subtopics=[];topic.subtopics.push(st)}if(!st.cards)st.cards=[];const k=cardKey(q,a);if(st.cards.some(c=>cardKey(c.q,c.a)===k)){skipped++;return}const similar=getAllCards().find(c=>c.q.trim()===q.trim()&&c.a.trim()!==a.trim());if(similar){if(confirm('کارت مشابه:\nسؤال: '+q+'\nپاسخ جدید: '+a+'\nپاسخ قبلی: '+similar.a+'\n\nاضافه شود؟')){st.cards.push({q:q,a:a});added++}else{warned++}return}st.cards.push({q:q,a:a});added++};const processTopic=function(topicName,subtopics,flatCards){let topic=TOPICS.find(x=>x.name===topicName);if(!topic){topic={id:makeId(),name:topicName||'بدون دسته',subtopics:[]};TOPICS.push(topic)}if(subtopics&&Array.isArray(subtopics)){subtopics.forEach(st=>{(st.cards||[]).forEach(c=>mergeCard(topic,st.name||'بدون مبحث',c.q,c.a))})}if(flatCards&&Array.isArray(flatCards)){flatCards.forEach(c=>mergeCard(topic,'بدون مبحث',c.q,c.a))}};if(Array.isArray(data)){processTopic('بدون دسته',null,data)}else if(data.topics&&Array.isArray(data.topics)){data.topics.forEach(t=>processTopic(t.name||'بدون دسته',t.subtopics,t.cards))}else if(data.topic||data.subtopics||data.cards){processTopic(data.topic||'بدون دسته',data.subtopics,data.cards)}else{return{added:0,skipped:0,warned:0,error:'ساختار JSON شناسایی نشد'}}return{added:added,skipped:skipped,warned:warned,error:null}}
+$('btnUploadTop').addEventListener('click',()=>$('fileInputCards').click());
+$('btnUploadTopic').addEventListener('click',()=>$('fileInputCards').click());
+$('btnUploadSettings').addEventListener('click',()=>$('fileInputCards').click());
+$('fileInputCards').addEventListener('change',async e=>{const files=Array.from(e.target.files||[]);if(files.length===0)return;let totalAdded=0,totalSkipped=0,totalWarned=0,errors=0;for(const f of files){const text=await f.text();const res=handleJSONUpload(text);if(res.error){errors++;showAlert('خطا در '+f.name+': '+res.error,'err')}else{totalAdded+=res.added;totalSkipped+=res.skipped;totalWarned+=res.warned}}saveTopics();updateMenuCounts();renderTopicsList();renderDashboard();if(errors===0){showAlert('✅ '+files.length+' فایل آپلود شد. '+totalAdded+' کارت اضافه، '+totalSkipped+' تکراری، '+totalWarned+' مشابه رد شد.','ok')}e.target.value=''});
+function downloadJSON(data,filename){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);showAlert('📤 خروجی ذخیره شد.','ok')}
+$('btnEmptyTemplate').addEventListener('click',()=>{const data={version:1,topic:"نام درس",subtopics:[{name:"نام مبحث",cards:[{q:"سؤال",a:"پاسخ"}]}]};downloadJSON(data,'قالب-خالی.json')});
+$('btnExport').addEventListener('click',exportBackup);
+$('btnQuickExport').addEventListener('click',exportBackup);
+function exportBackup(){const data={version:10,exportedAt:new Date().toISOString(),settings:SETTINGS,state:STATE,topics:TOPICS};const d=new Date();const stamp=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+'_'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0');downloadJSON(data,'پشتیبان-'+stamp+'.json');try{localStorage.setItem(BACKUP_KEY,String(Date.now()))}catch(e){}updateBackupNotice()}
+$('btnImport').addEventListener('click',()=>$('fileInput').click());
+$('fileInput').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(!data.state||!data.topics){showAlert('فایل نامعتبر.','err');return}if(!confirm('داده‌های فعلی جایگزین می‌شوند. مطمئنید؟'))return;STATE=data.state;TOPICS=data.topics;if(data.settings){SETTINGS=data.settings;try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(SETTINGS))}catch(e){}loadSettings()}if(!STATE.readSubtopics)STATE.readSubtopics={};if(!STATE.dailyRecords)STATE.dailyRecords={};saveState(true);saveTopics();updateMenuCounts();renderTopicsList();renderDashboard();renderSuggestBar();showAlert('✅ بازیابی شد.','ok')}catch(err){showAlert('خطا: '+err.message,'err')}};r.readAsText(f);e.target.value=''});
+
+/* ==== تابلوی آمار ==== */
+function getTodayStats(){const td=today();const h=STATE.history[td]||{correct:0,partial:0,wrong:0};const rec=STATE.dailyRecords[td]||{total:0,newCards:0};return{correct:h.correct,partial:h.partial,wrong:h.wrong,total:rec.total,newCards:rec.newCards}}
+function getRecords(){let bestCards=0,bestNew=0;Object.entries(STATE.dailyRecords||{}).forEach(([d,r])=>{if((r.total||0)>bestCards)bestCards=r.total;if((r.newCards||0)>bestNew)bestNew=r.newCards});return{bestCards:bestCards,bestNew:bestNew}}
+function getStepLevelCounts(){const all=getAllCards();const levels=[0,0,0,0,0,0,0];all.forEach(c=>{const s=getCardState(c.key);if(s.deleted||s.suspended)return;if(!s.seen||s.correctCount===0)return;const idx=Math.min(s.stepIndex,6);levels[idx]++});return levels}
+function renderDashboard(){const box=$('dashboardMain');if(!box)return;const all=getAllCards();if(all.length===0){box.innerHTML='<div style="text-align:center;padding:20px;color:var(--mt)">هنوز کارتی نداری.</div>';return}const mastered=calcMastered();const total=all.length;const pct=Math.round(mastered/total*100);const startN=countBy(isStart);const ts=getTodayStats();const rec=getRecords();const levels=getStepLevelCounts();const stepLabels=['۳ روز','۷ روز','۱۴ روز','۲۶ روز','۵۸ روز','۱۲۵ روز','🧠 حفظه'];let html='<div class="dash-grid"><div class="dash-item"><div class="num">'+pct+'%</div><div class="lbl">📈 پیشرفت کل</div></div><div class="dash-item pt"><div class="num">'+startN+'</div><div class="lbl">🎯 استارت</div></div><div class="dash-item ok"><div class="num">'+mastered+'</div><div class="lbl">✅ بلد</div></div><div class="dash-item"><div class="num">'+total+'</div><div class="lbl">📚 کل کارت</div></div></div>';html+='<div class="dash-section"><h3>📅 امروز</h3><div class="dash-grid"><div class="dash-item ok"><div class="num">'+ts.correct+'</div><div class="lbl">✅ درست</div></div><div class="dash-item pt"><div class="num">'+ts.partial+'</div><div class="lbl">🟡 حدودی</div></div><div class="dash-item wr"><div class="num">'+ts.wrong+'</div><div class="lbl">🔴 غلط</div></div><div class="dash-item"><div class="num">'+ts.total+'</div><div class="lbl">📖 خوانده</div></div><div class="dash-item"><div class="num">'+ts.newCards+'</div><div class="lbl">🆕 جدید</div></div></div></div>';html+='<div class="dash-section"><h3>🪜 توزیع پله‌ها</h3><div class="step-bar">';for(let i=0;i<7;i++){const color=i===6?'#a78bfa':'#60a5fa';html+='<div class="step-item"><div class="snum" style="color:'+color+'">'+levels[i]+'</div><div class="slbl">'+stepLabels[i]+'</div></div>'}html+='</div></div>';html+='<div class="dash-section"><h3>🏆 رکوردها</h3><div class="dash-grid"><div class="dash-item trophy"><div class="num">'+rec.bestCards+'</div><div class="lbl">🏆 بیشترین کارت در روز</div></div><div class="dash-item trophy"><div class="num">'+rec.bestNew+'</div><div class="lbl">🏆 بیشترین جدید در روز</div></div></div></div>';box.innerHTML=html}
+$('btnDashboard').addEventListener('click',()=>{$('mainMenu').style.display='none';$('topicsPanel').classList.remove('show');$('duePanel').classList.remove('show');$('subjectSearchPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('dashboardPanel').classList.add('show');renderDashboard()});
+$('btnCloseDashboard').addEventListener('click',goMenu);
+function renderDashboardBox(){const box=$('dashboardBox');if(!box)return;const all=getAllCards();if(all.length===0){box.classList.remove('show');return}box.classList.add('show');renderDashboard()}
+
+/* ==== پنل سررسیده‌ها ==== */
+function showDuePanel(){$('mainMenu').style.display='none';$('topicsPanel').classList.remove('show');$('subjectSearchPanel').classList.remove('show');$('topicPanel').classList.remove('show');$('subtopicPanel').classList.remove('show');$('dashboardPanel').classList.remove('show');$('dashboardBox').classList.remove('show');$('card').style.display='none';$('actions').style.display='none';document.querySelector('.nav-row').style.display='none';$('shortcutHint').style.display='none';$('duePanel').classList.add('show');renderDueTopics()}
+function renderDueTopics(){const wrap=$('dueTopicsList');const totalDue=countBy(isDue);if(totalDue===0){wrap.innerHTML='<div style="text-align:center;padding:24px;color:var(--mt)">🎉 کارت سررسیده‌ای نداری.</div>';return}let html='<div style="font-size:.8rem;color:var(--mt);margin-bottom:8px">📊 مجموع: <b style="color:#fbbf24">'+totalDue+'</b> کارت سررسیده</div>';html+='<div class="due-topics-list">';TOPICS.forEach(t=>{const n=countDueInTopic(t.id);if(n>0){html+='<div class="due-topic-row"><span class="tname">📚 '+escapeHtml(t.name)+'</span><span class="tcount">'+n+' کارت</span><button data-review-due-topic="'+t.id+'">▶ مرور</button></div>'}});html+='</div>';wrap.innerHTML=html;wrap.querySelectorAll('[data-review-due-topic]').forEach(b=>{b.addEventListener('click',()=>{const tid=b.dataset.reviewDueTopic;const all=getAllCards();const keys=all.filter(c=>c.topicId===tid&&isDue(c.key)).map(c=>c.key);if(keys.length===0){showAlert('کارت سررسیده‌ای در این درس نیست.','warn');return}startSession('custom',keys)})})}
+$('btnReviewAllDue').addEventListener('click',()=>{const q=buildQueue('due');if(q.length===0){showAlert('کارت سررسیده‌ای نیست.','warn');return}startSession('custom',q)});
+$('btnCloseDue').addEventListener('click',goMenu);
+
+/* ==== منوی پیشنهادی ==== */
+function renderSuggestBar(){const bar=$('suggestBar');if(!bar)return;const all=getAllCards();if(all.length===0){bar.innerHTML='';return}const unreadSubs=[];TOPICS.forEach(t=>{(t.subtopics||[]).forEach(st=>{const cards=st.cards||[];let unread=0;cards.forEach(c=>{if(!getCardState(cardKey(c.q,c.a)).seen)unread++});if(unread>0)unreadSubs.push({topic:t,sub:st,unread:unread})})});const dueSubs=[];TOPICS.forEach(t=>{(t.subtopics||[]).forEach(st=>{const cards=st.cards||[];let due=0;cards.forEach(c=>{if(isDue(cardKey(c.q,c.a)))due++});if(due>0)dueSubs.push({topic:t,sub:st,due:due})})});let pick=null;let label='';if(unreadSubs.length>0){pick=unreadSubs[Math.floor(Math.random()*unreadSubs.length)];label='🎯 بریم سراغ «'+escapeHtml(pick.sub.name)+'» از «'+escapeHtml(pick.topic.name)+'» ('+pick.unread+' کارت نخوانده)'}else if(dueSubs.length>0){pick=dueSubs[Math.floor(Math.random()*dueSubs.length)];label='⏰ بریم سراغ «'+escapeHtml(pick.sub.name)+'» از «'+escapeHtml(pick.topic.name)+'» ('+pick.due+' کارت سررسیده)'}else{bar.innerHTML='<div style="color:var(--mt);font-size:.78rem">🎉 همه چیز مرتب است.</div>';return}bar.innerHTML='<button id="btnSuggestGo">'+label+'</button>';$('btnSuggestGo').addEventListener('click',()=>{startSubtopicSession(pick.topic.id,pick.sub.id)})}
+
+/* ==== جستجوی کارت ==== */
+$('btnSearch').addEventListener('click',()=>{$('searchBox').classList.toggle('show');if($('searchBox').classList.contains('show'))$('searchInput').focus()});
+$('searchInput').addEventListener('input',e=>{const q=e.target.value.trim();const res=$('searchResults');if(q.length<2){res.innerHTML='';return}const all=getAllCards();const matches=all.filter(c=>c.q.includes(q)||c.a.includes(q));let html='';matches.slice(0,30).forEach(c=>{html+='<div data-key="'+encodeURIComponent(c.key)+'">'+escapeHtml(c.q.slice(0,60))+(c.q.length>60?'…':'')+' <span style="color:var(--mt);font-size:.7rem">— '+escapeHtml(c.topicName)+' › '+escapeHtml(c.subtopicName)+'</span></div>'});res.innerHTML=html;res.querySelectorAll('div').forEach(d=>{d.addEventListener('click',()=>{const key=decodeURIComponent(d.dataset.key);startSession('custom',[key]);$('searchBox').classList.remove('show');$('searchInput').value='';$('searchResults').innerHTML=''})})});
+
+/* ==== تم ==== */
+function applyTheme(t){document.body.classList.remove('light','night');if(t==='light')document.body.classList.add('light');else if(t==='night')document.body.classList.add('night')}
+$('btnTheme').addEventListener('click',()=>{let cur='dark';try{cur=localStorage.getItem(THEME_KEY)||'dark'}catch(e){}let nxt;if(cur==='dark')nxt='light';else if(cur==='light')nxt='night';else nxt='dark';try{localStorage.setItem(THEME_KEY,nxt)}catch(e){}applyTheme(nxt);showAlert('تم: '+nxt,'ok')});
+
+/* ==== پشتیبان هفتگی ==== */
+function checkFriday(){const d=new Date();if(d.getDay()===5){const td=today();const lastFri=localStorage.getItem('fc_last_friday_v10');if(lastFri!==td){$('fridayNotice').classList.add('show')}}}
+$('btnFridayYes').addEventListener('click',()=>{exportBackup();try{localStorage.setItem('fc_last_friday_v10',today())}catch(e){}$('fridayNotice').classList.remove('show')});
+$('btnFridayNo').addEventListener('click',()=>{try{localStorage.setItem('fc_last_friday_v10',today())}catch(e){}$('fridayNotice').classList.remove('show')});
+function updateBackupNotice(){try{const last=localStorage.getItem(BACKUP_KEY);const n=$('backupNotice');if(!last){n.classList.add('show');return}const d=(Date.now()-parseInt(last))/86400000;if(d>3)n.classList.add('show');else n.classList.remove('show')}catch(e){}}
+function pickMotivation(){const lastIdx=parseInt(localStorage.getItem('fc_mot_idx_v10')||'-1');let idx;do{idx=Math.floor(Math.random()*MOTIVATIONS.length)}while(idx===lastIdx&&MOTIVATIONS.length>1);try{localStorage.setItem('fc_mot_idx_v10',String(idx))}catch(e){}return MOTIVATIONS[idx]}
+
+/* ==== تنظیمات ==== */
+$('btnSettings').addEventListener('click',()=>$('settings').classList.toggle('show'));
+$('btnSaveSettings').addEventListener('click',()=>{const p=parseInt($('setPartial').value)||2;const c=$('setCorrect').value.split(',').map(x=>parseInt(x.trim())).filter(x=>x>0);const w=parseInt($('setWrong').value)||1;const h=parseInt($('setHardThreshold').value)||7;if(c.length===0){alert('زنجیره خالی');return}SETTINGS.partialDays=p;SETTINGS.correctSteps=c;SETTINGS.wrongDays=w;SETTINGS.hardThreshold=h;saveLS(SETTINGS_KEY,SETTINGS);showAlert('✅ ذخیره شد.','ok');updateMenuCounts()});
+let resetStep=0;
+$('btnResetAll').addEventListener('click',()=>{resetStep++;if(resetStep===1){if(!confirm('⚠️ مرحله ۱ از ۳: همه داده‌ها پاک شود؟')){resetStep=0;return}}else if(resetStep===2){if(!confirm('⚠️ مرحله ۲ از ۳: واقعاً مطمئنی؟')){resetStep=0;return}}else if(resetStep===3){if(!confirm('⚠️ مرحله ۳ از ۳: آخرین تأیید! پاک شود؟')){resetStep=0;return}try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(SETTINGS_KEY);localStorage.removeItem(TOPICS_KEY);sessionStorage.removeItem(STORAGE_KEY);sessionStorage.removeItem(TOPICS_KEY)}catch(e){}location.reload()}});
+$('btnShowStorageInfo').addEventListener('click',async()=>{let lsCount=0,tpCount=0;try{const raw=localStorage.getItem(STORAGE_KEY);if(raw)lsCount=raw.length;const rtp=localStorage.getItem(TOPICS_KEY);if(rtp)tpCount=rtp.length}catch(e){}const idbData=await loadIDB();let idbCount=0;if(idbData)idbCount=JSON.stringify(idbData).length;let backupAgo='هرگز';try{const last=localStorage.getItem(BACKUP_KEY);if(last){backupAgo=Math.round((Date.now()-parseInt(last))/86400000)+' روز پیش'}}catch(e){}alert('وضعیت:\n\nlocalStorage پیشرفت: '+(lsCount>0?'✅':'❌')+'\nlocalStorage درس‌ها: '+(tpCount>0?'✅':'❌')+'\nIndexedDB: '+(idbCount>0?'✅':'❌')+'\nآخرین پشتیبان: '+backupAgo+'\n\nدرس‌ها: '+TOPICS.length+'\nکل کارت‌ها: '+getAllCards().length+'\nپیشرفت: '+overallProgress()+'%')});
+
+/* ==== ادغام کارت‌های مشابه ==== */
+function findSimilarCardGroups(){const all=getAllCards();const byQ={};all.forEach(c=>{const qKey=c.q.trim();if(!byQ[qKey])byQ[qKey]=[];byQ[qKey].push(c)});const groups=[];Object.keys(byQ).forEach(q=>{const cards=byQ[q];if(cards.length>1){const uniqueAnswers=[];cards.forEach(c=>{if(uniqueAnswers.indexOf(c.a.trim())===-1)uniqueAnswers.push(c.a.trim())});if(uniqueAnswers.length>1)groups.push({q:q,cards:cards,answers:uniqueAnswers})}});return groups}
+$('btnMergeSimilar').addEventListener('click',()=>{const groups=findSimilarCardGroups();const modal=$('modalContent');if(groups.length===0){modal.innerHTML='<h3>🔗 ادغام کارت‌های مشابه</h3><p style="font-size:.85rem;color:var(--mt);text-align:center;padding:20px">✅ کارت مشابهی با پاسخ متفاوت پیدا نشد.</p><div class="row"><button class="neutral" id="modalMergeClose">✕ بستن</button></div>';$('modalOverlay').classList.add('show');$('modalMergeClose').addEventListener('click',closeModal);return}let html='<h3>🔗 ادغام کارت‌های مشابه</h3>';html+='<p style="font-size:.78rem;color:var(--mt);margin-bottom:10px">'+groups.length+' گروه کارت با سؤال یکسان ولی پاسخ متفاوت پیدا شد.</p>';html+='<div style="max-height:400px;overflow-y:auto;border:1px solid var(--bd);border-radius:8px;padding:8px;background:var(--bg)">';groups.forEach((g,gi)=>{html+='<div style="padding:10px;border-bottom:1px solid var(--bd);margin-bottom:6px">';html+='<div style="display:flex;align-items:flex-start;gap:8px"><input type="checkbox" data-merge-group="'+gi+'" checked style="margin-top:5px;width:16px;height:16px;cursor:pointer"><div style="flex:1"><div style="font-weight:600;font-size:.82rem;color:var(--tx);margin-bottom:6px">'+escapeHtml(g.q)+'</div>';html+='<div style="font-size:.72rem;color:var(--mt);margin-bottom:4px">پاسخ‌ها:</div>';g.answers.forEach(a=>{html+='<div style="font-size:.75rem;color:#fcd34d;padding:3px 8px;background:rgba(252,211,77,.1);border-radius:5px;margin-bottom:3px">• '+escapeHtml(a)+'</div>'});html+='</div></div></div>'});html+='</div>';html+='<div class="row"><button class="primary" id="modalMergeDo">💾 ادغام انتخاب‌شده‌ها</button><button class="neutral" id="modalMergeCancel">انصراف</button></div>';modal.innerHTML=html;$('modalOverlay').classList.add('show');$('modalMergeCancel').addEventListener('click',closeModal);$('modalMergeDo').addEventListener('click',()=>{const selected=Array.from(document.querySelectorAll('[data-merge-group]:checked')).map(cb=>parseInt(cb.dataset.mergeGroup));if(selected.length===0){showAlert('هیچ گروهی انتخاب نشده.','warn');return}if(!confirm(selected.length+' گروه ادغام شوند؟ کارت‌های ادغام‌شده از صفر شروع می‌شوند.'))return;let totalMerged=0;selected.forEach(gi=>{const g=groups[gi];const mergedAnswer=g.answers.map(a=>'• '+a).join('\n');const firstCard=g.cards[0];const t=TOPICS.find(x=>x.id===firstCard.topicId);if(!t)return;const st=(t.subtopics||[]).find(x=>x.id===firstCard.subtopicId);if(!st)return;const keysToRemove=g.cards.map(c=>c.key);st.cards=(st.cards||[]).filter(c=>keysToRemove.indexOf(cardKey(c.q,c.a))===-1);st.cards.push({q:firstCard.q,a:mergedAnswer});keysToRemove.forEach(k=>{delete STATE.cards[k]});totalMerged++});saveTopics();saveState(true);closeModal();renderTopicsList();updateMenuCounts();showAlert('🔗 '+totalMerged+' گروه ادغام شد.','ok')})});
+
+/* ==== پایان بخش ۴ ==== *//* ==== راه‌اندازی ==== */
+window.addEventListener('beforeunload',()=>{try{if(STATE)saveLS(STORAGE_KEY,STATE);if(TOPICS)saveLS(TOPICS_KEY,TOPICS)}catch(e){}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){saveState(true);saveTopics()}});
+async function init(){
+  try{await openIDB();saveStatus.idb=true}catch(e){saveStatus.idb=false}
+  loadSettings();
+  STATE=await loadState();
+  TOPICS=loadTopics();
+  if(!Array.isArray(TOPICS))TOPICS=[];
+  getAllCards().forEach(c=>getCardState(c.key));
+  if(!STATE.readSubtopics)STATE.readSubtopics={};
+  if(!STATE.dailyRecords)STATE.dailyRecords={};
+  await saveState(true);
+  updateMenuCounts();
+  updateBackupNotice();
+  checkFriday();
+  const motEl=$('motivation');
+  if(motEl)motEl.textContent='💡 '+pickMotivation();
+  renderSuggestBar();
+  renderDashboardBox();
+  $('card').style.display='none';
+  $('actions').style.display='none';
+  document.querySelector('.nav-row').style.display='none';
+  $('shortcutHint').style.display='none';
+  if(saveStatus.ls&&saveStatus.idb)showSaveIndicator(true,true);
+  else if(saveStatus.ls||saveStatus.idb)showSaveIndicator(saveStatus.ls,saveStatus.idb);
+  else{const el=$('saveIndicator');el.textContent='⚠️ ذخیره‌سازی در دسترس نیست';el.className='save-indicator err'}
+}
+init();
+</script>
+</body>
+</html>
