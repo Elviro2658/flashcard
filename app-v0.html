@@ -616,6 +616,84 @@ function renderSubtopics(topic){
   return html;
 }
 function bindTopicsEvents(){
+  try{
+    document.querySelectorAll('.dots-menu>button').forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.stopPropagation();
+        var dm=b.parentElement;
+        document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(function(x){if(x!==dm)x.classList.remove('open')});
+        dm.classList.toggle('open');
+      });
+    });
+    document.querySelectorAll('.sub-dots>button').forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.stopPropagation();
+        var dm=b.parentElement;
+        document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(function(x){if(x!==dm)x.classList.remove('open')});
+        dm.classList.toggle('open');
+      });
+    });
+    document.querySelectorAll('[data-toggle]').forEach(function(el){
+      el.addEventListener('click',function(e){
+        if(e.target.closest('input,button'))return;
+        var item=el.closest('.topic-item');
+        if(item)item.classList.toggle('open');
+      });
+    });
+    document.querySelectorAll('[data-sub-read]').forEach(function(cb){
+      cb.addEventListener('change',function(e){
+        e.stopPropagation();
+        var p=cb.dataset.subRead.split('|');
+        setSubtopicRead(p[0],p[1],cb.checked);
+        renderTopicsList();
+      });
+    });
+    document.querySelectorAll('[data-review-topic]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var t=TOPICS.find(function(x){return x.id===b.dataset.reviewTopic});
+        if(!t)return;
+        var keys=[];
+        (t.subtopics||[]).forEach(function(st){(st.cards||[]).forEach(function(c){keys.push(cardKey(c.q,c.a))})});
+        if(keys.length===0){showAlert('این درس کارتی ندارد.','warn');return}
+        startSession('custom',keys);
+      });
+    });
+    document.querySelectorAll('[data-review-sub]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var p=b.dataset.reviewSub.split('|');
+        startSubtopicSession(p[0],p[1]);
+      });
+    });
+    document.querySelectorAll('[data-edit-topic]').forEach(function(b){
+      b.addEventListener('click',function(){openTopicModal(b.dataset.editTopic)});
+    });
+    document.querySelectorAll('[data-edit-sub]').forEach(function(b){
+      b.addEventListener('click',function(){var p=b.dataset.editSub.split('|');openSubtopicModal(p[0],p[1])});
+    });
+    document.querySelectorAll('[data-add-card]').forEach(function(b){
+      b.addEventListener('click',function(){var p=b.dataset.addCard.split('|');openCardModal(p[0],p[1],null)});
+    });
+    document.querySelectorAll('[data-del-topic]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var t=TOPICS.find(function(x){return x.id===b.dataset.delTopic});
+        if(!t)return;
+        if(!confirm('درس «'+t.name+'» حذف شود؟'))return;
+        TOPICS=TOPICS.filter(function(x){return x.id!==b.dataset.delTopic});
+        saveTopics();renderTopicsList();updateMenuCounts();
+      });
+    });
+    document.querySelectorAll('[data-del-sub]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var p=b.dataset.delSub.split('|');
+        var t=TOPICS.find(function(x){return x.id===p[0]});
+        if(!t)return;
+        if(!confirm('مبحث حذف شود؟'))return;
+        t.subtopics=t.subtopics.filter(function(x){return x.id!==p[1]});
+        saveTopics();renderTopicsList();updateMenuCounts();
+      });
+    });
+  }catch(e){console.log('bindTopicsEvents error:',e)}
+}
   document.querySelectorAll('[data-toggle]').forEach(el=>{el.addEventListener('click',e=>{if(e.target.closest('input,button'))return;const item=el.closest('.topic-item');item.classList.toggle('open')})});
   document.querySelectorAll('.dots-menu>button').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const dm=b.parentElement;document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(x=>{if(x!==dm)x.classList.remove('open')});dm.classList.toggle('open')})});
   document.querySelectorAll('.sub-dots>button').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const dm=b.parentElement;document.querySelectorAll('.dots-menu.open,.sub-dots.open').forEach(x=>{if(x!==dm)x.classList.remove('open')});dm.classList.toggle('open')})});
