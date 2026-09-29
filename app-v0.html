@@ -692,6 +692,21 @@ async function init(){
   else{const el=$('saveIndicator');el.textContent='⚠️ ذخیره‌سازی در دسترس نیست';el.className='save-indicator err'}
 }
 setTimeout(function(){alert('TOPICS: '+TOPICS.length+' | Cards: '+getAllCards().length+' | FirstName: '+(TOPICS[0]?TOPICS[0].name:'-'))},3000);
+setTimeout(function(){
+  var msg='=== TEST RESULT ===\n';
+  msg+='TOPICS: '+TOPICS.length+'\n';
+  msg+='Cards: '+getAllCards().length+'\n';
+  msg+='FirstName: '+(TOPICS[0]?TOPICS[0].name:'-')+'\n';
+  var wrap=document.getElementById('topicsList');
+  msg+='topicsList element: '+(wrap?'YES':'NO')+'\n';
+  msg+='topicsList innerHTML len: '+(wrap?wrap.innerHTML.length:0)+'\n';
+  var panel=document.getElementById('topicsPanel');
+  msg+='topicsPanel display: '+(panel?panel.style.display:'-')+'\n';
+  msg+='topicsPanel has show class: '+(panel?panel.classList.contains('show'):'-')+'\n';
+  try{renderTopicsList();msg+='renderTopicsList called: OK\n';}catch(e){msg+='renderTopicsList ERROR: '+e.message+'\n'}
+  msg+='After render len: '+document.getElementById('topicsList').innerHTML.length;
+  alert(msg);
+},5000);
 init();
 </script>
 </body>
