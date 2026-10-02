@@ -795,228 +795,208 @@ body.deep-focus .card-area{min-height:70vh;display:flex;flex-direction:column;ju
   <script>
 /* ============================================================
    فلش‌کارت v24 — JavaScript بخش ۱
-   داده‌ها + ذخیره + ۱۰ صدا + XP + چالش + مدال + سیستم ساعت‌محور
+   داده‌ها + ذخیره + ۱۰ صدا + XP + چالش (ساعت‌محور) + مدال
    ============================================================ */
 
 /* ============ MOTIVATIONS ============ */
 var MOTIVATIONS = [
-"امروز تلاش کن، فردا افتخارش کن",
-"هر کارت یه قدم به موفقیته",
-"یادگیری بهترین سرمایه‌گذاریه",
-"پیوستگی مهم‌تر از شدته",
-"هر روز کمی بهتر از دیروز",
-"دانش نوره، بتابون",
-"خسته نشو، داری پیشرفت می‌کنی",
-"یک کارت بیشتر، یک قدم جلوتر",
-"موفقیت مجموع تلاش‌های کوچیکه",
-"به خودت ایمان داشته باش",
-"شروع کردی، پس ادامه بده",
-"پشتکار رمز موفقیته",
-"علم سلاح آینده‌ست",
-"راه طولانی با یک قدم شروع می‌شه",
-"وقت طلاست، هدرش نده",
-"خواب خوب، مغز بهتر",
-"آب کافی، تمرکز بالا",
-"نفس عمیق، آرامش فوری",
-"هر غلط یک درس جدید",
-"مرور کلید یادگیریه",
-"به مسیرت ادامه بده",
-"قوی‌تر از مشکلاتی",
-"هدف‌هات یادت نره",
-"امروز بساز، فردا فتح کن",
-"اشتباه یعنی تلاش کردی",
-"پیشرفت کن، متوقف نشو",
-"علم آزادی می‌آره",
-"با انگیزه بمان",
-"یاد بگیر، رشد کن، بدرخش",
-"بهترین نسخه خودت باش",
-"دیروز تموم شد، امروز تازه‌ست",
-"تلاش کن تا موفق شی",
-"تعادل رو حفظ کن",
-"هر نفس فرصت دوباره‌ست",
-"آینده مال یادگیرنده‌هاست",
-"با تمرین عالی می‌شی",
-"مسیر سخت، نتیجه شیرین",
-"ناامید نشو، ادامه بده",
-"مطالعه عادت بزرگان",
-"زمان رو دریاب",
-"به عقب نگاه نکن",
-"هدفت یادت باشه",
-"ایمان داشته باش",
-"بزرگ فکر کن",
-"سخت‌کوش باش",
-"صبور باش",
-"مثبت فکر کن",
-"مقاوم باش",
-"پیشرفتت رو جشن بگیر",
-"به خودت افتخار کن",
-"همه چیز درست می‌شه",
-"یادگیری لذت‌بخشه",
-"با علاقه یاد بگیر",
-"تمرکز مهم‌تر از زمانه",
-"کم‌کم رشد کن",
-"موفقیت انتخاب است",
-"هر روز فرصت جدیده",
-"دانش قدرت واقعیه",
-"به رؤیاهات برس",
-"روی خودت سرمایه‌گذاری کن",
-"تلاش تو رو می‌سازه",
-"همیشه یاد بگیر",
-"زمان بهترین هدیه‌ست",
-"جدی باش ولی سخت نگیر",
-"هدف‌مند باش",
-"خودت رو دوست داشته باش",
-"از اشتباهات یاد بگیر",
-"قدرت اراده سلاح توئه",
-"به خودت توجه کن",
-"ادامه دادن بهترین انتخابه",
-"تو می‌تونی، باور کن",
-"بهترین روزها در راهه",
-"قدر لحظه‌ها رو بدون",
-"نترس از اشتباه",
-"به مسیر ادامه بده",
-"موفقیت نزدیکه",
+"امروز تلاشت، فردا افتخارت، پس همین حالا شروع کن و نذار فردا حسرت امروز رو بخوری",
+"هر کارت که می‌خونی، یک قدم به موفقیت نزدیک‌تر می‌شی",
+"یادگیری بهترین سرمایه‌گذاری عمرته، پس وقتت رو هدر نده",
+"پیوستگی مهم‌تر از شدته، هر روز کمی بهتر از یه روز زیاد",
+"با تمرین هر روز بهتر می‌شی، فقط کافیه ادامه بدی",
+"دانش نور است، در تاریکی جاهل بتابون و راه رو روشن کن",
+"خسته نشو، تو داری پیشرفت می‌کنی حتی اگه خودت حس نکنی",
+"یک کارت بیشتر، یک قدم جلوتر، همین‌طوری جلو برو تا برسی",
+"موفقیت مجموع تلاش‌های کوچک روزانه‌ست، پس هر روز تلاش کن",
+"به خودت ایمان داشته باش، تو قوی‌تر از اون چیزی هستی که فکر می‌کنی",
+"سخت‌ترین کار شروع کردن است، ولی تو شروع کردی، پس ادامه بده",
+"هر روز بهتر از دیروز، همین کافیه، فقط یه قدم کوچیک جلوتر بیا",
+"پشتکار رمز موفقیت واقعیه، بدون اون هیچ استعدادی شکوفا نمی‌شه",
+"علم سلاح آینده توست، پس تجهیز شو و آماده باش",
+"خودت را باور کن، بقیه هم به‌زودی باورت می‌کنن",
+"راه طولانی با یک قدم شروع می‌شود، پس همون قدم اول رو بردار",
+"وقت طلاست، از هر لحظه‌اش برای بهتر شدن استفاده کن",
+"خواب خوب، مغز بهتر، پس به بدنت هم اهمیت بده",
+"آب کافی، تمرکز بالا، مواظب سلامتی‌ات باش",
+"نفس عمیق، آرامش فوری، قبل هر مطالعه چند نفس بکش",
+"هر غلط یک درس جدید است، پس از اشتباهاتت نترس",
+"مرور کلید یادگیری پایدار است، بدون مرور همه چیز فراموش می‌شه",
+"به مسیرت ادامه بده، تو داری به هدف نزدیک‌تر می‌شی",
+"تو قوی‌تر از مشکلاتی که سر راهت هستن، پس تسلیم نشو",
+"هدف‌هات رو یادت نره، هر روز به‌خاطر اونا تلاش کن",
+"امروز رو بساز، فردا رو فتح کن، حالا وقت عمل کردنه",
+"اشتباه یعنی تلاش کردی، اگه اشتباه نمی‌کردی یعنی تلاش هم نکرده بودی",
+"پیشرفت کن، متوقف نشو، حتی یه قدم کوچیک هم پیشرفته",
+"علم آزادی می‌آورد، هر چی بیشتر بدونی آزادتر زندگی می‌کنی",
+"با انگیزه بمان، انگیزه‌ات رو هر روز تازه کن",
+"یاد بگیر، رشد کن، بدرخش، این چرخه زندگی موفقه",
+"بهترین نسخه خودت باش، نه کپی از کسی دیگه",
+"دیروز تموم شد، امروز تازه‌ست، پس با انرژی شروع کن",
+"تلاش کن تا موفق شی، راه دیگه‌ای نداری",
+"به خودت سخت نگیر ولی رها هم نکن، تعادل رو حفظ کن",
+"هر نفس فرصت دوباره است، پس نفس بکش و ادامه بده",
+"دانشمند بساز از خودت، آینده مال کسانیه که یاد می‌گیرن",
+"با تمرین عالی می‌شی، استعداد فقط بخش کوچیکیه",
+"مسیر سخت نتیجه شیرین داره، پس سختی‌ها رو تحمل کن",
+"ناامید نشو، همه از صفر شروع کردن، تو هم می‌تونی",
+"مطالعه عادت بزرگان است، پس خودت هم بهش عادت کن",
+"زمان رو دریاب، هر لحظه‌ای که می‌گذره برنمی‌گرده",
+"به عقب نگاه نکن، فقط به جلو برو، گذشته تموم شده",
+"هدفت یادت نره، حتی وقتی خسته‌ای، هدف‌هات یادت باشه",
+"ایمان داشته باش، به خودت و به توانایی‌هات",
+"بزرگ فکر کن، بزرگ بساز، هیچ‌وقت خودت رو دست‌کم نگیر",
+"سخت‌کوش باش، پاداش می‌گیری، قانون کائناته",
+"صبور باش، همه چیز زمان می‌بره، عجله نکن",
+"مثبت فکر کن، مثبت زندگی کن، افکارت واقعیت می‌سازن",
+"مقاوم باش، طوفان می‌گذره ولی تو می‌مونی",
+"پیشرفتت رو جشن بگیر، حتی کوچیک‌ها رو",
+"به خودت افتخار کن، داری تلاش می‌کنی و این ارزشمنده",
+"همه چیز درست می‌شه، صبر کن و ادامه بده",
+"یادگیری لذت‌بخش‌ترین کار دنیاست، پس ازش لذت ببر",
+"با علاقه یاد بگیر، علاقه بهترین موتوره",
+"تمرکز مهم‌تر از زمان است، کیفیت مهم‌تر از کمیت",
+"کم‌کم رشد کن، پیوسته بمون، یه ذره هر روز",
+"موفقیت انتخاب است نه شانس، پس انتخاب کن که موفق باشی",
+"هر روز فرصت جدیده، ازش استفاده کن",
+"دانش قدرت واقعی است، قدرتش رو حس کن",
+"به رؤیاهات برس، بذار رؤیاهات موتور حرکتت باشن",
+"روی خودت سرمایه‌گذاری کن، بهترین سرمایه‌گذاریه",
+"تلاش تو را می‌سازد، نه چیز دیگه",
+"همیشه یاد بگیر، هیچ‌وقت بس نیست، تا زنده‌ای یاد بگیر",
+"زمان بهترین هدیه‌ایه که داری، پس هدرش نده",
+"جدی باش ولی سخت نگیر، تعادل کلید موفقیته",
+"هدف‌مند باش، بدون هدف هیچ راهی وجود نداره",
+"خودت رو دوست داشته باش، اول از همه خودت",
+"از اشتباهات یاد بگیر نه اینکه فرار کنی",
+"قدرت اراده بزرگ‌ترین سلاح توئه، پس قوی باش",
+"توجه به خود، توجه به آینده، مراقب خودت باش",
+"بهترین انتخاب، ادامه دادن است، حتی وقتی سخته",
+"تو می‌تونی، فقط باور کن، این جمله رو باور کن",
+"بهترین روزها در راهه، اگر امروز تلاش کنی",
+"قدر لحظه‌ها رو بدون، هر لحظه یه فرصته",
+"خودت رو باور داشته باش، تو از اونی که فکر می‌کنی قوی‌تری",
+"نترس از اشتباه، بترس از تلاش نکردن",
+"به مسیر ادامه بده، حتی وقتی تاریکه",
+"موفقیت نزدیکه، فقط کافیه ادامه بدی",
 "سعی کن، تلاش کن، برنده شو",
-"به خودت فرصت بده",
-"قدر خودت رو بدون",
-"انگیزه‌ات رو حفظ کن",
-"داری بهتر می‌شی",
-"یه قدم دیگه بردار",
-"به هدف نزدیک‌تر شدی",
-"پیشرفتت محسوسه",
-"قوی‌تر از دیروز",
-"افتخار کن به خودت",
-"هر کارت یه پله",
-"همین حالا شروع کن",
-"باور کن که می‌تونی",
-"علم ماله خودته",
-"بی‌سوادی بدتر از فقره",
-"موفقیت قلعه‌ست، فتحش کن",
-"نظم مهم‌تر از انگیزه‌ست",
-"عادت‌های خوب بساز",
-"خودتو با دیروزت مقایسه کن",
-"یادگیری سفر است",
-"بهترین کتاب خودتی",
-"هر ثانیه سرمایه‌گذاریه",
-"تنبلی و تلاش با هم نمی‌سازن",
-"با کوچیک شروع کن",
-"به امروزت افتخار می‌کنی",
-"راه هزار کیلومتری با یه قدم",
-"هیچ‌وقت دیر نیست",
-"تنبلی رو شکست بده",
-"هر صبح یه فرصته",
-"امروز رو بساز",
-"دفعه بعد بهتر",
-"سختی‌ها موقتی‌ن",
-"هیچ‌کس کامل نیست",
-"تلاش امروز، آرامش فردا",
-"نقطه ضعف رو قوت کن",
-"یک درصد بهتر هر روز",
-"کاری که شروع کردی تمومش کن",
-"نتیجه تلاش رو می‌بینی",
-"شک نکن، درست پیش می‌ری",
-"قدر زمان رو بدون",
-"مسیر درسته، ادامه بده",
-"نزدیک‌تر از فکرت هستی",
-"موفقیت یه تصمیمه",
-"به خودت جایزه بده",
-"جای درستی هستی",
-"زندگی بازی رو ببر",
-"خودت رو ناامید نکن",
-"خودت بهترین دوستتی",
-"امروز شروع همه چیزه",
-"معجزه با تلاش میاد",
+"به خودت فرصت بده، هیچ‌کس یک‌شبه موفق نشد",
+"قدر خودت رو بدون، تو ارزشمندی",
+"انگیزه‌ات رو حفظ کن، هر روز یادآوری کن چرا شروع کردی",
+"داری بهتر می‌شی، حتی اگه خودت متوجه نشی",
+"یه قدم دیگه بردار، نزدیک‌تر از اونی که فکر می‌کنی",
+"به هدف نزدیک‌تر شدی، پس ادامه بده",
+"پیشرفتت محسوسه، فقط به خودت فرصت بده",
+"قوی‌تر از دیروز، هر روز یه قدم",
+"افتخار کن به خودت، تو داری کار درست رو انجام می‌دی",
+"هر کارت یه پله، هر پله یه قدم به موفقیت",
+"بهترین زمان برای شروع همین حالاست، نه فردا",
+"باور کن که می‌تونی، چون واقعاً می‌تونی",
+"علم تنها سلاحیه که هرگز ازت گرفته نمی‌شه",
+"هر چی یاد بگیری ماله خودته، هیچ‌کس نمی‌تونه بگیره",
+"بی‌سوادی بدتر از فقره، پس وقتت رو هدر نده",
+"موفقیت مثل یه قلعه‌ست، باید قدم به قدم فتحش کنی",
+"یه قدم کوچیک هر روز، بهتر از یه شیرجه بزرگ گاهی وقتا",
+"نظم مهم‌تر از انگیزه‌ست، چون انگیزه گذراست ولی نظم می‌مونه",
+"عادت‌های خوب بساز، چون زندگی رو می‌سازن",
+"خودتو با دیروز خودت مقایسه کن، نه با دیگران",
+"هر روز یه فرصت دوباره برای بهتر شدنه",
+"یادگیری سفر است، نه مقصد",
+"بهترین کتابی که می‌تونی بخونی، خودتی",
+"هر ثانیه‌ای که می‌خونی، سرمایه‌گذاری روی آینده‌ست",
+"موفق شدن تنبلی و تلاش رو با هم قبول نمی‌کنه",
+"با کوچیک شروع کن، ولی با جدیت ادامه بده",
+"یه روزی به امروزت افتخار می‌کنی",
+"راه هزار کیلومتری با یه قدم شروع می‌شه",
+"هیچ‌وقت دیر نیست برای شروع، از الان شروع کن",
+"بزرگ‌ترین دشمن تو، تنبلی خودته، شکستش بده",
+"هر روز صبح که بیدار می‌شی، یه فرصت جدید داری",
+"به جای حسرت دیروز، امروز رو بساز",
+"دفعه بعد بهتر انجامش می‌دی، پس ناراحت نشو",
+"سختی‌ها موقتی‌ن، ولی نتیجه‌شون موندگاره",
+"هیچ‌کس کامل نیست، ولی همه می‌تونن پیشرفت کنن",
+"تلاش امروز، آرامش فرداست",
+"نقطه ضعفت رو پیدا کن و بشه نقطه قوتت",
+"هر روز فقط یک درصد بهتر، بعد یه سال ۳۷ برابر بهتر می‌شی",
+"کاری رو که شروع کردی، تمومش کن",
+"مطمئن باش نتیجه تلاش‌هات رو می‌بینی",
+"شک نکن، تو داری درست پیش می‌ری",
+"زمان سریع می‌گذره، پس قدرش رو بدون",
+"مسیر درست رو انتخاب کردی، ادامه بده",
+"تو از اونی که فکر می‌کنی نزدیک‌تری",
+"موفقیت یه تصمیمه، تصمیم بگیر و ادامه بده",
+"به خودت جایزه بده وقتی هدف رو زدی",
+"دقیقاً همون‌جایی هستی که باید باشی",
+"زندگی بازی شانسه ولی تو می‌تونی بازی رو ببری",
+"هیچ نسخه‌ای از خودت رو ناامید نکن",
+"بهترین دوست تو، خودت هستی، پس مهربون باش",
+"امروز می‌تونه روز شروع همه چیز باشه",
+"معجزه وقتی اتفاق می‌افته که تلاش کنی",
 "آرزوهات رو جدی بگیر",
-"استعداد بدون تلاش شکوفا نمی‌شه",
-"سخت‌کوشی تو رو می‌رسونه",
-"مسیر سخت ارزشش رو داره",
-"یه کارت دیگه، بریم",
-"لحظه رو دریاب",
-"بی‌توجهی به پیشرفت نکن",
-"خودت رو بساز",
-"قوی بودن تلقینه",
-"با تمرکز، معجزه کن",
+"بدون تلاش، هیچ استعدادی شکوفا نمی‌شه",
+"سخت کوشی تو رو به هر جایی که بخوای می‌رسونه",
+"مسیر سخت، ولی ارزشش رو داره",
+"یه کارت دیگه، یه قدم دیگه، بریم",
+"این لحظه رو دریاب، چون تکرار نمی‌شه",
+"پیشرفت نکردن یه انتخاب نیست، یه بی‌توجهیه",
+"خودت رو بساز، بقیه میان",
+"قوی بودن انتخاب نیست، تلقینه",
+"با تمرکز و پشتکار، معجزه می‌کنی",
 "باور داشته باش که می‌شه",
-"زندگی کوتاهه، بهترین کار",
-"بهتر از دیروز، شعارت باشه",
-"معجزه‌ها ساخته می‌شن",
-"به زمان احترام بذار",
-"شکست پله موفقیته",
-"داستان فردا رو بساز",
-"بزرگ فکر کن، کوچیک شروع",
-"ناامیدی رو دور کن",
-"موفقیت بدون تلاش، رؤیاست",
-"زندگیت جدیه، جدی بگیر",
-"از ذهن و بدنت مراقبت کن",
-"به این روزها می‌خندی",
-"بهترین بازیگرش تو باش",
-"یادگیری متوقف نمی‌شه",
-"توانایی تو، تصمیم‌هات",
-"ادامه بده، می‌رسی",
-"بهترین روزها در راهه",
-"هر روز فرصت تازه",
+"زندگی کوتاهه، بهترین کار رو انجام بده",
+"امروز بهتر از دیروز، این شعارت باشه",
+"معجزه‌ها اتفاق نمی‌افتن، ساخته می‌شن",
+"به زمان احترام بذار، اونم بهت احترام می‌ذاره",
+"شکست، پله‌ایه برای موفقیت",
+"تلاش امروز، داستان فرداست",
+"بزرگ فکر کن، کوچیک شروع کن، الان عمل کن",
+"ناامیدی رو از خودت دور کن",
+"موفقیت بدون تلاش، فقط یه رؤیاست",
+"خودت رو جدی بگیر، زندگیت جدی‌ه",
+"سرمایه اصلی تو، ذهن و بدنتن، ازشون مراقبت کن",
+"یه روز به این روزها می‌خندی و افتخار می‌کنی",
+"زندگی یه بازیه، بهترین بازیگرش تو باش",
+"یادگیری هیچ‌وقت متوقف نمی‌شه",
+"توانایی واقعی تو، تصمیم‌های توئه نه شانس",
+"مسیر رو ادامه بده، به نتیجه می‌رسی",
+"خودت رو باور کن، بهترین روزها در راهه",
+"هر روز، یه فرصت برای شروع تازه",
 "بزرگ‌ترین خطر، ریسک نکردنه",
-"به خودت بگو می‌تونم",
-"بذار زمان کارش رو بکنه",
-"برای بهتر شدن دیر نیست",
-"تو معمار موفقیتی",
-"زندگیت رو خودت بساز",
-"بهتر از این می‌تونی باشی",
-"ایمان به توانایی‌هات",
-"پیروزی بر خودت بزرگ‌ترینه",
-"قلب قوی، ذهن باز",
+"خودت رو در آینه ببین و بگو می‌تونم",
+"تلاش کن، بعد بذار زمان کارش رو بکنه",
+"هیچ‌وقت برای بهتر شدن دیر نیست",
+"موفقیت یه ساختمون، تو معمارشی",
+"زندگیت رو خودت بساز، نه دیگران",
+"خیلی بهتر از این می‌تونی باشی، پس تلاش کن",
+"به خودت و توانایی‌هات ایمان بیار",
+"بزرگ‌ترین پیروزی، پیروزی بر خودته",
+"قلبت رو قوی کن، ذهنت رو بازتر",
 "دنیا مال تلاش‌کننده‌هاست",
 "تغییر از خودت شروع می‌شه",
-"امروز روز توئه",
-"پیشرفتت رو ببین",
-"داستانت رو قشنگ بنویس",
-"با هر مرور قوی‌تر",
-"حافظه‌ات قابل اعتماده",
-"چرا شروع کردی رو یادت باشه",
-"کارت‌هات بهترین دوستتن",
-"سرمایه‌گذاری روی خودت",
-"از اشتباه پله بساز",
-"بی‌نظمی رو حذف کن",
-"صبور باش ولی بی‌حرکت نه",
-"تلاشت رو ببین",
-"عادت‌هات زندگیت رو می‌سازن",
-"یادگیری راه داره",
-"مرور یادت میاره",
-"قدرت تکرار رو دست‌کم نگیر",
-"هر روز یه پله بالاتر",
-"با تمرین، استاد می‌شی",
-"پیشرفت زمان می‌بره",
-"به خودت فرصت بده",
-"در مسیر درستی هستی",
-"تلاش بی‌نتیجه نمی‌مونه",
-"به نتیجه فکر کن نه سختی",
-"هیچ تلاشی هدر نمی‌ره",
-"خودت رو جدی بگیر",
-"بزرگ بشو، بزرگ فکر کن",
-"مسیر روشنه، فقط برو",
-"مرور کن تا ملکه ذهنت بشه",
-"با هر کارت یه قدم جلوتر",
-"قدر این لحظه رو بدون",
-"یادگیری پایان نداره",
-"بهترین زمان، همین حالاست",
-"با پشتکار به همه جا می‌رسی",
-"مهم نیست چقدر کنده، مهم ادامه دادنه",
-"کارت‌هات رو با علاقه بخون",
-"دانش بهترین دوسته",
-"برای خودت افتخار بساز",
-"تو بهترین خودت باش",
-"هر روز فرصت جدید"
+"امروز، روز توئه، پس ازش استفاده کن",
+"پیشرفتت رو ببین، نه عقب‌موندنت رو",
+"هر کارت یه داستانه، داستانت رو قشنگ بنویس",
+"با هر مرور، قوی‌تر می‌شی",
+"حافظه‌ات قابل اعتماده، فقط بهش اعتماد کن",
+"یادت باشه چرا شروع کردی، اون انگیزه رو حفظ کن",
+"بهترین دوست تو، کتاب و کارت‌هات هستن",
+"سرمایه‌گذاری روی خودت، بیشترین سود رو داره",
+"از هر اشتباه، یه پله بساز",
+"بی‌نظمی رو از زندگیت حذف کن",
+"صبور باش، ولی بی‌حرکت نباش",
+"تلاشت رو ببین، نه نتیجه‌ش رو",
+"روی عادت‌هات کار کن، زندگیت رو می‌سازن"
 ];
 
 var PRAISES = ["عالی بود!","آفرین!","درسته!","ادامه بده!","خوب بود!","دقیقاً همین!","ماشالله!","با قدرت!","حرفه‌ای!","بی‌نظیر!","همینه!","زدی تو هدف!","تمرکز بالا!","افتخارآمیز!","خوب یاد گرفتی!","به همین ادامه بده!","پیشرفت عالی!","قوی بودی!","درخشان!","ممنون از تلاشت!","نزدیکی!","درخشیدی!","بازی خوب!","مغز فعال!","حافظه آهنین!","یک قدم به جلو!","نتیجه داد!","با انرژی!","نمایش فوق‌العاده!","پاسخ دقیق!","حرف نداری!","قدرت یادگیری!","سریع و دقیق!","آینده‌ساز!","سبقت گرفتی!","پیروزی نزدیکه!","به خودت ببال!","تو یک قهرمانی!","بهترین نتیجه!","خوب زدی!","کامل و درست!","یک قدم جلوتر!","بردی!","دقیق مثل لیزر!","باز هم درست!","درخشان مثل خورشید!","یادگیری چشمگیر!","استوار ادامه!","سرعت و دقت!","تو بهترینی!","دستت درد نکنه!","قشنگ زدی!","همچین ادامه بده!","دقیق و بی‌نقص!","عالی و بی‌نظیر!","افتخار روز!","تو یک عالمی!","راه تو راه علم!","بچه باهوش!","کارت بعدی منتظرته!","پاسخ تو پاسخ درست!","با این سرعت به همه می‌رسی!","رکورد جدید!","حافظه‌ات عالیه!","محکم و استوار!","در مسیر موفقیت!","با هوش ادامه بده!","پیشرفت محسوس!","کارات درسته!","باریکلا!","شیرین مثل عسل!","مثل یک استاد!","پاسخ‌هات دقیق!","با روحیه ادامه بده!","یه سر و گردن بالاتر!","قلب مرور تو قویه!","درخشان‌تر از دیروز!","اثر یادگیری!","بهترین روز!","به افتخار تو!","امروز روز توئه!","تو یک درخششی!","پاسخ عالی!","شگفت‌انگیز!","قدرت نامحدود!","راهت ادامه بده!","مثل آب خوردن!","این که کاری نبود!","حتی بهتر!","رکورد زدی!","استادانه!","دقیق مثل ساعت!","مثل گل!","راحت زدی!","بازم درست!","هوشت بالاست!","سرعت نور!","تنها راست!","مسیر درسته!","جدی گرفتی!","باور نکردنی!","دقیق و قشنگ!","فوق‌العاده بود!","دقیق‌تر از همیشه!","یه کارت کمتر!","نزدیک‌تر شدی!","داری می‌رسی!","پیشرفتت عالیه!","تو یه قهرمانی!","ادامه بده نزدیکه!","درست مثل استاد!","دقیق مثل کتاب!","مثل یادگیرنده‌های خوب!","دقیق و بی‌نقص!","مثل یه حرفه‌ای!","قوی بودی!","با تمرکز!","باریکلا!","عالی بود!","تحسین می‌کنم!","باورم نمی‌شه!","کاری کردی!","درست و کامل!","یه رتبه بالاتر!","محکم‌تر از قبل!","باهوش‌تر شدی!","قوی‌تر از دیروز!","دقیق‌تر از همیشه!","افتخار روز!","در تاریخ ثبت شد!","به یادگار موند!","کارت زدی مثل کولاک!","پاسخ دقیق داد!","فوق‌العاده سریع!","دقیق‌تر از لیزر!","کامل و بی‌نقص!","یه نتیجه عالی!","حرفه‌ای بود!","مرسی از تلاش!","به افتخار تو!","داری عادت می‌کنی!","داری ماهر می‌شی!","داری قوی‌تر می‌شی!","داری حرفه‌ای می‌شی!","داری درخشان می‌شی!","داری بی‌نظیر می‌شی!","داری استاد می‌شی!","داری بهتر می‌شی!","داری جلو می‌ری!","داری برنده می‌شی!","بهترین انتخاب!","بهترین پاسخ!","بهترین نتیجه!","بهترین لحظه!","بهترین روز!","بهترین کارت!","بهترین تمرین!","بهترین تلاش!","بهترین خودت!","بهترین نسخه!","دقیق و کامل!","دقیق و هوشمند!","دقیق و سریع!","قوی و بااعتماد!","باهوش و چابک!","قوی و استوار!","صاف و روشن!","بدون ابهام!","افتخار می‌کنم!","خوشحالم برات!","بلدی!","یاد گرفتی!","ماندگار شد!","حک شد!","ثبت شد!","ماند!","تثبیت شد!","قطعی شد!","منتظر کارت بعدی!","بریم کارت بعد!","ادامه بده!","کارت بعدی آسونه!","کارت بعدی منتظرته!","کارت بعدی نزدیکه!","کارت بعدی نوبته!","کارت بعدی مال توئه!","کارت بعدی بریم!","وقت داری!","آرام و پیوسته!","بدون عجله!","گام به گام!","راهت ادامه بده!","با اطمینان ادامه بده!","محکم باش!"];
 
 var WRONG_PRAISES = ["اشکالی نداره، ادامه بده!","غلط یعنی داری یاد می‌گیری!","دفعه بعد می‌زنی!","نگران نباش، طبیعیه!","هر اشتباه یه درسه!","مهم اینه که تلاش کردی!","کم کم یاد می‌گیری!","اشتباه بهترین معلمه!","این کارت رو مرور کن!","دفعه بعد بهتر می‌زنی!","مهم ادامه دادنه!","پیشرفت با اشتباه میاد!","نگران نباش عادیه!","از غلط نترس از توقف بترس!","اشتباه یعنی تلاش!","یادگیری راه داره!","یه بار دیگه بخون!","این کارت یادت میمونه!","حافظه با تکرار قوی میشه!","اشتباه بخشی از یادگیریه!","همه اشتباه می‌کنن!","غلط زدی ولی درس گرفتی!","دفعه بعد قطعاً می‌زنی!","قوی بمون!","این کارت رو علامت بزن!","باز هم تلاش کن!","اشتباهات پله‌های موفقیتم!","ادامه بده داری خوب پیش می‌ری!","هر بار بهتر می‌شی!","این یکی رو حفظ کن!","بار بعد میاد دستت!","مهم اینه که ادامه می‌دی!","خسته نباشی ادامه بده!","داری یاد می‌گیری همینه!","اشتباه یعنی داری تلاش می‌کنی!","یه نفس عمیق بعد ادامه!","بار بعد بهتر می‌شه!","این هم یه تجربه شد!","اشکالی نداره ادامه!","پیشرفت تدریجیه!","غلط یه قدم به یادگیریه!","همه چی درست می‌شه!","یادت بمونه دفعه بعد می‌زنی!","باخت امروز برد فردا!","اشتباه یه فرصته!","قوی ادامه بده!","ناراحت نشو ادامه بده!","مرور کن یاد می‌گیری!","همه از جایی شروع کردن!","این کارت رو بیشتر بخون!","دفعه بعد آماده‌تری!","اشتباهات تو رو می‌سازن!","ادامه بده پیشرفت کردی!","قدرت واقعی ادامه دادنه!","یه بار دیگه با دقت بخون!","اشتباه یه پله‌ست!","بار بعد درستش می‌کنی!","مهم اینه که عقب نکشیدی!","غلط یعنی داری یاد می‌گیری!","با هر اشتباه قوی‌تر می‌شی!","کنترل خودت رو حفظ کن!","بار بعد می‌زنی مطمئنم!","این کارت واسم مهمه!","ادامه تو می‌تونی!","چیزی که سخت بود آسون می‌شه!","اشتباه نشون می‌ده تلاش کردی!","زمان می‌بره عادیه!","بار بعد تمرکز بیشتر!","غلط زدی درس گرفتی!","پیشرفت کردی ادامه بده!","یادگیری سفر داره نه مقصد!","هر اشتباه یه قدم جلوتر!","بار بعد حتماً می‌زنی!","داری بهتر می‌شی باور کن!","ادامه بده نزدیکی!","اشتباه بخشی از مسیره!","این کارت رو یادداشت کن!","بعداً بهش می‌خندی!","صبر کن یاد می‌گیری!","غلط زدی ولی تلاش کردی!","دفعه بعد بهتر!","باختن بخشی از یادگیریه!","ادامه تو قوی‌تری!","این یه فرصته!","بار بعد دقیق‌تر می‌زنی!","مهم اینه که ادامه دادی!","قدرت ادامه دادنه!","غلط نشون می‌ده تلاش کردی!","بار بعد این کارت آسونه!","حافظه با تمرین قوی می‌شه!","هر بار نزدیک‌تر!","ادامه بده داری رشد می‌کنی!","این کارت رو بذار ستاره!","بار بعد دیگه غلط نمی‌زنی!","چیزی که مهمه ادامه دادنه!","اشتباه یه هدیه‌ست!","قوی بمون ادامه بده!","بار بعد برنده می‌شی!","غلط زدی؟ پس یاد می‌گیری!","ادامه موفقیت نزدیکه!","بهترین موقع برای یادگیری!","بهترین تلاش رو کردی!","بهترین خودت رو نشون دادی!","قدرت پیگیری تو عالیه!","قدرت پشتکار!","وقت داری عجله نکن!","آرام و پیوسته!","بدون عجله گام به گام!","این کارت خاصه!","حافظه قوی می‌شه با تکرار!","یادگیری نیاز به زمان داره!","صبور باش!","یه کارت دیگه بلد می‌شی!","داری پیشرفت می‌کنی!","به خودت فرصت بده!","تلاش امروز نتیجه فردا!","بار بعد قطعاً درست!","از اشتباه نترس!","غلط نشون پیشرفته!","داری بهتر می‌شی!","ادامه بده کارت بعدی!","قوی ادامه بده!","حافظه با تمرین!","بار بعد دقیق!","یادگیری با تکرار!","صبور باش!","همه از صفر!","خودت رو باور کن!","قوی‌تر از قبل!","ادامه بده نزدیکی!","اشتباه یعنی زندگی!","دفعه بعد بهتر!","قلب مرور تو قویه!","یادگیری لذت‌بخشه!","خودت رو دست‌کم نگیر!","بار بعد می‌زنی!","مهم ادامه دادنه!","تمرکز کن!","قوی بمون!","داری یاد می‌گیری!","با تمرین عالی می‌شی!","ایمان داشته باش!","تلاش کن!","پیشرفت می‌کنی!","موفق می‌شی!","به مسیر ادامه بده!","صبور باش!","قدرت اراده!","مثبت فکر کن!","استوار بمون!","با تمرکز ادامه بده!","تلاش امروز، موفقیت فردا!","جدی بگیر!","مسیر درسته!","ادامه بده!","خودت رو باور کن!","قوی‌تر از مشکلاتی!","هدف‌هات یادت نره!","امروز بساز!","فردا رو فتح کن!","اشتباه یه معلمه!","ازش یاد بگیر!","دفعه بعد بهتر!","پیشرفت محسوسه!","باانگیزه بمان!","بزرگ فکر کن!","محکم ادامه بده!","با اعتماد ادامه بده!","این کارت خاصه!","داری رشد می‌کنی!","قدر خودت رو بدون!","تو می‌تونی!","باور داشته باش!","محکم بمون!","بهترین نسخه خودت باش!","ادامه بده!","تلاش کن!","قوی بمون!","موفق می‌شی!","نزدیکه!","داری می‌رسی!","صبور باش!","به خودت فرصت بده!","حافظه قوی می‌شه!","با تکرار یاد می‌گیری!"];
 
+/* ★ مقادیر پیش‌فرض — همه بر حسب ساعت */
 var DEF = {
   partialHours: 48,
-  /* ★ پله‌ها بر اساس ساعت — دقیقاً مطابق درخواست */
-  correctSteps: [24, 72, 168, 336, 624, 1392, 3000],
-  newCardDelayHours: 16,        /* ★ کارت جدید: +۱۶ ساعت */
+  newCardHours: 16,
+  correctStepsHours: [16, 24, 72, 168, 336, 624, 1392],
   hardThreshold: 7,
   dailyGoal: 50,
   mostViewsThreshold: 20,
@@ -1030,9 +1010,9 @@ var DEF = {
   soundWrong: 'sharp',
   soundPartial: 'melodic',
   soundStudy: 'soft',
-  soundPomo: 'soft',           /* ★ صدای پومودورو (شروع=اتمام) */
+  soundPomo: 'soft',
   soundLevelUp: 'melodic',
-  soundMissionClaim: 'bell',   /* ★ صدای دریافت پاداش */
+  soundMissionClaim: 'bell',
   volume: 60,
   sound: true,
   pomoFocus: 25,
@@ -1058,21 +1038,21 @@ var DEF = {
 };
 
 var KEYS = {
-  state: 'fc24_state',
-  settings: 'fc24_settings',
-  topics: 'fc24_topics',
-  theme: 'fc24_theme',
-  backup: 'fc24_backup',
-  friday: 'fc24_friday',
-  mot: 'fc24_mot',
-  pomo: 'fc24_pomo',
-  medals: 'fc24_medals',
-  folders: 'fc24_folders',
-  challenge: 'fc24_challenge',
-  xp: 'fc24_xp',
-  hiddenAch: 'fc24_hidden_ach',
-  missions: 'fc24_missions',
-  navStack: 'fc24_navstack'
+  state: 'fc23_state',
+  settings: 'fc23_settings',
+  topics: 'fc23_topics',
+  theme: 'fc23_theme',
+  backup: 'fc23_backup',
+  friday: 'fc23_friday',
+  mot: 'fc23_mot',
+  pomo: 'fc23_pomo',
+  medals: 'fc23_medals',
+  folders: 'fc23_folders',
+  challenge: 'fc23_challenge',
+  xp: 'fc23_xp',
+  hiddenAch: 'fc23_hidden_ach',
+  missions: 'fc23_missions',
+  navStack: 'fc23_navStack'
 };
 
 var STATE = null;
@@ -1096,51 +1076,65 @@ var calendarMonth = {y:0, m:0};
 var currentChallenge = null;
 var xpData = {xp: 0, level: 1, history: [], boostUntil: null};
 var challengeData = {current: null, streak: 0, done: [], history: [], level: 1};
-
-/* ★★ NAVIGATION STACK برای دکمه برگشت ★★ */
+/* ★ stack برای دکمه برگشت */
 var NAV_STACK = [];
 
 /* ============ HELPERS ============ */
 function $(id){return document.getElementById(id)}
-function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function nowMs(){return Date.now()}
-/* ★ زمان حال با ساعت و دقیقه */
-function nowISO(){return new Date().toISOString()}
-function addHours(ms, h){return ms + (h * 3600 * 1000)}
-/* ★ تبدیل هر ورودی (string قدیمی یا timestamp جدید) به ms */
+/* ★ تبدیل هر ورودی (string یا number) به timestamp — گزینه ب */
 function toMs(v){
   if(v == null) return null;
   if(typeof v === 'number') return v;
   if(typeof v === 'string'){
-    /* فرمت ISO قدیمی مثل 2024-01-15 */
-    if(/^\d{4}-\d{2}-\d{2}$/.test(v)){
-      return new Date(v + 'T00:00:00').getTime();
-    }
-    var t = Date.parse(v);
-    return isNaN(t) ? null : t;
+    if(v.indexOf('T') > 0 || v.length > 10) return new Date(v).getTime();
+    /* قدیمی: YYYY-MM-DD → نیمه‌شب */
+    var d = new Date(v + 'T00:00:00');
+    return isNaN(d.getTime()) ? null : d.getTime();
   }
   return null;
 }
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addHours(ms, h){ return ms + h*3600*1000 }
 function addDays(s,n){var d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000)}
-/* ★ daysUntil: اگر ورودی string باشه می‌شه روز، اگر timestamp باشه بر اساس ms مقایسه */
-function daysUntil(v){
-  if(v == null) return null;
-  var ms = toMs(v);
-  if(ms == null) return null;
-  return (ms - Date.now()) / 86400000;
-}
-function hoursUntil(v){
-  if(v == null) return null;
-  var ms = toMs(v);
-  if(ms == null) return null;
-  return (ms - Date.now()) / 3600000;
+/* ★ hoursUntil: ساعت تا سررسید */
+function hoursUntil(ms){
+  var t = toMs(ms);
+  if(!t) return null;
+  return (t - Date.now()) / 3600000;
 }
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 function ck(q,a){return (q||'')+'|||'+(a||'')}
 function esc(s){if(s==null)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 function randRGB(){var r,g,b,br,t=0;do{r=Math.floor(Math.random()*180)+70;g=Math.floor(Math.random()*180)+70;b=Math.floor(Math.random()*180)+70;br=0.299*r+0.587*g+0.114*b;t++}while((br<130||br>215)&&t<25);return 'rgb('+r+','+g+','+b+')'}
+/* ★ نمایش ساعت و دقیقه */
+function fmtDueTime(ms){
+  var t = toMs(ms);
+  if(!t) return '';
+  var d = new Date(t);
+  var hh = String(d.getHours()).padStart(2,'0');
+  var mm = String(d.getMinutes()).padStart(2,'0');
+  return hh + ':' + mm;
+}
+function fmtDueFull(ms){
+  var t = toMs(ms);
+  if(!t) return '';
+  var d = new Date(t);
+  var ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return jalali(ds) + ' · ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+/* ★ نمایش فاصله به ساعت و دقیقه */
+function fmtHoursLeft(h){
+  if(h == null) return '';
+  if(h <= 0) return 'سررسیده';
+  if(h < 1){ var m = Math.round(h*60); return m + ' دقیقه'; }
+  if(h < 24){ var hh = Math.floor(h); var mm = Math.round((h-hh)*60); return hh + ' ساعت' + (mm?(' و '+mm+' دقیقه'):''); }
+  var days = Math.floor(h/24);
+  var remH = Math.round(h - days*24);
+  return days + ' روز' + (remH?(' و '+remH+' ساعت'):'');
+}
 
 /* ============ JALALI ============ */
 function jalali(ds){
@@ -1190,12 +1184,6 @@ function gregorianShort(ds){
   var d = ds ? new Date(ds+'T00:00:00') : new Date();
   return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0');
 }
-/* ★ نمایش ساعت و دقیقه */
-function formatTime24(ms){
-  if(!ms) return '—';
-  var d = new Date(ms);
-  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-}
 function daysInJalaliMonth(y,m){if(m<=6) return 31; if(m<=11) return 30; return 30;}
 function jalaliToDate(jy,jm,jd){
   var gy = jy + 621;
@@ -1225,7 +1213,7 @@ function updateDateTime(){
 function saveLS(k,d){try{localStorage.setItem(k,JSON.stringify(d));return true}catch(e){return false}}
 function loadLS(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
 function saveSS(k,d){try{sessionStorage.setItem(k,JSON.stringify(d))}catch(e){}}
-function openIDB(){return new Promise(function(res){try{var r=indexedDB.open('fc24_db',2);r.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('kv'))db.createObjectStore('kv');if(!db.objectStoreNames.contains('sounds'))db.createObjectStore('sounds')};r.onsuccess=function(e){idb=e.target.result;res(idb)};r.onerror=function(){res(null)}}catch(e){res(null)}})}
+function openIDB(){return new Promise(function(res){try{var r=indexedDB.open('fc23_db',2);r.onupgradeneeded=function(e){var db=e.target.result;if(!db.objectStoreNames.contains('kv'))db.createObjectStore('kv');if(!db.objectStoreNames.contains('sounds'))db.createObjectStore('sounds')};r.onsuccess=function(e){idb=e.target.result;res(idb)};r.onerror=function(){res(null)}}catch(e){res(null)}})}
 function saveIDB(d){if(!idb)return;try{idb.transaction('kv','readwrite').objectStore('kv').put(d,'state')}catch(e){}}
 function loadIDB(){return new Promise(function(res){if(!idb)return res(null);try{var req=idb.transaction('kv','readonly').objectStore('kv').get('state');req.onsuccess=function(){res(req.result)};req.onerror=function(){res(null)}}catch(e){res(null)}})}
 function saveSoundToIDB(key, dataUrl){return new Promise(function(res){if(!idb)return res(false);try{var tx=idb.transaction('sounds','readwrite');tx.objectStore('sounds').put(dataUrl,key);tx.oncomplete=function(){res(true)};tx.onerror=function(){res(false)}}catch(e){res(false)}})}
@@ -1238,8 +1226,6 @@ function saveXP(){saveLS(KEYS.xp,xpData)}
 function saveChallenge(){saveLS(KEYS.challenge,challengeData)}
 function saveHiddenAch(){saveLS(KEYS.hiddenAch,HIDDEN_ACH)}
 function saveMissions(){saveLS(KEYS.missions,MISSIONS)}
-function saveNavStack(){saveLS(KEYS.navStack, NAV_STACK)}
-function loadNavStack(){var s = loadLS(KEYS.navStack); return Array.isArray(s) ? s : []}
 function showToast(msg){var el=$('toastBox');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show')},1500)}
 function showXPToast(amount){var el=$('xpToast');if(!el)return;if(amount>=0){el.textContent='+'+amount+' XP';el.classList.remove('neg')}else{el.textContent=amount+' XP';el.classList.add('neg')}el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(xpToastTimer);xpToastTimer=setTimeout(function(){el.classList.remove('show')},1500)}
 
@@ -1264,7 +1250,7 @@ function getS(k){
   if(s.timeSpent === undefined) s.timeSpent = 0;
   if(s.pinned === undefined) s.pinned = false;
   if(s.reverse === undefined) s.reverse = false;
-  if(s.firstSeenMs === undefined) s.firstSeenMs = s.firstSeenDate ? toMs(s.firstSeenDate) : null;
+  if(s.firstSeenMs === undefined) s.firstSeenMs = null;
   return s;
 }
 function isActive(k){var s=STATE.cards[k];if(!s)return true;return !s.deleted && !s.suspended}
@@ -1273,40 +1259,19 @@ function isSuspended(k){var s=STATE.cards[k];return !!(s&&s.suspended)}
 function isSeen(k){var s=STATE.cards[k];return !!(s&&s.seen)}
 function isNew(k){var s=STATE.cards[k];return !s || !s.seen}
 function isPinned(k){var s=STATE.cards[k];return !!(s&&s.pinned)}
-/* ★ isDue بر اساس ms — پله ۰ جداگانه ۱۶ ساعت */
+/* ★ isDue بر اساس timestamp */
 function isDue(k){
   var s=STATE.cards[k];
   if(!s||s.deleted||s.suspended)return false;
-  if(!s.seen){
-    /* ★ کارت جدید: اگر ۱۶ ساعت از اولین نمایشش گذشته → سررسیده */
-    if(s.firstSeenMs && (Date.now() - s.firstSeenMs) >= SETTINGS.newCardDelayHours*3600*1000) return true;
-    return false;
-  }
-  if(s.nextDue == null) return false;
-  var ms = toMs(s.nextDue);
-  return ms != null && Date.now() >= ms;
-}
-/* ★ سررسیده‌ی پله ۰ (کارت جدید ۱۶ ساعت گذشته) */
-function isDueNew(k){
-  var s=STATE.cards[k];
-  if(!s||s.deleted||s.suspended)return false;
-  if(s.seen) return false;
-  if(!s.firstSeenMs) return false;
-  return (Date.now() - s.firstSeenMs) >= SETTINGS.newCardDelayHours*3600*1000;
-}
-/* ★ سررسیده‌ی پله ≥۱ */
-function isDueSeen(k){
-  var s=STATE.cards[k];
-  if(!s||s.deleted||s.suspended)return false;
-  if(!s.seen) return false;
-  if(s.nextDue == null) return false;
-  var ms = toMs(s.nextDue);
-  return ms != null && Date.now() >= ms;
+  if(!s.seen)return false;
+  var t = toMs(s.nextDue);
+  if(!t) return false;
+  return t <= Date.now();
 }
 function isHard(k){var s=STATE.cards[k];if(!s)return false;return (s.totalWrong||0)>=SETTINGS.hardThreshold}
 function isStarred(k){var s=STATE.cards[k];return !!(s&&s.starred)}
 function isMostViews(k){var s=STATE.cards[k];if(!s)return false;return (s.viewCount||0)>=(SETTINGS.mostViewsThreshold||20)}
-function isGold(k){var s=STATE.cards[k];if(!s)return false;return (s.stepIndex||0)>=SETTINGS.correctSteps.length-1 && (s.wrongCount||0)===0 && (s.partialCount||0)===0 && (s.correctCount||0)>0}
+function isGold(k){var s=STATE.cards[k];if(!s)return false;return (s.stepIndex||0)>=SETTINGS.correctStepsHours.length-1 && (s.wrongCount||0)===0 && (s.partialCount||0)===0 && (s.correctCount||0)>0}
 function isTodayWrong(k){var s=STATE.cards[k];return !!(s&&s.lastWrongDate===today())}
 function isTodayPartial(k){var s=STATE.cards[k];return !!(s&&s.lastPartialDate===today())}
 function isTodayCorrect(k){var s=STATE.cards[k];return !!(s&&s.todayCorrect&&s.lastSeen===today())}
@@ -1319,24 +1284,6 @@ function countReadInTopic(tid){var t=TOPICS.find(function(x){return x.id===tid})
 function getStreak(){var streak=0;var d=today();while(true){if(STATE.dailyRecords[d]&&STATE.dailyRecords[d].total>0){streak++;d=addDays(d,-1)}else break}return streak}
 function topicColor(id){var c=['#3b82f6','#4ade80','#fbbf24','#f87171','#a78bfa','#f472b6','#22d3ee','#fb923c','#34d399','#818cf8'];var h=0;for(var i=0;i<id.length;i++){h=((h<<5)-h)+id.charCodeAt(i);h=h&h}return c[Math.abs(h)%c.length]}
 function getDifficultyLevel(k){var s=STATE.cards[k];if(!s)return 0;var w=s.totalWrong||0;if(w===0)return 0;if(w<=2)return 1;if(w<=5)return 2;if(w<=9)return 3;if(w<=14)return 4;if(w<=19)return 5;if(w<=24)return 6;return 7}
-
-/* ★★★ چک اتوماتیک خوانده‌شدن مبحث (تیک سبز خودکار) ★★★ */
-function autoCheckSubRead(tid, sid){
-  var t = TOPICS.find(function(x){return x.id === tid});
-  if(!t) return;
-  var s = t.subtopics.find(function(x){return x.id === sid});
-  if(!s) return;
-  var allSeen = true;
-  (s.cards||[]).forEach(function(c){
-    var k = ck(c.q||'', c.a||'');
-    var st = STATE.cards[k];
-    if(!st || !st.seen){ allSeen = false; }
-  });
-  if(allSeen && (s.cards||[]).length > 0){
-    setSubRead(tid, sid, true);
-  }
-}
-
 function updateCounts(){
   try{
     var counts = {
@@ -1357,24 +1304,45 @@ function updateCounts(){
     if(bm) bm.textContent = TOPICS.length;
   }catch(e){}
 }
+/* ★ وقتی همه کارت‌های مبحث دیده شدن، تیک خودکار */
+function autoMarkSubRead(){
+  try{
+    var changed = false;
+    TOPICS.forEach(function(t){
+      (t.subtopics||[]).forEach(function(s){
+        var key = t.id+'|'+s.id;
+        if(STATE.readSubtopics[key]) return;
+        var cards = s.cards||[];
+        if(!cards.length) return;
+        var allSeen = cards.every(function(c){
+          var k = ck(c.q||'', c.a||'');
+          var st = STATE.cards[k];
+          return st && st.seen;
+        });
+        if(allSeen){ STATE.readSubtopics[key] = true; changed = true; }
+      });
+    });
+    if(changed) saveState();
+  }catch(e){}
+}
 
 /* ============================================================
-   صدای واقعی — ۱۰ مدل (بدون تغییر)
+   صدا — ۱۰ مدل
    ============================================================ */
 var SOUND_MODELS = {
-  soft: {name:'نرم', waves:['sine'], base:1.0, attack:0.02, decay:0.1, sustain:0.7, release:0.3, filter:null, detune:0, vibrato:0, harmonics:[]},
-  sharp: {name:'تیز', waves:['square'], base:1.4, attack:0.005, decay:0.05, sustain:0.85, release:0.15, filter:null, detune:0, vibrato:0, harmonics:[]},
-  melodic: {name:'ملودیک', waves:['sine'], base:1.0, attack:0.01, decay:0.15, sustain:0.6, release:0.4, filter:null, detune:0, vibrato:0, harmonics:[], melodic:true},
-  piano: {name:'پیانو', waves:['triangle','sine'], base:1.0, attack:0.003, decay:0.4, sustain:0.15, release:0.6, filter:{type:'lowpass', freq:3500, q:1}, detune:0, vibrato:0, harmonics:[{mult:2, gain:0.25}, {mult:3, gain:0.1}]},
-  guitar: {name:'گیتار', waves:['sawtooth'], base:0.95, attack:0.005, decay:0.25, sustain:0.35, release:0.4, filter:{type:'lowpass', freq:2200, q:3}, detune:0, vibrato:0, harmonics:[{mult:2, gain:0.15}]},
-  bell: {name:'زنگ', waves:['sine'], base:1.6, attack:0.001, decay:0.8, sustain:0.05, release:1.2, filter:null, detune:0, vibrato:0, harmonics:[{mult:2.76, gain:0.4}, {mult:5.4, gain:0.2}, {mult:8.9, gain:0.1}]},
-  trumpet: {name:'ترومپت', waves:['square'], base:0.75, attack:0.06, decay:0.1, sustain:0.85, release:0.2, filter:{type:'lowpass', freq:2800, q:0.7}, detune:0, vibrato:0, harmonics:[{mult:2, gain:0.3}, {mult:3, gain:0.15}, {mult:4, gain:0.05}]},
-  drum: {name:'درام', waves:['triangle'], base:0.5, attack:0.001, decay:0.08, sustain:0.001, release:0.15, filter:null, detune:0, vibrato:0, harmonics:[], freqSweep:{from:3, to:0.3, time:0.08}, noise:true},
-  sax: {name:'ساکسیفون', waves:['sawtooth'], base:0.85, attack:0.04, decay:0.15, sustain:0.7, release:0.25, filter:{type:'lowpass', freq:2400, q:2}, detune:0, vibrato:5, harmonics:[{mult:2, gain:0.2}]},
-  violin: {name:'ویولن', waves:['sawtooth'], base:1.1, attack:0.12, decay:0.15, sustain:0.8, release:0.3, filter:{type:'lowpass', freq:3200, q:1.5}, detune:5, vibrato:6, harmonics:[{mult:2, gain:0.15}, {mult:3, gain:0.08}]}
+  soft: {name:'نرم',waves:['sine'],base:1.0,attack:0.02,decay:0.1,sustain:0.7,release:0.3,filter:null,detune:0,vibrato:0,harmonics:[]},
+  sharp: {name:'تیز',waves:['square'],base:1.4,attack:0.005,decay:0.05,sustain:0.85,release:0.15,filter:null,detune:0,vibrato:0,harmonics:[]},
+  melodic: {name:'ملودیک',waves:['sine'],base:1.0,attack:0.01,decay:0.15,sustain:0.6,release:0.4,filter:null,detune:0,vibrato:0,harmonics:[],melodic:true},
+  piano: {name:'پیانو',waves:['triangle','sine'],base:1.0,attack:0.003,decay:0.4,sustain:0.15,release:0.6,filter:{type:'lowpass',freq:3500,q:1},detune:0,vibrato:0,harmonics:[{mult:2,gain:0.25},{mult:3,gain:0.1}]},
+  guitar: {name:'گیتار',waves:['sawtooth'],base:0.95,attack:0.005,decay:0.25,sustain:0.35,release:0.4,filter:{type:'lowpass',freq:2200,q:3},detune:0,vibrato:0,harmonics:[{mult:2,gain:0.15}]},
+  bell: {name:'زنگ',waves:['sine'],base:1.6,attack:0.001,decay:0.8,sustain:0.05,release:1.2,filter:null,detune:0,vibrato:0,harmonics:[{mult:2.76,gain:0.4},{mult:5.4,gain:0.2},{mult:8.9,gain:0.1}]},
+  trumpet: {name:'ترومپت',waves:['square'],base:0.75,attack:0.06,decay:0.1,sustain:0.85,release:0.2,filter:{type:'lowpass',freq:2800,q:0.7},detune:0,vibrato:0,harmonics:[{mult:2,gain:0.3},{mult:3,gain:0.15},{mult:4,gain:0.05}]},
+  drum: {name:'درام',waves:['triangle'],base:0.5,attack:0.001,decay:0.08,sustain:0.001,release:0.15,filter:null,detune:0,vibrato:0,harmonics:[],freqSweep:{from:3,to:0.3,time:0.08},noise:true},
+  sax: {name:'ساکسیفون',waves:['sawtooth'],base:0.85,attack:0.04,decay:0.15,sustain:0.7,release:0.25,filter:{type:'lowpass',freq:2400,q:2},detune:0,vibrato:5,harmonics:[{mult:2,gain:0.2}]},
+  violin: {name:'ویولن',waves:['sawtooth'],base:1.1,attack:0.12,decay:0.15,sustain:0.8,release:0.3,filter:{type:'lowpass',freq:3200,q:1.5},detune:5,vibrato:6,harmonics:[{mult:2,gain:0.15},{mult:3,gain:0.08}]}
 };
 
-var NOTE = {C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00, B4:493.88, C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99, A5:880.00, B5:987.77, C6:1046.50, E6:1318.51, G6:1567.98};
+var NOTE = {C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.00,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99,A5:880.00,B5:987.77,C6:1046.50,E6:1318.51,G6:1567.98};
 
 function playTone(ctx, dest, freq, dur, cfg, startTime){
   var t = ctx.currentTime + (startTime || 0);
@@ -1391,10 +1359,8 @@ function playTone(ctx, dest, freq, dur, cfg, startTime){
     lfo.frequency.value = cfg.vibrato;
     var lfoG = ctx.createGain();
     lfoG.gain.value = freq * 0.02;
-    lfo.connect(lfoG);
-    lfoG.connect(osc.frequency);
-    lfo.start(t);
-    lfo.stop(t + dur + cfg.release + 0.2);
+    lfo.connect(lfoG); lfoG.connect(osc.frequency);
+    lfo.start(t); lfo.stop(t + dur + cfg.release + 0.2);
   }
   var gain = ctx.createGain();
   gain.gain.setValueAtTime(0, t);
@@ -1408,12 +1374,10 @@ function playTone(ctx, dest, freq, dur, cfg, startTime){
     filt.type = cfg.filter.type;
     filt.frequency.value = cfg.filter.freq;
     filt.Q.value = cfg.filter.q || 1;
-    gain.connect(filt);
-    chainEnd = filt;
+    gain.connect(filt); chainEnd = filt;
   }
   osc.connect(gain);
-  osc.start(t);
-  osc.stop(t + dur + cfg.release + 0.2);
+  osc.start(t); osc.stop(t + dur + cfg.release + 0.2);
   (cfg.harmonics || []).forEach(function(h){
     var ho = ctx.createOscillator();
     ho.type = cfg.waves[cfg.waves.length-1];
@@ -1422,30 +1386,29 @@ function playTone(ctx, dest, freq, dur, cfg, startTime){
     hg.gain.setValueAtTime(0, t);
     hg.gain.linearRampToValueAtTime(h.gain, t + cfg.attack);
     hg.gain.linearRampToValueAtTime(0, t + dur + cfg.release);
-    ho.connect(hg);
-    hg.connect(gain);
-    ho.start(t);
-    ho.stop(t + dur + cfg.release + 0.2);
+    ho.connect(hg); hg.connect(gain);
+    ho.start(t); ho.stop(t + dur + cfg.release + 0.2);
   });
   if(cfg.noise){
     var bufferSize = ctx.sampleRate * 0.1;
     var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     var data = buffer.getChannelData(0);
-    for(var i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+    for(var i = 0; i < bufferSize; i++){ data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3); }
     var noise = ctx.createBufferSource();
     noise.buffer = buffer;
     var noiseGain = ctx.createGain();
     noiseGain.gain.value = 0.3;
-    noise.connect(noiseGain);
-    noiseGain.connect(gain);
+    noise.connect(noiseGain); noiseGain.connect(gain);
     noise.start(t);
   }
   chainEnd.connect(dest);
 }
 
+/* ★ playSnd — PomoStart و PomoEnd یکی شدن */
 function playSnd(type){
   if(!SETTINGS.sound) return;
   var key = 'sound' + type;
+  if(type === 'PomoStart' || type === 'PomoEnd') key = 'soundPomo';
   var model = SETTINGS[key] || 'soft';
   var cfg = SOUND_MODELS[model] || SOUND_MODELS.soft;
   var vol = (SETTINGS.volume||60)/100;
@@ -1457,18 +1420,18 @@ function playSnd(type){
     master.gain.value = vol * 0.18;
     master.connect(ctx.destination);
     if(type === 'Correct'){
-      if(cfg.melodic){ playTone(ctx, master, NOTE.C5, 0.12, cfg, 0); playTone(ctx, master, NOTE.E5, 0.12, cfg, 0.12); playTone(ctx, master, NOTE.G5, 0.25, cfg, 0.24); }
-      else { playTone(ctx, master, NOTE.G5, 0.15, cfg, 0); playTone(ctx, master, NOTE.C6, 0.25, cfg, 0.1); }
+      if(cfg.melodic){ playTone(ctx,master,NOTE.C5,0.12,cfg,0); playTone(ctx,master,NOTE.E5,0.12,cfg,0.12); playTone(ctx,master,NOTE.G5,0.25,cfg,0.24); }
+      else { playTone(ctx,master,NOTE.G5,0.15,cfg,0); playTone(ctx,master,NOTE.C6,0.25,cfg,0.1); }
     }
     else if(type === 'Wrong'){
-      if(cfg.melodic){ playTone(ctx, master, NOTE.G4, 0.15, cfg, 0); playTone(ctx, master, NOTE.E4, 0.15, cfg, 0.15); playTone(ctx, master, NOTE.C4, 0.35, cfg, 0.3); }
-      else { playTone(ctx, master, NOTE.E4, 0.18, cfg, 0); playTone(ctx, master, NOTE.C4, 0.35, cfg, 0.12); }
+      if(cfg.melodic){ playTone(ctx,master,NOTE.G4,0.15,cfg,0); playTone(ctx,master,NOTE.E4,0.15,cfg,0.15); playTone(ctx,master,NOTE.C4,0.35,cfg,0.3); }
+      else { playTone(ctx,master,NOTE.E4,0.18,cfg,0); playTone(ctx,master,NOTE.C4,0.35,cfg,0.12); }
     }
-    else if(type === 'Partial'){ playTone(ctx, master, NOTE.E5, 0.2, cfg, 0); if(cfg.melodic) playTone(ctx, master, NOTE.A5, 0.2, cfg, 0.15); }
-    else if(type === 'Study'){ playTone(ctx, master, NOTE.D5, 0.18, cfg, 0); if(cfg.melodic) playTone(ctx, master, NOTE.G5, 0.22, cfg, 0.15); }
-    else if(type === 'Pomo'){ playTone(ctx, master, NOTE.C5, 0.15, cfg, 0); playTone(ctx, master, NOTE.E5, 0.15, cfg, 0.15); if(cfg.melodic) playTone(ctx, master, NOTE.G5, 0.3, cfg, 0.3); }
-    else if(type === 'LevelUp'){ playTone(ctx, master, NOTE.C5, 0.1, cfg, 0); playTone(ctx, master, NOTE.E5, 0.1, cfg, 0.1); playTone(ctx, master, NOTE.G5, 0.1, cfg, 0.2); playTone(ctx, master, NOTE.C6, 0.4, cfg, 0.3); if(cfg.melodic) playTone(ctx, master, NOTE.E6, 0.5, cfg, 0.45); }
-    else if(type === 'MissionClaim'){ playTone(ctx, master, NOTE.E5, 0.12, cfg, 0); playTone(ctx, master, NOTE.G5, 0.12, cfg, 0.12); playTone(ctx, master, NOTE.C6, 0.3, cfg, 0.24); if(cfg.melodic) playTone(ctx, master, NOTE.E6, 0.4, cfg, 0.4); }
+    else if(type === 'Partial'){ playTone(ctx,master,NOTE.E5,0.2,cfg,0); if(cfg.melodic) playTone(ctx,master,NOTE.A5,0.2,cfg,0.15); }
+    else if(type === 'Study'){ playTone(ctx,master,NOTE.D5,0.18,cfg,0); if(cfg.melodic) playTone(ctx,master,NOTE.G5,0.22,cfg,0.15); }
+    else if(type === 'Pomo'){ playTone(ctx,master,NOTE.C5,0.15,cfg,0); playTone(ctx,master,NOTE.E5,0.15,cfg,0.15); if(cfg.melodic) playTone(ctx,master,NOTE.G5,0.3,cfg,0.3); }
+    else if(type === 'LevelUp'){ playTone(ctx,master,NOTE.C5,0.1,cfg,0); playTone(ctx,master,NOTE.E5,0.1,cfg,0.1); playTone(ctx,master,NOTE.G5,0.1,cfg,0.2); playTone(ctx,master,NOTE.C6,0.4,cfg,0.3); if(cfg.melodic) playTone(ctx,master,NOTE.E6,0.5,cfg,0.45); }
+    else if(type === 'MissionClaim'){ playTone(ctx,master,NOTE.E5,0.1,cfg,0); playTone(ctx,master,NOTE.G5,0.1,cfg,0.1); playTone(ctx,master,NOTE.C6,0.3,cfg,0.2); }
     setTimeout(function(){try{ctx.close()}catch(e){}}, 3000);
   }catch(e){ console.warn('sound err:', e); }
 }
@@ -1494,17 +1457,17 @@ function closeAllFolders(){
 
 /* ============ XP ============ */
 var LEVEL_TITLES = [
-  {min:1, title:'🌱 مبتدی', avatar:'🌱'},
-  {min:5, title:'🌿 تازه‌کار', avatar:'🌿'},
-  {min:10, title:'📖 یادگیرنده', avatar:'📖'},
-  {min:15, title:'📚 کوشا', avatar:'📚'},
-  {min:20, title:'✏️ ماهر', avatar:'✏️'},
-  {min:30, title:'🎓 حرفه‌ای', avatar:'🎓'},
-  {min:40, title:'🏅 استاد', avatar:'🏅'},
-  {min:50, title:'👑 استاد بزرگ', avatar:'👑'},
-  {min:70, title:'🧠 نابغه', avatar:'🧠'},
-  {min:90, title:'🌟 اسطوره', avatar:'🌟'},
-  {min:100, title:'💎 جاودان', avatar:'💎'}
+  {min:1,title:'🌱 مبتدی',avatar:'🌱'},
+  {min:5,title:'🌿 تازه‌کار',avatar:'🌿'},
+  {min:10,title:'📖 یادگیرنده',avatar:'📖'},
+  {min:15,title:'📚 کوشا',avatar:'📚'},
+  {min:20,title:'✏️ ماهر',avatar:'✏️'},
+  {min:30,title:'🎓 حرفه‌ای',avatar:'🎓'},
+  {min:40,title:'🏅 استاد',avatar:'🏅'},
+  {min:50,title:'👑 استاد بزرگ',avatar:'👑'},
+  {min:70,title:'🧠 نابغه',avatar:'🧠'},
+  {min:90,title:'🌟 اسطوره',avatar:'🌟'},
+  {min:100,title:'💎 جاودان',avatar:'💎'}
 ];
 function xpForLevel(lvl){ return 50 * lvl * lvl; }
 function getLevelFromXP(xp){ var lvl=1; while(xpForLevel(lvl+1)<=xp && lvl<100) lvl++; return lvl; }
@@ -1523,7 +1486,8 @@ function addXP(amount, reason){
     var oldLevel = xpData.level;
     xpData.level = newLevel;
     var reward = onLevelUp(oldLevel, newLevel);
-    saveXP(); renderXPBar(); showLevelUp(oldLevel, newLevel, reward);
+    saveXP(); renderXPBar();
+    showLevelUp(oldLevel, newLevel, reward);
   } else { saveXP(); renderXPBar(); }
   showXPToast(actual);
 }
@@ -1571,12 +1535,14 @@ function showLevelDetails(){
   var p = getXPProgress();
   var nextLvlXP = xpForLevel(lvl+1);
   var remaining = nextLvlXP - xpData.xp;
+  var title = getLevelTitle(lvl);
+  var avatar = getLevelAvatar(lvl);
   var html = '<button class="modal-close" onclick="closeModal()">✕</button>';
   html += '<h3>📊 جزئیات سطح</h3>';
   html += '<div class="level-detail">';
-  html += '<div class="big">'+getLevelAvatar(lvl)+'</div>';
+  html += '<div class="big">'+avatar+'</div>';
   html += '<div class="lvl">سطح ' + lvl + '</div>';
-  html += '<div class="title">' + getLevelTitle(lvl) + '</div>';
+  html += '<div class="title">' + title + '</div>';
   html += '<div class="row"><span>XP فعلی</span><span class="val">' + xpData.xp + '</span></div>';
   html += '<div class="row"><span>XP سطح ' + lvl + '</span><span class="val">' + xpForLevel(lvl) + '</span></div>';
   html += '<div class="row"><span>XP سطح ' + (lvl+1) + '</span><span class="val">' + nextLvlXP + '</span></div>';
@@ -1594,37 +1560,26 @@ function showLevelDetails(){
   html += '<div class="modal-acts"><button class="btn primary" onclick="closeModal()">باشه</button></div>';
   openModal(html);
 }
+
 function registerWrong(){
   SETTINGS.errorCounter = (SETTINGS.errorCounter || 0) + 1;
   if(SETTINGS.errorCounter >= 3){ SETTINGS.errorCounter = 0; addXP(-1, 'اشتباه'); saveSettings(); }
   else saveSettings();
 }
 
-/* ============ CHALLENGE (★ اصلاح‌شده) ============ */
+/* ============ CHALLENGE (ساعت‌محور) ============ */
 function challengeXPForTarget(target){ return Math.round(target * (target / 100) * 10); }
-function getChallengeBaseForLevel(lvl){
-  if(lvl <= 5) return 30;
-  if(lvl <= 15) return 100;
-  if(lvl <= 30) return 200;
-  if(lvl <= 50) return 400;
-  return 500;
-}
 function generateDailyChallenge(){
   var td = today();
-  /* ★ اگر چالش امروز قبلاً انجام شده، تکرار نکن */
-  if(challengeData.current && challengeData.current.date === td){
-    if(challengeData.current.done){
-      /* دنبال چالش بعدی همون روز برو */
-      if((challengeData.current.stage||1) >= 3){
-        currentChallenge = null;
-        return;
-      }
-    }
-    currentChallenge = challengeData.current;
-    return;
-  }
+  if(challengeData.current && challengeData.current.date === td && !challengeData.current.done){ currentChallenge = challengeData.current; return; }
+  if(challengeData.current && challengeData.current.date === td && challengeData.current.done && (challengeData.current.stage||1) >= 3){ currentChallenge = challengeData.current; return; }
   var lvl = xpData.level;
-  var base = getChallengeBaseForLevel(lvl);
+  var base;
+  if(lvl <= 5) base = 30;
+  else if(lvl <= 15) base = 100;
+  else if(lvl <= 30) base = 200;
+  else if(lvl <= 50) base = 400;
+  else base = 500;
   if(challengeData.history && challengeData.history.length){
     var last = challengeData.history[challengeData.history.length-1];
     if(last.target && last.target > base) base = last.target + 20;
@@ -1642,19 +1597,17 @@ function generateDailyChallenge(){
   ch.reward = challengeXPForTarget(ch.target);
   currentChallenge = ch; challengeData.current = ch; saveChallenge();
 }
-/* ★ چالش بعدی اتوماتیک بعد از اتمام */
+/* ★ چالش بعدی اتوماتیک — سخت‌تر نسبت به سطح + تعداد */
 function autoNextChallenge(){
   var td = today();
   var prev = challengeData.current;
   if(!prev) return;
-  if(prev.date !== td) return;
   var stage = (prev.stage || 1) + 1;
   if(stage > 3){ currentChallenge = prev; return; }
-  /* ★ سخت‌تر: بسته به سطح + ضریب مرحله + نسبت به قبلی */
-  var baseTarget = prev.target;
-  var lvlBonus = 1 + (xpData.level * 0.02); /* هر سطح ۲٪ سخت‌تر */
+  /* سخت‌تر: هم ضریب مرحله + هم نسبت به سطح XP */
   var stageMult = stage === 2 ? 1.5 : 2.5;
-  var target = Math.round(baseTarget * stageMult * lvlBonus);
+  var lvlMult = 1 + Math.min(1, xpData.level * 0.01); /* تا ۲ برابر */
+  var target = Math.round(prev.target * stageMult * lvlMult);
   var ch = {
     id: 'ch_' + td + '_' + prev.type + '_' + stage,
     date: td, type: prev.type, target: target, metric: prev.metric,
@@ -1662,39 +1615,30 @@ function autoNextChallenge(){
     reward: challengeXPForTarget(target),
     text: 'امروز ' + target + ' کارت ' + (prev.type === 'new' ? 'جدید شروع کن' : prev.type === 'correct' ? 'درست بزن' : 'مرور کن')
   };
-  currentChallenge = ch;
-  challengeData.current = ch;
-  saveChallenge();
+  currentChallenge = ch; challengeData.current = ch; saveChallenge();
+  updateChallengeUI();
+  showToast('🎯 چالش ' + stage + ' شروع شد!');
 }
 function checkChallengeProgress(){
+  if(!currentChallenge) return;
   var td = today();
   var rec = STATE.dailyRecords[td] || {total:0, newCards:0, correct:0, wrong:0, partial:0};
-  /* ★ اگر چالش null (همه مراحل انجام شده) */
-  if(!currentChallenge || (currentChallenge && currentChallenge.date !== td)){
-    if(!currentChallenge){
-      var card = $('challengeCard');
-      if(card) card.style.display = 'none';
-      return;
-    }
-  }
-  var card = $('challengeCard');
-  if(card) card.style.display = '';
-  var title = $('challengeTitle'), txt = $('challengeText');
-  var prog = $('challengeProgress'), stat = $('challengeStat'), streak = $('challengeStreak');
-  if(!card) return;
   var current = 0;
   var target = currentChallenge.target;
   if(currentChallenge.metric === 'total') current = rec.total;
   else if(currentChallenge.metric === 'newCards') current = rec.newCards;
   else if(currentChallenge.metric === 'correct') current = rec.correct;
   var pct = target > 0 ? Math.min(100, Math.round(current/target*100)) : 0;
+  var card = $('challengeCard'), title = $('challengeTitle'), txt = $('challengeText');
+  var prog = $('challengeProgress'), stat = $('challengeStat'), streak = $('challengeStreak');
+  if(!card) return;
   txt.textContent = currentChallenge.text;
   prog.style.width = pct + '%';
   stat.textContent = current + ' / ' + target + ' · 🎁 ' + currentChallenge.reward + ' XP';
   streak.textContent = '🔥 ' + challengeData.streak + ' روز';
   if(challengeData.streak >= 7) streak.classList.add('pulse');
   else streak.classList.remove('pulse');
-  /* ★ اتمام چالش */
+  /* ★ اگه انجام شد و تیک نخورده */
   if(current >= target && !currentChallenge.done){
     currentChallenge.done = true;
     var stage = currentChallenge.stage || 1;
@@ -1703,24 +1647,26 @@ function checkChallengeProgress(){
     if(stage === 1) challengeData.streak++;
     if(!challengeData.history) challengeData.history = [];
     challengeData.history.push({date: td, target: target, stage: stage});
-    /* ★ مدال شمارنده چالش +۱ */
-    if(!MEDALS['challenge_count']) MEDALS['challenge_count'] = {date: today(), count: 0};
-    MEDALS['challenge_count'].count = (MEDALS['challenge_count'].count || 0) + 1;
-    MEDALS['challenge_count'].date = today();
+    /* ★ مدال شمارنده‌دار: هر چالش +1 */
+    MEDALS['challenge_count'] = {date: td, count: (MEDALS['challenge_count'] && MEDALS['challenge_count'].count || 0) + 1};
     saveMedals();
     saveChallenge();
     card.classList.add('done');
     title.textContent = '✅ چالش انجام شد!';
     addXP(xpReward, 'چالش روزانه مرحله ' + stage);
-    showToast('🎯 چالش انجام شد! +' + xpReward + ' XP');
-    /* ★ چالش بعدی اتوماتیک بعد ۲ ثانیه */
-    setTimeout(function(){
-      if(stage < 3){
-        autoNextChallenge();
+    setTimeout(function(){ showToast('🎯 چالش انجام شد! +' + xpReward + ' XP'); }, 500);
+    /* ★ چالش بعدی اتوماتیک بعد از 1.2 ثانیه */
+    if(stage < 3){
+      setTimeout(function(){
         card.classList.remove('done');
-        checkChallengeProgress();
-      }
-    }, 2200);
+        title.textContent = '🎯 چالش روزانه';
+        autoNextChallenge();
+      }, 1400);
+    }
+  }
+  if(currentChallenge.done && (currentChallenge.stage||1) >= 3){
+    card.classList.add('done');
+    title.textContent = '✅ همه چالش‌های امروز انجام شد!';
   }
 }
 
@@ -1743,7 +1689,7 @@ function aiFindWeaknesses(){
 }
 function aiPredictLearning(){
   var total = getAllCards().length;
-  var mastered = countBy(function(k){var s=STATE.cards[k];return s && !s.deleted && (s.stepIndex||0) >= SETTINGS.correctSteps.length-1});
+  var mastered = countBy(function(k){var s=STATE.cards[k];return s && !s.deleted && (s.stepIndex||0) >= SETTINGS.correctStepsHours.length-1});
   var remaining = total - mastered;
   var last7 = 0;
   for(var i=0;i<7;i++){ var d = addDays(today(), -i); last7 += (STATE.dailyRecords[d] && STATE.dailyRecords[d].correct) || 0; }
@@ -1762,7 +1708,7 @@ function aiWeeklySummary(){
   return {thisW:thisW, lastW:lastW, diffW:diffW};
 }
 
-/* ============ HIDDEN ACHIEVEMENTS ============ */
+/* ============ HIDDEN ACH ============ */
 var HIDDEN_ACH_LIST = [
   {id:'night_owl', name:'جغد شب', emoji:'🦉', desc:'بعد از ۱۲ شب مطالعه کن'},
   {id:'early_bird', name:'پرنده صبح', emoji:'🐦', desc:'قبل از ۶ صبح مطالعه کن'},
@@ -1815,7 +1761,7 @@ function checkHiddenAch(){
   }
 }
 
-/* ============ WEEKLY MISSIONS ============ */
+/* ============ MISSIONS ============ */
 function getWeekStart(d){
   var date = d ? new Date(d+'T00:00:00') : new Date();
   var day = date.getDay();
@@ -1869,6 +1815,8 @@ function updateWeeklyMissions(){
 var MEDALS_LIST = [];
 (function(){
   function M(id,name,emoji,desc,tier){MEDALS_LIST.push({id:id,name:name,emoji:emoji,desc:desc,tier:tier})}
+  /* ★ مدال شمارنده‌دار چالش — اول لیست */
+  MEDALS_LIST.push({id:'challenge_count', name:'چالش‌ها', emoji:'🎯', desc:'هر چالشی که تموم کنی +۱', tier:'go', counter:true});
   var reads = [200,400,1000,2000,4000,7000,8000,9000,10000];
   reads.forEach(function(n,i){var tier=i<2?'br':i<4?'si':i<6?'go':i<8?'di':'cr';M('read_'+n,n+' خواندن روزانه','📖',n+' کارت در یک روز',tier)});
   reads.forEach(function(n,i){var tier=i<2?'br':i<4?'si':i<6?'go':i<8?'di':'cr';M('correct_'+n,n+' درست روزانه','✅',n+' پاسخ درست در یک روز',tier)});
@@ -1879,20 +1827,18 @@ var MEDALS_LIST = [];
   [100,500,1000,5000,10000,50000,100000,500000].forEach(function(n,i){var tier=i<2?'br':i<4?'si':i<6?'go':'di';M('xp_'+n,n+' XP','⭐',n+' امتیاز XP',tier)});
   [7,30,100,365].forEach(function(n,i){var tier=i<1?'si':i<2?'go':i<3?'di':'cr';M('streak_'+n,n+' روز پیوسته','🔥',n+' روز پیوسته چالش',tier)});
   [50,100,500,1000].forEach(function(n,i){var tier=i<1?'br':i<2?'si':i<3?'go':'di';M('gold_'+n,n+' کارت طلایی','👑',n+' کارت طلایی',tier)});
-  /* ★ مدال تکرارپذیر چالش */
-  MEDALS_LIST.push({id:'challenge_count', name:'چالش‌ها', emoji:'🎯', desc:'تعداد چالش‌های انجام‌شده', tier:'counter', counter:true});
 })();
 
 function checkMedals(){
   try{
     var unlocked = [];
-    var mastered = countBy(function(k){var s=STATE.cards[k];return s&&!s.deleted&&(s.stepIndex||0)>=SETTINGS.correctSteps.length-1});
+    var mastered = countBy(function(k){var s=STATE.cards[k];return s&&!s.deleted&&(s.stepIndex||0)>=SETTINGS.correctStepsHours.length-1});
     var goldCount = countBy(function(k){return isGold(k)});
     var td = today();
     var rec = STATE.dailyRecords[td] || {total:0, correct:0, wrong:0, newCards:0};
     var maxStep = 0;
     Object.keys(STATE.cards).forEach(function(k){ var s=STATE.cards[k]; if(s && !s.deleted) maxStep = Math.max(maxStep, s.stepIndex||0); });
-    function un(id){if(!MEDALS[id] && id !== 'challenge_count'){MEDALS[id]={date:today()};unlocked.push(id)}}
+    function un(id){if(!MEDALS[id]){MEDALS[id]={date:today()};unlocked.push(id)}}
     [200,400,1000,2000,4000,7000,8000,9000,10000].forEach(function(n){
       if(rec.total >= n) un('read_'+n);
       if(rec.correct >= n) un('correct_'+n);
@@ -1923,7 +1869,7 @@ function showMedal(def){
   }catch(e){}
 }
 
-/* ============ POMODORO (★ صدا یکی شده) ============ */
+/* ============ POMODORO ============ */
 function pomoLoad(){try{var p=loadLS(KEYS.pomo);if(p){POMO.phase=p.phase||'focus';POMO.cycles=p.cycles||0;POMO.seconds=p.seconds||(SETTINGS.pomoFocus*60)}}catch(e){}}
 function pomoSave(){saveLS(KEYS.pomo,{phase:POMO.phase,cycles:POMO.cycles,seconds:POMO.seconds})}
 function pomoRender(){
@@ -1940,13 +1886,13 @@ function pomoTick(){if(!POMO.running)return;POMO.seconds--;if(POMO.seconds<=0)po
 function pomoFinish(){
   POMO.running=false;
   if(POMO.timer){clearInterval(POMO.timer);POMO.timer=null}
-  playSnd('Pomo');
+  playSnd('Pomo'); /* ★ یک صدا برای شروع و اتمام */
   addXP(5, 'پومودورو');
   if(POMO.phase==='focus'){
     POMO.cycles++;
     if(POMO.cycles%4===0){POMO.phase='long';POMO.seconds=SETTINGS.pomoLong*60}
     else{POMO.phase='break';POMO.seconds=SETTINGS.pomoBreak*60}
-  } else { POMO.phase='focus';POMO.seconds=SETTINGS.pomoFocus*60; }
+  } else { POMO.phase='focus'; POMO.seconds=SETTINGS.pomoFocus*60; }
   pomoSave();pomoRender();
 }
 function pomoToggle(){
@@ -1954,12 +1900,12 @@ function pomoToggle(){
   else{
     if(POMO.seconds <= 0) POMO.seconds = POMO.phase==='focus' ? SETTINGS.pomoFocus*60 : SETTINGS.pomoBreak*60;
     POMO.running = true;
-    if(!POMO.startSoundPlayed){ playSnd('Pomo'); POMO.startSoundPlayed = true; }
+    playSnd('Pomo'); /* ★ یک صدا */
     POMO.timer = setInterval(pomoTick,1000);
     pomoRender();
   }
 }
-function pomoReset(){POMO.running=false;if(POMO.timer){clearInterval(POMO.timer);POMO.timer=null}POMO.phase='focus';POMO.seconds=SETTINGS.pomoFocus*60;POMO.cycles=0;POMO.startSoundPlayed=false;pomoSave();pomoRender()}
+function pomoReset(){POMO.running=false;if(POMO.timer){clearInterval(POMO.timer);POMO.timer=null}POMO.phase='focus';POMO.seconds=SETTINGS.pomoFocus*60;POMO.cycles=0;pomoSave();pomoRender()}
 
 /* ============ THEME ============ */
 function applyFontSize(s){var sizes={small:'13px',normal:'15px',large:'17px'};document.body.style.fontSize=sizes[s]||'15px'}
@@ -1975,7 +1921,6 @@ function applyTheme(t){
   document.body.className = cls.join(' ');
   saveLS(KEYS.theme, t);
 }
-
 function getAllTags(){
   var s = {};
   TOPICS.forEach(function(t){
@@ -1987,20 +1932,19 @@ function getAllTags(){
   });
   return s;
 }
-
 function checkReminder(){
   if(!SETTINGS.reminderOn) return;
   var now = new Date();
   var cur = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-  var last = loadLS('fc24_lastReminder');
+  var last = loadLS('fc23_lastReminder');
   if(cur === SETTINGS.reminderTime && last !== today()){
     if('Notification' in window && Notification.permission === 'granted'){
       new Notification('فلش‌کارت', {body: 'وقت مطالعه‌ست! 📚'});
     } else showToast('📚 وقت مطالعه‌ست!');
-    saveLS('fc24_lastReminder', today());
+    saveLS('fc23_lastReminder', today());
   }
 }
-
+/* ★ راهنمای میانبرها */
 function showShortcutsHelp(){
   var html = '<button class="modal-close" onclick="closeModal()">✕</button>';
   html += '<h3>⌨️ راهنمای میانبرها</h3>';
@@ -2009,7 +1953,7 @@ function showShortcutsHelp(){
   html += '<div class="sc-row"><span>درست</span><kbd>1</kbd></div>';
   html += '<div class="sc-row"><span>حدودی</span><kbd>2</kbd></div>';
   html += '<div class="sc-row"><span>غلط</span><kbd>3</kbd></div>';
-  html += '<div class="sc-row"><span>متوجه شدم (کارت جدید)</span><kbd>4</kbd></div>';
+  html += '<div class="sc-row"><span>متوجه شدم</span><kbd>4</kbd></div>';
   html += '<div class="sc-row"><span>معکوس کردن کارت</span><kbd>6</kbd></div>';
   html += '<div class="sc-row"><span>تعلیق کارت</span><kbd>7</kbd></div>';
   html += '<div class="sc-row"><span>حذف کارت</span><kbd>8</kbd></div>';
@@ -2021,10 +1965,10 @@ function showShortcutsHelp(){
   html += '<div class="modal-acts"><button class="btn primary" onclick="closeModal()">فهمیدم</button></div>';
   openModal(html);
 }
+</script>
   <script>
 /* ============================================================
    فلش‌کارت v24 — JavaScript بخش ۲ (نهایی)
-   session + ترتیب ساعت‌محور + navigation stack + چالش + import fix
    ============================================================ */
 
 /* ============ MODAL ============ */
@@ -2036,74 +1980,52 @@ function openModal(html){
 function closeModal(){ var bg = $('modalBg'); if(bg) bg.classList.remove('show'); }
 window.closeModal = closeModal;
 
-/* ============ ★ NAVIGATION STACK ★ ============ */
-/* هر ورودی: {type, id} — type: 'panel' یا 'session' یا 'topics' */
-function pushNavState(type, id){
-  /* اگر آخرین state همون بود، دوباره push نکن */
-  var last = NAV_STACK[NAV_STACK.length - 1];
-  if(last && last.type === type && last.id === id) return;
-  NAV_STACK.push({type: type, id: id || null, ts: Date.now()});
+/* ============ NAV STACK (دکمه برگشت) ============ */
+function pushNav(state){
+  NAV_STACK.push(state);
   if(NAV_STACK.length > 30) NAV_STACK.shift();
-  saveNavStack();
   updateBackBtn();
 }
-function popNavState(){
+function popNav(){
   if(!NAV_STACK.length) return null;
-  NAV_STACK.pop();
-  saveNavStack();
-  updateBackBtn();
-  return NAV_STACK[NAV_STACK.length - 1] || null;
-}
-function clearNavStack(){
-  NAV_STACK = [];
-  saveNavStack();
-  updateBackBtn();
+  return NAV_STACK.pop();
 }
 function updateBackBtn(){
-  var btn = $('btnBack');
-  if(!btn) return;
-  btn.style.display = NAV_STACK.length > 0 ? 'inline-flex' : 'none';
+  var b = $('btnBack');
+  if(!b) return;
+  var visible = NAV_STACK.length > 0 || !!document.querySelector('.panel.show');
+  b.style.display = visible ? 'inline-flex' : 'none';
 }
-function goBackStack(){
-  var prev = popNavState();
-  if(!prev){ goHome(); return; }
-  /* برگشت به state قبلی */
-  if(prev.type === 'panel'){ restorePanel(prev.id); }
-  else if(prev.type === 'topics'){ restorePanel('pTopics'); }
-  else if(prev.type === 'home'){ goHome(true); }
+function goBack(){
+  var st = popNav();
+  if(!st){ goHome(); return; }
+  applyNavState(st);
 }
-function restorePanel(panelId){
-  if(panelId === 'pTopics'){ showPanel('pTopics', true); renderTopics(); return; }
-  if(panelId === 'pDue'){ showPanel('pDue', true); showDuePanel(true); return; }
-  if(panelId === 'pSubject'){ showPanel('pSubject', true); renderSubject(''); return; }
-  if(panelId === 'pSubDetail'){ showPanel('pSubDetail', true); renderSubDetail(); return; }
-  if(panelId === 'pSettings'){ showPanel('pSettings', true); fillSettings(); return; }
-  if(panelId === 'pStats'){ showPanel('pStats', true); renderStats(); return; }
-  if(panelId === 'pMedals'){ showPanel('pMedals', true); renderMedals(); return; }
-  if(panelId === 'pHeatmap'){ showPanel('pHeatmap', true); renderHeatmap(); return; }
-  if(panelId === 'pCalendar'){ showPanel('pCalendar', true); renderCalendar(); return; }
-  if(panelId === 'pRecords'){ showPanel('pRecords', true); renderRecords(); return; }
-  if(panelId === 'pGrowth'){ showPanel('pGrowth', true); renderGrowth(); return; }
-  if(panelId === 'pChallengeDetail'){ showPanel('pChallengeDetail', true); renderChallengeDetail(); return; }
-  if(panelId === 'pWeeklyMissions'){ showPanel('pWeeklyMissions', true); renderWeeklyMissions(); return; }
-  if(panelId === 'pHiddenAch'){ showPanel('pHiddenAch', true); renderHiddenAch(); return; }
-  if(panelId === 'pTags'){ showPanel('pTags', true); renderTagsPanel(); return; }
-  goHome(true);
+function applyNavState(st){
+  if(!st){ goHome(); return; }
+  if(st.type === 'panel'){
+    showPanel(st.id, true);
+  } else if(st.type === 'home'){
+    goHome(true);
+  } else if(st.type === 'subDetail'){
+    currentSubDetail = {tid:st.tid, sid:st.sid};
+    showPanel('pSubDetail', true);
+    renderSubDetail();
+  }
 }
 
 /* ============ SESSION ============ */
-/* ★ buildQueue: ترتیب بر اساس ساعت nextDue (صعودی) */
-function sortByDue(keys){
-  return keys.slice().sort(function(a, b){
-    var sa = STATE.cards[a] || {};
-    var sb = STATE.cards[b] || {};
-    var ma = sa.nextDue ? (toMs(sa.nextDue) || 0) : (sa.firstSeenMs || 0);
-    var mb = sb.nextDue ? (toMs(sb.nextDue) || 0) : (sb.firstSeenMs || 0);
-    if(ma !== mb) return ma - mb;
-    /* اگر برابر بود، کارت جدیدتر اول */
-    return (sa.firstSeenMs || 0) - (sb.firstSeenMs || 0);
+/* ★ مرتب‌سازی بر اساس nextDue (timestamp) صعودی */
+function sortByNextDue(arr){
+  return arr.slice().sort(function(a, b){
+    var sa = STATE.cards[a.key] || {};
+    var sb = STATE.cards[b.key] || {};
+    var ta = toMs(sa.nextDue) || 0;
+    var tb = toMs(sb.nextDue) || 0;
+    return ta - tb;
   });
 }
+/* ★ buildQueue — همه‌جا ترتیب ساعت */
 function buildQueue(mode, keys, ordered){
   var all = getAllCards();
   var ks = keys || all.map(function(c){return c.key});
@@ -2134,85 +2056,69 @@ function buildQueue(mode, keys, ordered){
     }
     out.push(c);
   });
-  /* ★ اگر ordered یا هر مود دیگه: ترتیب بر اساس ساعت nextDue */
-  if(ordered || mode === 'ordered'){
-    var keyArr = out.map(function(c){return c.key});
-    var sortedKeys = sortByDue(keyArr);
-    var byKey = {};
-    out.forEach(function(c){ byKey[c.key] = c; });
-    return sortedKeys.map(function(k){return byKey[k]}).filter(function(c){return c});
-  }
-  /* ★ حتی مودهای دیگه هم ترتیب ساعت می‌گیرن (رندوم فقط بین پله‌ها) */
+  if(ordered || mode === 'ordered') return out;
   if(SETTINGS.smartSuggestion){
     var hard = out.filter(function(c){return isHard(c.key)});
     var low = out.filter(function(c){return !isHard(c.key) && ((STATE.cards[c.key]&&STATE.cards[c.key].stepIndex)||0) <= 1});
     var rest = out.filter(function(c){return !isHard(c.key) && ((STATE.cards[c.key]&&STATE.cards[c.key].stepIndex)||0) > 1});
-    return sortByDue(hard.map(function(c){return c.key})).map(function(k){return findCard(k)}).filter(function(c){return c})
-      .concat(sortByDue(low.map(function(c){return c.key})).map(function(k){return findCard(k)}).filter(function(c){return c}))
-      .concat(sortByDue(rest.map(function(c){return c.key})).map(function(k){return findCard(k)}).filter(function(c){return c}));
+    /* ★ داخل هر گروه ترتیب ساعت */
+    return sortByNextDue(hard).concat(sortByNextDue(low)).concat(sortByNextDue(rest));
   }
-  /* ★ در نهایت: sortByDue */
-  var outKeys = out.map(function(c){return c.key});
-  var sortedK = sortByDue(outKeys);
-  var byK = {};
-  out.forEach(function(c){ byK[c.key] = c; });
-  return sortedK.map(function(k){return byK[k]}).filter(function(c){return c});
+  /* ★ پیش‌فرض: ترتیب ساعت */
+  return sortByNextDue(out);
 }
-
-/* ★ ترتیب: مباحث پشت سر هم، کارت‌ها پشت سر هم، درون مبحث ساعت‌محور */
 function buildOrderedQueue(keys){
   var byKey = {};
   keys.forEach(function(k){ byKey[k] = true });
   var out = [];
   TOPICS.forEach(function(t){
     (t.subtopics||[]).forEach(function(s){
-      var subKeys = [];
       (s.cards||[]).forEach(function(c){
         var k = ck(c.q||'', c.a||'');
-        if(byKey[k]) subKeys.push(k);
+        if(byKey[k]) out.push(k);
       });
-      /* ★ درون هر مبحث: ترتیب ساعت */
-      sortByDue(subKeys).forEach(function(k){ out.push(k); });
     });
   });
   return out;
 }
-
 function buildNewQueueFromTopic(tid){
   var t = TOPICS.find(function(x){return x.id === tid});
   if(!t) return [];
   var out = [];
   (t.subtopics||[]).forEach(function(s){
-    var subKeys = [];
     (s.cards||[]).forEach(function(c){
       var k = ck(c.q||'', c.a||'');
-      if(isNew(k) && isActive(k)) subKeys.push(k);
+      if(isNew(k) && isActive(k)) out.push(k);
     });
-    sortByDue(subKeys).forEach(function(k){ out.push(k); });
   });
   return out;
 }
-
 function hidePanels(){
   ['pTopics','pDue','pSubject','pSubDetail','pSettings','pStats','pMedals','pHeatmap','pCalendar','pRecords','pGrowth','pChallengeDetail','pWeeklyMissions','pHiddenAch','pTags'].forEach(function(id){
     var el = $(id); if(el) el.classList.remove('show');
   });
   var e = $('endSub'); if(e) e.classList.remove('show');
 }
-function showPanel(id, skipStack){
-  /* ★ push به stack قبل از نمایش (اگر از goHome نمیایم) */
-  if(!skipStack){ pushNavState('panel', id); }
+/* ★ showPanel با push به stack */
+function showPanel(id, noPush){
+  if(!noPush){
+    var cur = document.querySelector('.panel.show');
+    var state = cur ? {type:'panel', id:cur.id} : {type:'home'};
+    pushNav(state);
+  }
   hidePanels();
   var el = $(id); if(el) el.classList.add('show');
   var w = $('welcome'); if(w) w.style.display = 'none';
   var ca = $('cardArea'); if(ca) ca.classList.remove('show');
   var ac = $('actions'); if(ac) ac.classList.remove('show');
   var nv = $('nav'); if(nv) nv.classList.remove('show');
-  /* ★ اسکرول به بالا */
-  try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
+  updateBackBtn();
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
-function goHome(skipStack){
-  if(!skipStack) clearNavStack();
+/* ★ goHome با اسکرول به بالا */
+function goHome(noPush){
+  if(!noPush) NAV_STACK = [];
+  updateBackBtn();
   hidePanels();
   var w = $('welcome');
   if(w){
@@ -2237,7 +2143,7 @@ function goHome(skipStack){
   updateDailyAch();
   updateTodayWidget();
   /* ★ اسکرول به بالا */
-  try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 function startSession(mode, keys, subInfo, opts){
   opts = opts || {};
@@ -2263,8 +2169,6 @@ function startSession(mode, keys, subInfo, opts){
   if(SESSION.queue.length === 0){ alert('کارتی برای این بخش نیست'); return; }
   SETTINGS.lastSession = {mode:mode, keys:SESSION.queue.map(function(c){return c.key}), ts:Date.now(), ordered:SESSION.ordered};
   saveSettings();
-  /* ★ push session به nav stack */
-  pushNavState('session', mode);
   hidePanels();
   var w = $('welcome'); if(w) w.style.display = 'none';
   var ca = $('cardArea'); if(ca) ca.classList.add('show');
@@ -2286,10 +2190,8 @@ function render(){
   if(!c){ showSummary(); return; }
   var s = getS(c.key);
   s.viewCount = (s.viewCount||0) + 1;
-  /* ★ ثبت firstSeenMs برای کارت جدید */
-  if(!s.seen && !s.firstSeenMs){ s.firstSeenMs = Date.now(); }
   s._renderTime = Date.now();
-  var stepNames = ['پله ۰','پله ۱ (۲۴س)','پله ۲ (۷۲س)','پله ۳ (۱۶۸س)','پله ۴ (۳۳۶س)','پله ۵ (۶۲۴س)','🏅 بلد (۱۳۹۲س)'];
+  var stepNames = ['پله ۰ (۱۶ ساعت)','پله ۱ (۲۴ ساعت)','پله ۲ (۷۲ ساعت)','پله ۳ (۱۶۸ ساعت)','پله ۴ (۳۳۶ ساعت)','پله ۵ (۶۲۴ ساعت)','🏅 بلد (۱۳۹۲ ساعت)'];
   var head = $('chead');
   if(head){
     head.innerHTML = '📚 <span class="tn">'+esc(c.topicName)+'</span> <span class="sb">'+stepNames[Math.min(s.stepIndex,6)]+'</span><span class="sn">📖 '+esc(c.subName)+'</span>';
@@ -2326,18 +2228,16 @@ function render(){
   var tPin = $('tPin'); if(tPin) tPin.classList.toggle('on', !!s.pinned);
   var tRev = $('tRev'); if(tRev) tRev.classList.toggle('on', !!s.reverse);
   var tTag = $('tTag'); if(tTag) tTag.classList.toggle('on', (c.tags && c.tags.length > 0));
-  /* ★ نمایش ساعت و دقیقه */
+  /* ★ نمایش ساعت سررسید */
   if(s.nextDue && dl){
-    var hu = hoursUntil(s.nextDue);
-    var nextMs = toMs(s.nextDue);
-    if(hu !== null){
-      var txt;
-      if(hu <= 0) txt = '📅 سررسیده ('+formatTime24(nextMs)+')';
-      else if(hu < 24) txt = '📅 ' + Math.round(hu) + ' ساعت دیگر · ' + formatTime24(nextMs);
-      else txt = '📅 ' + Math.round(hu/24) + ' روز دیگر · ' + formatTime24(nextMs) + ' · ' + jalali(null);
-      dl.textContent = txt;
-      dl.classList.add('show');
-    }
+    var hLeft = hoursUntil(s.nextDue);
+    var dueTime = fmtDueTime(s.nextDue);
+    var txt;
+    if(hLeft == null) txt = '';
+    else if(hLeft <= 0) txt = '📅 سررسیده · ساعت ' + dueTime;
+    else txt = '⏰ ' + fmtHoursLeft(hLeft) + ' دیگر · ساعت ' + dueTime;
+    dl.textContent = txt;
+    dl.classList.add('show');
   }
   var wasNew = !s.seen;
   var ac = $('actions');
@@ -2375,6 +2275,7 @@ function showStepChange(oldS, newS){
   clearTimeout(el._t);
   el._t = setTimeout(function(){ el.className = 'step-toast'; }, 1600);
 }
+/* ★ answerCard با ساعت‌محور + XP جدید */
 function answerCard(type){
   var c = SESSION.queue[SESSION.idx];
   if(!c) return;
@@ -2385,14 +2286,14 @@ function answerCard(type){
   s.timeSpent = (s.timeSpent||0) + elapsed;
   var td = today();
   if(!STATE.dailyRecords[td]) STATE.dailyRecords[td] = {total:0, newCards:0, correct:0, wrong:0, partial:0};
+  var now = Date.now();
   var xpGain = 0;
+  /* ★ کارت جدید */
   if(wasNew){
-    /* ★ کارت جدید: nextDue = الان + ۱۶ ساعت */
-    var nowMsNow = Date.now();
-    s.seen = true; s.firstSeenDate = td; s.lastSeen = td;
-    if(!s.firstSeenMs) s.firstSeenMs = nowMsNow;
+    s.seen = true; s.firstSeenDate = td; s.firstSeenMs = now; s.lastSeen = td;
     s.stepIndex = 0;
-    s.nextDue = addHours(nowMsNow, SETTINGS.newCardDelayHours);
+    /* ★ +16 ساعت */
+    s.nextDue = addHours(now, SETTINGS.newCardHours || 16);
     STATE.dailyRecords[td].newCards++;
     STATE.dailyRecords[td].total++;
     xpGain = 2;
@@ -2400,47 +2301,46 @@ function answerCard(type){
     playSnd('Study');
     SESSION.answers.push({key:c.key, type:'study', time:elapsed});
     addXP(xpGain, 'کارت جدید');
-    /* ★ چک اتوماتیک تیک سبز مبحث */
-    autoCheckSubRead(c.topicId, c.subId);
-    saveState(); checkMedals(); checkHiddenAch(); updateComboBar(); updateChallengeUI(); updateWeeklyMissions(); updateTodayWidget();
+    saveState();
+    autoMarkSubRead();
+    checkMedals(); checkHiddenAch(); updateComboBar(); updateChallengeUI(); updateWeeklyMissions(); updateTodayWidget();
     setTimeout(function(){ nextCard(); }, 500);
     return;
   }
   s.seen = true; s.lastSeen = td;
-  var nowMs2 = Date.now();
+  /* ★ محاسبه‌ی nextDue بر اساس ساعت */
   if(type === 'correct'){
     s.correctCount++; s.todayCorrect = true;
-    s.stepIndex = Math.min(oldStep + 1, SETTINGS.correctSteps.length - 1);
-    /* ★ hours به جای days */
-    var hours = SETTINGS.correctSteps[s.stepIndex] || SETTINGS.correctSteps[SETTINGS.correctSteps.length-1];
-    s.nextDue = addHours(nowMs2, hours);
+    s.stepIndex = Math.min(oldStep + 1, SETTINGS.correctStepsHours.length - 1);
+    var hours = SETTINGS.correctStepsHours[s.stepIndex] || SETTINGS.correctStepsHours[SETTINGS.correctStepsHours.length-1];
+    s.nextDue = addHours(now, hours);
     STATE.dailyRecords[td].correct++;
     xpGain = 3;
     showPraise(false); playSnd('Correct');
   } else if(type === 'partial'){
     s.partialCount++; s.todayCorrect = false; s.lastPartialDate = td;
     s.stepIndex = Math.max(oldStep - 1, 0);
-    s.nextDue = addHours(nowMs2, SETTINGS.partialHours);
+    s.nextDue = addHours(now, SETTINGS.partialHours || 48);
     STATE.dailyRecords[td].partial++;
     xpGain = 1;
     showPraise(true); playSnd('Partial');
   } else if(type === 'wrong'){
     s.wrongCount++; s.totalWrong++; s.todayCorrect = false; s.lastWrongDate = td;
     s.stepIndex = 0;
-    s.nextDue = addHours(nowMs2, SETTINGS.correctSteps[0] || 24);
+    s.nextDue = addHours(now, 24);
     STATE.dailyRecords[td].wrong++;
-    xpGain = 0; /* ★ غلط امتیاز مثبت نداره */
+    xpGain = 0; /* ★ غلط = 0 XP */
     showPraise(true); playSnd('Wrong');
-    registerWrong(); /* ★ هر ۳ غلط = -1 XP */
+    registerWrong(); /* این تابع خودش هر ۳ غلط 1- می‌ده */
   }
   var newStep = s.stepIndex;
   if(oldStep !== newStep) showStepChange(oldStep, newStep);
   STATE.dailyRecords[td].total++;
   SESSION.answers.push({key:c.key, type:type, time:elapsed});
   if(xpGain > 0) addXP(xpGain, 'مرور');
-  /* ★ چک اتوماتیک تیک سبز مبحث */
-  autoCheckSubRead(c.topicId, c.subId);
-  saveState(); checkMedals(); checkHiddenAch(); updateComboBar(); updateChallengeUI(); updateWeeklyMissions(); updateTodayWidget();
+  saveState();
+  autoMarkSubRead();
+  checkMedals(); checkHiddenAch(); updateComboBar(); updateChallengeUI(); updateWeeklyMissions(); updateTodayWidget();
   setTimeout(function(){ nextCard(); }, type === 'correct' ? 800 : 500);
 }
 function nextCard(){
@@ -2491,10 +2391,6 @@ function showSummary(){
   updateCounts(); renderWelcomeStats(); updateComboBar(); updateChallengeUI(); renderXPBar(); updateWeeklyMissions(); updateTodayWidget();
   SESSION.subInfo = null; SESSION.exam = false; SESSION.quick = false;
   SETTINGS.lastSession = null; saveSettings();
-  /* ★ پاپ session از nav stack */
-  if(NAV_STACK.length && NAV_STACK[NAV_STACK.length-1].type === 'session'){
-    popNavState();
-  }
 }
 function buildReport(){
   var correct = SESSION.answers.filter(function(a){return a.type==='correct'}).length;
@@ -2514,28 +2410,31 @@ function renderWelcomeStats(){
   if(!el) return;
   var total = getAllCards().length;
   var seen = countBy(function(k){var s=STATE.cards[k];return s&&s.seen&&!s.deleted});
-  var mastered = countBy(function(k){var s=STATE.cards[k];return s && !s.deleted && (s.stepIndex||0) >= SETTINGS.correctSteps.length-1});
+  var mastered = countBy(function(k){var s=STATE.cards[k];return s && !s.deleted && (s.stepIndex||0) >= SETTINGS.correctStepsHours.length-1});
   var due = countBy(isDue);
   el.innerHTML = '<div class="stat"><span class="v">'+total+'</span><span class="l">کل</span></div><div class="stat"><span class="v">'+seen+'</span><span class="l">دیده</span></div><div class="stat"><span class="v" style="color:var(--green)">'+mastered+'</span><span class="l">بلد</span></div><div class="stat"><span class="v" style="color:var(--yellow)">'+due+'</span><span class="l">سررسیده</span></div>';
 }
-/* ★ نوار ۴ میانبر */
+/* ★ comboBar با ۴ آیتم */
 function updateComboBar(){
   var td = today();
   var rec = STATE.dailyRecords[td] || {total:0};
   var goal = SETTINGS.dailyGoal || 50;
   var due = countBy(isDue);
   var hard = countBy(isHard);
-  var topicsCount = TOPICS.length;
-  var totalCards = getAllCards().length;
+  var topics = TOPICS.length;
   var gn = $('comboGoalNum'), gp = $('comboGoalProg');
   if(gn) gn.textContent = rec.total + '/' + goal;
   if(gp) gp.style.width = Math.min(100, Math.round(rec.total/goal*100)) + '%';
   var dn = $('comboDueNum'), dp = $('comboDueProg');
   if(dn) dn.textContent = due;
+  var totalCards = getAllCards().length;
   if(dp) dp.style.width = totalCards ? Math.min(100, Math.round(due/totalCards*100)) + '%' : '0%';
   var tn = $('comboTopicsNum'), tp = $('comboTopicsProg');
-  if(tn) tn.textContent = topicsCount;
-  if(tp) tp.style.width = topicsCount > 0 ? '100%' : '0%';
+  if(tn) tn.textContent = topics;
+  if(tp){
+    var pctT = topics > 0 ? Math.min(100, Math.round((topics/Math.max(10, topics))*100)) : 0;
+    tp.style.width = pctT + '%';
+  }
   var hn = $('comboHardNum'), hp = $('comboHardProg');
   if(hn) hn.textContent = hard;
   if(hp) hp.style.width = totalCards ? Math.min(100, Math.round(hard/totalCards*100)) + '%' : '0%';
@@ -2590,9 +2489,7 @@ document.querySelectorAll('.menu-btn').forEach(function(b){
     if(m === 'randomAll'){
       var all = getAllCards().filter(function(c){return isActive(c.key) && isSeen(c.key)});
       if(!all.length){ alert('هنوز کارتی نخوندی'); return; }
-      /* ★ ترتیب ساعت در randomSeen */
-      var keys = sortByDue(shuffle(all).slice(0,30).map(function(c){return c.key}));
-      startSession('randomSeen', keys);
+      startSession('randomSeen', shuffle(all).slice(0,30).map(function(c){return c.key}));
       return;
     }
     if(m === 'new'){ startNewSessionFlow(); return; }
@@ -2605,7 +2502,6 @@ document.querySelectorAll('.menu-btn').forEach(function(b){
     startSession(m);
   });
 });
-
 function startNewSessionFlow(){
   if(!TOPICS.length){ alert('اول یه درس بساز'); return; }
   var topicsWithNew = TOPICS.filter(function(t){ return countNewInTopic(t.id) > 0; });
@@ -2630,12 +2526,12 @@ function startNewSessionFlow(){
 }
 
 /* ============ TOPBAR ============ */
-$('btnBack').onclick = goBackStack;
 $('btnHome').onclick = function(){
   if($('cardArea').classList.contains('show')){
     if(confirm('از جلسه خارج می‌شی؟')) goHome();
   } else goHome();
 };
+$('btnBack').onclick = goBack;
 $('btnSettings').onclick = function(){ showPanel('pSettings'); fillSettings(); };
 $('btnAddCard').onclick = function(){ openAddCardDialog(); };
 $('btnTheme').onclick = function(){
@@ -2687,19 +2583,15 @@ $('fileQuick').addEventListener('change', function(e){
 });
 $('levelBadge').onclick = function(){ showLevelDetails(); };
 $('xpBar').onclick = function(){ showLevelDetails(); };
+/* ★ comboGoal */
 $('comboGoal').onclick = function(){
   var all = getAllCards().filter(function(c){return isActive(c.key) && isSeen(c.key)});
   if(!all.length){ alert('هنوز کارتی نخوندی'); return; }
-  var keys = sortByDue(all.map(function(c){return c.key}));
-  startSession('randomSeen', keys);
+  startSession('randomSeen', all.map(function(c){return c.key}));
 };
 $('comboDue').onclick = function(){ showDuePanel(); };
 $('comboTopics').onclick = function(){ showTopicsPanel(); };
-$('comboHard').onclick = function(){
-  var h = countBy(isHard);
-  if(!h){ showToast('کارت سختی نداری'); return; }
-  startSession('hard');
-};
+$('comboHard').onclick = function(){ startSession('hard'); };
 $('todayWidget').onclick = function(){ showPanel('pCalendar'); renderCalendar(); };
 
 /* ============ SEARCH MODAL ============ */
@@ -2720,21 +2612,19 @@ function openSearchModal(){
         });
         if(!matches.length){ showToast('نتیجه‌ای نیست'); return; }
         closeModal();
-        /* ★ ترتیب ساعت */
-        var keys = sortByDue(matches.map(function(c){return c.key}));
-        startSession('all', keys);
+        startSession('all', matches.map(function(c){return c.key}));
       }, 400);
     });
   }
 }
 
 /* ============ BACK BUTTONS ============ */
-['xTopics','xDue','xSubject','xSettings'].forEach(function(id){ var el=$(id); if(el) el.onclick = function(){ popNavState(); goHome(true); }; });
+['xTopics','xDue','xSubject','xSettings'].forEach(function(id){ var el=$(id); if(el) el.onclick = goBack; });
 ['xStats','xMedals','xHeatmap','xCalendar','xRecords','xGrowth','xChallengeDetail','xWeeklyMissions','xHiddenAch','xTags'].forEach(function(id){
   var el = $(id);
-  if(el) el.onclick = function(){ showPanel('pSettings'); fillSettings(); };
+  if(el) el.onclick = goBack;
 });
-var xSub = $('xSubDetail'); if(xSub) xSub.onclick = function(){ showTopicsPanel(); };
+var xSub = $('xSubDetail'); if(xSub) xSub.onclick = function(){ goBack(); };
 
 /* ============ CARD TOOLS ============ */
 $('cardQ').addEventListener('click', function(){ $('cardA').classList.add('show'); });
@@ -2893,22 +2783,22 @@ $('navPrev').onclick = prevCard;
 $('navNext').onclick = nextCard;
 
 document.addEventListener('keydown', function(e){
-  /* ★ Ctrl+E برای ادیت */
-  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e'){
-    if($('cardArea').classList.contains('show')){
-      e.preventDefault();
-      var btn = $('tEdit');
-      if(btn) btn.click();
-    }
-    return;
-  }
   if(e.key === 'Escape'){
     if($('levelUpModal').classList.contains('show')){ closeLevelUp(); return; }
     if($('modalBg').classList.contains('show')){ closeModal(); return; }
-    if(document.querySelector('.panel.show')){ popNavState(); goHome(true); return; }
+    if(document.querySelector('.panel.show')){ goBack(); return; }
     return;
   }
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+  /* ★ Ctrl+E برای ادیت */
+  if(e.ctrlKey && (e.key === 'e' || e.key === 'E')){
+    var cc = SESSION.queue[SESSION.idx];
+    if(cc && $('cardArea').classList.contains('show')){
+      e.preventDefault();
+      $('tEdit').click();
+      return;
+    }
+  }
   if(!$('cardArea').classList.contains('show')){
     if(e.key === '9'){ e.preventDefault(); goHome(); }
     return;
@@ -2931,11 +2821,7 @@ document.addEventListener('keydown', function(e){
 });
 
 /* ============ TOPICS PANEL ============ */
-function showTopicsPanel(){
-  pushNavState('panel', 'pTopics');
-  showPanel('pTopics', true);
-  renderTopics();
-}
+function showTopicsPanel(){ showPanel('pTopics'); renderTopics(); }
 $('btnExpandAll').onclick = function(){
   var anyOpen = Object.keys(currentTopicTab).some(function(k){return currentTopicTab[k]});
   TOPICS.forEach(function(t){ currentTopicTab[t.id] = !anyOpen; });
@@ -3033,6 +2919,15 @@ function handleTopicAct(a, tid, sid){
     currentTopicTab[tid] = !currentTopicTab[tid];
     activeDropdown = null;
     renderTopics();
+    if(currentTopicTab[tid]){
+      setTimeout(function(){
+        var target = document.querySelector('#topicsList [data-a="toggleTopic"][data-t="' + tid + '"]');
+        if(target){
+          var item = target.closest('.item');
+          if(item) item.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      }, 120);
+    }
   }
   else if(a === 'topicMenu'){ activeDropdown = (activeDropdown && activeDropdown.type === 'topic' && activeDropdown.tid === tid) ? null : {type:'topic', tid:tid}; renderTopics(); }
   else if(a === 'subMenu'){ activeDropdown = (activeDropdown && activeDropdown.type === 'sub' && activeDropdown.tid === tid && activeDropdown.sid === sid) ? null : {type:'sub', tid:tid, sid:sid}; renderTopics(); }
@@ -3041,6 +2936,7 @@ function handleTopicAct(a, tid, sid){
     (t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){keys.push(ck(c.q||'',c.a||''))})});
     if(!keys.length){ alert('خالی'); return; }
     activeDropdown = null;
+    /* ★ ordered: ترتیب مباحث، داخل هر مبحث ترتیب ساعت */
     startSession('all', keys, null, {ordered:true});
   }
   else if(a === 'randomTopic'){
@@ -3062,19 +2958,23 @@ function handleTopicAct(a, tid, sid){
     var s = t.subtopics.find(function(x){return x.id === sid}); if(!s) return;
     var ks = (s.cards||[]).map(function(c){return ck(c.q||'',c.a||'')});
     if(!ks.length){ alert('خالی'); return; }
-    activeDropdown = null; startSession('all', ks, {tid:tid, sid:sid}, {ordered:true});
+    activeDropdown = null;
+    /* ★ ترتیب ساعت داخل مبحث */
+    startSession('all', ks, {tid:tid, sid:sid}, {ordered:true});
   }
   else if(a === 'reviewSubShuffle'){
     var s6 = t.subtopics.find(function(x){return x.id === sid}); if(!s6) return;
     var ks6 = (s6.cards||[]).map(function(c){return ck(c.q||'',c.a||'')}).filter(function(k){return isSeen(k) && isActive(k)});
     if(!ks6.length){ alert('هنوز کارتی از این مبحث نخوندی'); return; }
-    activeDropdown = null; startSession('randomSeen', ks6, {tid:tid, sid:sid});
+    activeDropdown = null;
+    startSession('randomSeen', ks6, {tid:tid, sid:sid});
   }
   else if(a === 'quickSub'){
     var s5 = t.subtopics.find(function(x){return x.id === sid}); if(!s5) return;
     var ks5 = (s5.cards||[]).map(function(c){return ck(c.q||'',c.a||'')});
     if(!ks5.length){ alert('خالی'); return; }
-    activeDropdown = null; startQuickSession(ks5, {tid:tid, sid:sid});
+    activeDropdown = null;
+    startQuickSession(ks5, {tid:tid, sid:sid});
   }
   else if(a === 'subDetail'){ activeDropdown = null; openSubDetail(tid, sid); }
   else if(a === 'renameSub'){ var s3 = t.subtopics.find(function(x){return x.id === sid}); var nn = prompt('نام جدید:', s3.name); if(nn && nn.trim()){ s3.name = nn.trim(); saveTopics(); activeDropdown = null; renderTopics(); } }
@@ -3114,27 +3014,40 @@ $('fileTxt').addEventListener('change', function(e){
   });
   e.target.value = '';
 });
-/* ★ handleJson اصلاح‌شده: کارت تکراری درس/مبحث خالی نمی‌سازه */
+/* ★ handleJson اصلاح‌شده: کارت تکراری دیگه درس/مبحث خالی نمی‌سازه */
 function handleJson(text){
   var data = JSON.parse(text);
   var added = 0, skipped = 0;
   var existing = {};
   getAllCards().forEach(function(c){ existing[c.key] = true; });
-  function addCard(tn, sn, q, a, tags){
-    if(!q || !a){ skipped++; return; } /* ★ بدون سؤال/پاسخ → skip */
-    var k = ck(q, a);
-    /* ★ اول چک تکراری — قبل از ساختن درس/مبحث */
-    if(existing[k]){ skipped++; return; }
-    /* ★ الان درس/مبحث رو بساز */
-    var t = TOPICS.find(function(x){return x.name === tn});
-    if(!t){ t = {id:uid(), name:tn, subtopics:[], pinned:false}; TOPICS.push(t); }
+  /* ★ cache برای درس‌ها و مباحث در همین import */
+  var pendingTopics = {};
+  TOPICS.forEach(function(t){ pendingTopics[t.name] = t; });
+  function getOrCreateTopic(tn){
+    if(pendingTopics[tn]) return pendingTopics[tn];
+    var t = {id:uid(), name:tn, subtopics:[], pinned:false};
+    TOPICS.push(t);
+    pendingTopics[tn] = t;
+    return t;
+  }
+  function getOrCreateSub(t, sn){
     var s = t.subtopics.find(function(x){return x.name === sn});
     if(!s){ s = {id:uid(), name:sn, cards:[]}; t.subtopics.push(s); }
+    return s;
+  }
+  function addCard(tn, sn, q, a, tags){
+    if(!q || !a) return false;
+    var k = ck(q, a);
+    if(existing[k]){ skipped++; return false; }
+    /* ★ فقط اگه کارت جدید واقعاً داریم، درس/مبحث بساز */
+    var t = getOrCreateTopic(tn);
+    var s = getOrCreateSub(t, sn);
     var nc = {q:q, a:a};
     if(tags && tags.length) nc.tags = tags;
     s.cards.push(nc);
     existing[k] = true;
     added++;
+    return true;
   }
   if(Array.isArray(data)){ data.forEach(function(c){ addCard('عمومی', 'عمومی', c.q, c.a, c.tags); }); }
   else if(data.topics){ data.topics.forEach(function(t){ (t.subtopics||[]).forEach(function(s){ (s.cards||[]).forEach(function(c){ addCard(t.name, s.name, c.q, c.a, c.tags); }); }); }); }
@@ -3144,10 +3057,10 @@ function handleJson(text){
     else throw new Error('ساختار JSON اشتباهه');
   }
   else throw new Error('فرمت JSON شناخته نشد');
-  /* ★ پاک‌سازی: درس/مبحث خالی حذف */
+  /* ★ پاکسازی درس‌ها و مباحث خالی */
   TOPICS = TOPICS.filter(function(t){
     t.subtopics = (t.subtopics||[]).filter(function(s){ return (s.cards||[]).length > 0; });
-    return (t.subtopics||[]).length > 0;
+    return t.subtopics.length > 0;
   });
   saveTopics(); updateCounts();
   alert('اضافه: ' + added + '\nرد شد: ' + skipped);
@@ -3180,6 +3093,11 @@ function handleTxt(text, fileName){
     var k = ck(c.q, c.a);
     if(!existing[k]){ s.cards.push(c); existing[k] = true; added++; }
   });
+  if(added === 0 && !s.cards.length){
+    /* ★ اگه هیچی اضافه نشد و مبحث خالی، حذفش کن */
+    t.subtopics = t.subtopics.filter(function(x){return x.id !== s.id});
+    if(!t.subtopics.length) TOPICS = TOPICS.filter(function(x){return x.id !== t.id});
+  }
   saveTopics(); updateCounts();
   alert(added + ' کارت اضافه شد');
   if($('pTopics').classList.contains('show')) renderTopics();
@@ -3255,8 +3173,7 @@ function openSubDetail(tid, sid){
   var s = t.subtopics.find(function(x){return x.id === sid});
   if(!s) return;
   currentSubDetail = {tid:tid, sid:sid};
-  pushNavState('panel', 'pSubDetail');
-  showPanel('pSubDetail', true);
+  showPanel('pSubDetail');
   var ttl = $('subDetailTitle');
   if(ttl) ttl.textContent = t.name + ' / ' + s.name;
   renderSubDetail();
@@ -3420,16 +3337,26 @@ function addVoiceCard(s, tid, sid){
 }
 
 /* ============ DUE PANEL ============ */
-function showDuePanel(skipStack){
-  if(!skipStack){ pushNavState('panel', 'pDue'); }
-  showPanel('pDue', true);
+function showDuePanel(){
+  showPanel('pDue');
   var due = getAllCards().filter(function(c){return isDue(c.key)});
-  /* ★ ترتیب ساعت */
-  var dueKeys = due.map(function(c){return c.key});
-  dueKeys = sortByDue(dueKeys);
-  var byKey = {};
-  due.forEach(function(c){ byKey[c.key] = c; });
-  due = dueKeys.map(function(k){return byKey[k]}).filter(function(c){return c});
+  if(SETTINGS.smartSuggestion){
+    var hard = due.filter(function(c){return isHard(c.key)});
+    var low = due.filter(function(c){return !isHard(c.key) && ((STATE.cards[c.key]&&STATE.cards[c.key].stepIndex)||0) <= 1});
+    var rest = due.filter(function(c){return !isHard(c.key) && ((STATE.cards[c.key]&&STATE.cards[c.key].stepIndex)||0) > 1});
+    due = sortByNextDue(hard).concat(sortByNextDue(low)).concat(sortByNextDue(rest));
+  } else {
+    /* ★ ترتیب: ساعت قدیمی‌تر اول */
+    due = due.sort(function(a,b){
+      var sa = STATE.cards[a.key]||{}, sb = STATE.cards[b.key]||{};
+      var ha = (sa.totalWrong||0) >= SETTINGS.hardThreshold ? 0 : 1;
+      var hb = (sb.totalWrong||0) >= SETTINGS.hardThreshold ? 0 : 1;
+      if(ha !== hb) return ha - hb;
+      var ta = toMs(sa.nextDue) || 0;
+      var tb = toMs(sb.nextDue) || 0;
+      return ta - tb;
+    });
+  }
   var info = $('dueInfo');
   if(info) info.innerHTML = '<span>📅 '+jalali(null)+' · '+gregorianShort(null)+'</span><span>'+due.length+' کارت</span>';
   var el = $('dueList');
@@ -3449,7 +3376,7 @@ function showDuePanel(skipStack){
 }
 
 /* ============ SUBJECT SEARCH ============ */
-function showSubjectPanel(){ pushNavState('panel', 'pSubject'); showPanel('pSubject', true); $('subjInput').focus(); renderSubject(''); }
+function showSubjectPanel(){ showPanel('pSubject'); $('subjInput').focus(); renderSubject(''); }
 $('subjInput').addEventListener('input', function(){ renderSubject(this.value); });
 function renderSubject(q){
   q = (q||'').trim().toLowerCase();
@@ -3535,7 +3462,6 @@ function startQuickSession(keys, subInfo){
   SESSION.exam = false;
   SESSION.quick = true;
   SESSION.startTime = Date.now();
-  pushNavState('session', 'quick');
   hidePanels();
   var w = $('welcome'); if(w) w.style.display = 'none';
   var ca = $('cardArea'); if(ca) ca.classList.add('show');
@@ -3561,23 +3487,21 @@ function renderQuick(){
   quickTimer = setTimeout(function(){
     if($('cardA')) $('cardA').classList.add('show');
     quickTimer = setTimeout(function(){
-      var s = getS(c.key);
+      var s2 = getS(c.key);
       var td = today();
       if(!STATE.dailyRecords[td]) STATE.dailyRecords[td] = {total:0, newCards:0, correct:0, wrong:0, partial:0};
-      if(!s.seen){
-        var nowMsQ = Date.now();
-        s.seen = true; s.firstSeenDate = td; s.lastSeen = td;
-        if(!s.firstSeenMs) s.firstSeenMs = nowMsQ;
-        s.stepIndex = 0;
-        s.nextDue = addHours(nowMsQ, SETTINGS.newCardDelayHours);
+      var nw = Date.now();
+      if(!s2.seen){
+        s2.seen = true; s2.firstSeenDate = td; s2.firstSeenMs = nw; s2.lastSeen = td;
+        s2.stepIndex = 0;
+        s2.nextDue = addHours(nw, SETTINGS.newCardHours || 16);
         STATE.dailyRecords[td].newCards++;
       } else {
-        s.lastSeen = td;
-        s.nextDue = addHours(Date.now(), SETTINGS.correctSteps[0] || 24);
+        s2.lastSeen = td; s2.nextDue = addHours(nw, 24);
       }
       STATE.dailyRecords[td].total++;
-      autoCheckSubRead(c.topicId, c.subId);
       saveState();
+      autoMarkSubRead();
       SESSION.answers.push({key:c.key, type:'study', time:SETTINGS.quickQTime + SETTINGS.quickATime});
       nextQuick();
     }, SETTINGS.quickATime * 1000);
@@ -3591,7 +3515,7 @@ function nextQuick(){
 
 /* ============ STEP FILTER ============ */
 function showStepFilter(){
-  openModal('<button class="modal-close" onclick="closeModal()">✕</button><h3>📊 فیلتر پله</h3><p style="font-size:12px;color:var(--muted);margin-bottom:10px">روی هر پله کلیک کن.</p><div class="step-btns"><button class="step-btn" data-sf="0"><span class="n">پله ۰</span>۲۴ ساعت</button><button class="step-btn" data-sf="1"><span class="n">پله ۱</span>۲۴ ساعت</button><button class="step-btn" data-sf="2"><span class="n">پله ۲</span>۷۲ ساعت</button><button class="step-btn" data-sf="3"><span class="n">پله ۳</span>۱۶۸ ساعت</button><button class="step-btn" data-sf="4"><span class="n">پله ۴</span>۳۳۶ ساعت</button><button class="step-btn" data-sf="5"><span class="n">پله ۵</span>۶۲۴ ساعت</button><button class="step-btn" data-sf="6"><span class="n">بلد</span>۱۳۹۲ ساعت</button></div><div style="margin-top:10px"><label><input type="radio" name="sfMode" value="review" checked> مرور همه کارت‌های این پله</label><label><input type="radio" name="sfMode" value="due"> فقط سررسیده‌ها</label></div><div class="modal-acts"><button class="btn" onclick="closeModal()">بستن</button></div>');
+  openModal('<button class="modal-close" onclick="closeModal()">✕</button><h3>📊 فیلتر پله</h3><p style="font-size:12px;color:var(--muted);margin-bottom:10px">روی هر پله کلیک کن. ترتیب نمایش بر اساس ساعت سررسید.</p><div class="step-btns"><button class="step-btn" data-sf="0"><span class="n">پله ۰</span>۱۶ ساعت</button><button class="step-btn" data-sf="1"><span class="n">پله ۱</span>۲۴ ساعت</button><button class="step-btn" data-sf="2"><span class="n">پله ۲</span>۷۲ ساعت</button><button class="step-btn" data-sf="3"><span class="n">پله ۳</span>۱۶۸ ساعت</button><button class="step-btn" data-sf="4"><span class="n">پله ۴</span>۳۳۶ ساعت</button><button class="step-btn" data-sf="5"><span class="n">پله ۵</span>۶۲۴ ساعت</button><button class="step-btn" data-sf="6"><span class="n">بلد</span>۱۳۹۲ ساعت</button></div><div style="margin-top:10px"><label><input type="radio" name="sfMode" value="review" checked> مرور همه کارت‌های این پله</label><label><input type="radio" name="sfMode" value="due"> فقط سررسیده‌ها</label></div><div class="modal-acts"><button class="btn" onclick="closeModal()">بستن</button></div>');
   document.querySelectorAll('.step-btn').forEach(function(b){
     b.onclick = function(){
       var sf = b.dataset.sf;
@@ -3609,6 +3533,7 @@ function showStepFilter(){
       });
       if(!out.length){ alert('کارتی توی این پله نیست'); return; }
       closeModal();
+      /* ★ ترتیب ساعت */
       startSession('all', out);
     };
   });
@@ -3699,7 +3624,6 @@ function getSessionPlan(){
   var isMorning = h >= 6 && h < 12;
   var isEvening = h >= 18;
   var totalPlanned = 0;
-
   if(hard >= 10){
     var hardN = Math.min(hard, Math.round(target * 0.25));
     sessions.push({n: hardN, metric:'hard', label: hardN + ' کارت سخت', time: Math.round(hardN * 0.5)});
@@ -3736,24 +3660,17 @@ function showWhatToDo(){
   var predict = aiPredictLearning();
   var h = new Date().getHours();
   var hourName = h < 12 ? 'صبح' : h < 18 ? 'بعدازظهر' : 'شب';
-
   var html = '<button class="modal-close" onclick="closeModal()">✕</button>';
   html += '<h3>🤔 امروز چیکار کنم؟</h3>';
-
-  html += '<div class="coach-section">';
-  html += '<h4>📊 وضعیت امروز</h4>';
-  html += '<div class="coach-status">';
+  html += '<div class="coach-section"><h4>📊 وضعیت امروز</h4><div class="coach-status">';
   html += '<div class="item"><span>⏰ سررسیده</span><span class="num">' + due + '</span></div>';
   html += '<div class="item"><span>🆕 جدید</span><span class="num">' + newC + '</span></div>';
   html += '<div class="item"><span>🔁 سخت</span><span class="num">' + hard + '</span></div>';
   html += '<div class="item"><span>🎯 هدف</span><span class="num">' + todayTotal + '/' + goal + '</span></div>';
   html += '<div class="item"><span>🔥 استریک</span><span class="num">' + getStreak() + ' روز</span></div>';
   html += '<div class="item"><span>🕐 ساعت</span><span class="num">' + h + ':00 (' + hourName + ')</span></div>';
-  html += '</div>';
-  html += '</div>';
-
-  html += '<div class="coach-section">';
-  html += '<h4>🎯 برنامه پیشنهادی</h4>';
+  html += '</div></div>';
+  html += '<div class="coach-section"><h4>🎯 برنامه پیشنهادی</h4>';
   if(plan.sessions.length === 0){
     html += '<div class="coach-plan">✅ همه چیز تمومه! استراحت کن.</div>';
   } else {
@@ -3765,7 +3682,6 @@ function showWhatToDo(){
     html += '</div>';
   }
   html += '</div>';
-
   var tip = '';
   if(plan.isMorning) tip = '🌅 صبح‌ها مغز آماده‌تره، از این ساعت برای جدیدها استفاده کن';
   else if(plan.isEvening) tip = '🌙 شب‌ها برای مرور و تثبیت بهتره، جدیدها رو بذار برای فردا صبح';
@@ -3775,11 +3691,7 @@ function showWhatToDo(){
   if(due > 100) tip = '⏰ ' + due + ' سررسیده داری، اول اونا رو تموم کن';
   if(weaknesses.length && weaknesses[0].rate > 0.4) tip = '⚠️ درس «' + weaknesses[0].name + '» ضعیف‌تره، بیشتر روش کار کن';
   if(predict) tip += '<br>📈 با این سرعت ~' + predict.days + ' روز تا اتمام';
-  html += '<div class="coach-section">';
-  html += '<h4>💡 نکته امروز</h4>';
-  html += '<div class="coach-tip">' + tip + '</div>';
-  html += '</div>';
-
+  html += '<div class="coach-section"><h4>💡 نکته امروز</h4><div class="coach-tip">' + tip + '</div></div>';
   html += '<div class="coach-actions">';
   if(plan.sessions.length > 0) html += '<button class="btn primary" id="coachStart" style="grid-column:span 2">▶ شروع برنامه پیشنهادی</button>';
   if(due > 0) html += '<button class="btn" id="coachDue">⏰ فقط سررسیده (' + due + ')</button>';
@@ -3788,9 +3700,7 @@ function showWhatToDo(){
   if(left > 0) html += '<button class="btn gold" id="coachGoal">🎯 هدف امروز (' + left + ')</button>';
   html += '<button class="btn" onclick="closeModal()" style="grid-column:span 2">✖ بستن</button>';
   html += '</div>';
-
   openModal(html);
-
   var cs = $('coachStart');
   if(cs) cs.onclick = function(){
     closeModal();
@@ -3801,7 +3711,7 @@ function showWhatToDo(){
       else if(s.metric === 'due') filtered = getAllCards().filter(function(c){return isDue(c.key)});
       else if(s.metric === 'seen') filtered = getAllCards().filter(function(c){return isActive(c.key) && isSeen(c.key)});
       else filtered = getAllCards().filter(function(c){return isActive(c.key)});
-      filtered = shuffle(filtered).slice(0, s.n);
+      filtered = sortByNextDue(filtered).slice(0, s.n);
       filtered.forEach(function(c){ if(keys.indexOf(c.key) < 0) keys.push(c.key); });
     });
     if(!keys.length){ showToast('کارتی نیست'); return; }
@@ -3814,13 +3724,35 @@ function showWhatToDo(){
     closeModal();
     var seen = getAllCards().filter(function(c){return isActive(c.key) && isSeen(c.key)});
     if(!seen.length){ showToast('هنوز کارت خونده‌شده نداری'); return; }
-    startSession('randomSeen', shuffle(seen).slice(0, left).map(function(c){return c.key}));
+    startSession('randomSeen', sortByNextDue(seen).slice(0, left).map(function(c){return c.key}));
   };
 }
 
 /* ============ SETTINGS ============ */
 function fillSettings(){
-  var map = {setPart:SETTINGS.partialHours,setSteps:SETTINGS.correctSteps.join(','),setHard:SETTINGS.hardThreshold,setGoal:SETTINGS.dailyGoal,setMostViews:SETTINGS.mostViewsThreshold,setSess:SETTINGS.sessionSize,setQuickQ:SETTINGS.quickQTime,setQuickA:SETTINGS.quickATime,setRec:SETTINGS.recTime,sndC:SETTINGS.soundCorrect,sndW:SETTINGS.soundWrong,sndP:SETTINGS.soundPartial,sndS:SETTINGS.soundStudy,sndPomo:SETTINGS.soundPomo,sndL:SETTINGS.soundLevelUp,sndMC:SETTINGS.soundMissionClaim,setVol:SETTINGS.volume,setPF:SETTINGS.pomoFocus,setPB:SETTINGS.pomoBreak,setPL:SETTINGS.pomoLong,setFont:SETTINGS.fontSize || 'normal'};
+  var map = {
+    setPart:SETTINGS.partialHours,
+    setSteps:(SETTINGS.correctStepsHours||[]).join(','),
+    setHard:SETTINGS.hardThreshold,
+    setGoal:SETTINGS.dailyGoal,
+    setMostViews:SETTINGS.mostViewsThreshold,
+    setSess:SETTINGS.sessionSize,
+    setQuickQ:SETTINGS.quickQTime,
+    setQuickA:SETTINGS.quickATime,
+    setRec:SETTINGS.recTime,
+    sndC:SETTINGS.soundCorrect,
+    sndW:SETTINGS.soundWrong,
+    sndP:SETTINGS.soundPartial,
+    sndS:SETTINGS.soundStudy,
+    sndPomo:SETTINGS.soundPomo,
+    sndL:SETTINGS.soundLevelUp,
+    sndMC:SETTINGS.soundMissionClaim,
+    setVol:SETTINGS.volume,
+    setPF:SETTINGS.pomoFocus,
+    setPB:SETTINGS.pomoBreak,
+    setPL:SETTINGS.pomoLong,
+    setFont:SETTINGS.fontSize || 'normal'
+  };
   Object.keys(map).forEach(function(id){ var el = $(id); if(el) el.value = map[id]; });
   var snd = $('setSnd'); if(snd) snd.checked = !!SETTINGS.sound;
   var smart = $('setSmart'); if(smart) smart.checked = !!SETTINGS.smartSuggestion;
@@ -3836,7 +3768,10 @@ function autoSaveSettings(e){
     var id = e && e.target ? e.target.id : null;
     var v = e && e.target ? e.target.value : null;
     if(id === 'setPart') SETTINGS.partialHours = parseInt(v) || 48;
-    else if(id === 'setSteps'){ var cs = (v||'').split(',').map(function(x){return parseInt(x.trim())}).filter(function(x){return x > 0}); if(cs.length) SETTINGS.correctSteps = cs; }
+    else if(id === 'setSteps'){
+      var cs = (v||'').split(',').map(function(x){return parseInt(x.trim())}).filter(function(x){return x > 0});
+      if(cs.length) SETTINGS.correctStepsHours = cs;
+    }
     else if(id === 'setHard') SETTINGS.hardThreshold = parseInt(v) || 7;
     else if(id === 'setGoal') SETTINGS.dailyGoal = parseInt(v) || 0;
     else if(id === 'setMostViews') SETTINGS.mostViewsThreshold = parseInt(v) || 20;
@@ -3873,7 +3808,6 @@ setTimeout(function(){
   });
   var vol = $('setVol');
   if(vol) vol.addEventListener('input', function(){ SETTINGS.volume = parseInt(this.value); saveSettings(); });
-
   document.querySelectorAll('.sound-test').forEach(function(btn){
     btn.addEventListener('click', function(){
       var type = btn.dataset.snd;
@@ -4006,7 +3940,7 @@ $('btnReset').onclick = function(){
   try{
     if(idb){
       try{ idb.close(); }catch(e){}
-      var delReq = indexedDB.deleteDatabase('fc24_db');
+      var delReq = indexedDB.deleteDatabase('fc23_db');
       delReq.onsuccess = function(){ location.reload(); };
       delReq.onerror = function(){ location.reload(); };
       delReq.onblocked = function(){ location.reload(); };
@@ -4066,7 +4000,7 @@ function renderStats(){
     if(s.deleted) return;
     if(s.starred) starred++;
     if(s.seen) seen++; else newCount++;
-    if((s.stepIndex||0) >= SETTINGS.correctSteps.length-1) mastered++;
+    if((s.stepIndex||0) >= SETTINGS.correctStepsHours.length-1) mastered++;
     totalC += s.correctCount||0;
     totalP += s.partialCount||0;
     totalW += s.wrongCount||0;
@@ -4128,29 +4062,30 @@ function renderStats(){
   html += '<div class="srow"><span>این هفته: '+thisW+'</span><span>هفته قبل: '+lastW+'</span><span>'+(lastW>0?Math.round((thisW-lastW)/lastW*100):0)+'%</span></div>';
   html += '<h3 style="margin:14px 0 8px">🥧 نسبت یادگیری</h3>'+pie;
   html += '<h3 style="margin:14px 0 8px">🪜 توزیع پله‌ها</h3>';
-  var stepNames = ['پله ۰','پله ۱','پله ۲','پله ۳','پله ۴','پله ۵','بلد'];
+  var stepNames = ['پله ۰ (۱۶س)','پله ۱ (۲۴س)','پله ۲ (۷۲س)','پله ۳ (۱۶۸س)','پله ۴ (۳۳۶س)','پله ۵ (۶۲۴س)','بلد (۱۳۹۲س)'];
   for(var sj = 0; sj < 7; sj++){ html += '<div class="srow"><span>'+stepNames[sj]+'</span><span class="badge '+(sj===6?'gold':'')+'">'+steps[sj]+'</span></div>'; }
   var body = $('statsBody'); if(body) body.innerHTML = html;
 }
-
-/* ★ renderMedals با مدال شمارنده */
 function renderMedals(){
-  var u = Object.keys(MEDALS).filter(function(k){return k !== 'challenge_count'}).length;
-  var totalMedals = MEDALS_LIST.length;
-  var html = '<p style="text-align:center;margin-bottom:12px;font-size:13px">🏆 '+u+' از '+(totalMedals-1)+' مدال عادی</p><div class="medals">';
+  var u = Object.keys(MEDALS).length;
+  var html = '<p style="text-align:center;margin-bottom:12px;font-size:13px">🏆 '+u+' از '+MEDALS_LIST.length+' مدال</p><div class="medals">';
   MEDALS_LIST.forEach(function(def){
-    if(def.counter){
-      var cnt = (MEDALS['challenge_count'] && MEDALS['challenge_count'].count) || 0;
-      html += '<div class="medal counter-medal un" title="'+def.desc+'"><span class="cnt">'+cnt+'</span><span class="e">'+def.emoji+'</span><span class="n">'+def.name+'</span></div>';
-      return;
-    }
     var unlocked = !!MEDALS[def.id];
-    html += '<div class="medal '+def.tier+(unlocked?' un':'')+'" title="'+def.desc+'"><span class="e">'+def.emoji+'</span><span class="n">'+def.name+'</span></div>';
+    if(def.counter){
+      /* ★ مدال شمارنده‌دار چالش */
+      var cnt = (MEDALS[def.id] && MEDALS[def.id].count) || 0;
+      html += '<div class="medal counter-medal un" title="'+def.desc+'">';
+      html += '<span class="cnt">'+cnt+'</span>';
+      html += '<span class="e">'+def.emoji+'</span>';
+      html += '<span class="n">'+def.name+'</span>';
+      html += '</div>';
+    } else {
+      html += '<div class="medal '+def.tier+(unlocked?' un':'')+'" title="'+def.desc+'"><span class="e">'+def.emoji+'</span><span class="n">'+def.name+'</span></div>';
+    }
   });
   html += '</div>';
   var body = $('medalsBody'); if(body) body.innerHTML = html;
 }
-
 function renderHeatmap(){
   var td = today();
   var days = []; for(var i = 89; i >= 0; i--) days.push(addDays(td, -i));
@@ -4167,6 +4102,7 @@ function renderHeatmap(){
   var body = $('heatmapBody'); if(body) body.innerHTML = html;
 }
 
+/* ============ CALENDAR ============ */
 function renderCalendar(){
   var jf = jalaliFull(null);
   if(!calendarMonth.y){ calendarMonth.y = jf.y; calendarMonth.m = jf.m; }
@@ -4214,6 +4150,7 @@ function showCardsOfDay(dateStr){
   startSession('all', onDay.map(function(c){return c.key}));
 }
 
+/* ============ RECORDS ============ */
 function renderRecords(){
   var recMaxNew = 0, recMaxTotal = 0, recMaxNewD = '', recMaxTotalD = '';
   var recMaxCorrect = 0, recMaxCorrectD = '';
@@ -4249,6 +4186,7 @@ function renderRecords(){
   var body = $('recordsBody'); if(body) body.innerHTML = html;
 }
 
+/* ============ GROWTH ============ */
 function renderGrowth(){
   var days = []; for(var i = 29; i >= 0; i--) days.push(addDays(today(), -i));
   var vals = days.map(function(d){ return (STATE.dailyRecords[d] && STATE.dailyRecords[d].total) || 0; });
@@ -4268,21 +4206,18 @@ function renderGrowth(){
   var body = $('growthBody'); if(body) body.innerHTML = html;
 }
 
+/* ============ CHALLENGE DETAIL ============ */
 function renderChallengeDetail(){
   var html = '<h3 style="margin-bottom:10px">🎯 چالش امروز</h3>';
   if(currentChallenge){
     var stage = currentChallenge.stage || 1;
     html += '<div class="srow"><span>'+currentChallenge.text+'</span><span class="badge '+(currentChallenge.done?'g':'y')+'">'+(currentChallenge.done?'انجام شد':'مرحله '+stage)+'</span></div>';
     html += '<div class="srow"><span>🎁 پاداش</span><span class="badge gold">'+currentChallenge.reward+' XP</span></div>';
-  } else {
-    html += '<div class="empty">همه چالش‌های امروز انجام شده! 🎉</div>';
   }
   html += '<h3 style="margin:14px 0 8px">🔥 استریک</h3><div class="sgrid2">';
   html += '<div class="scard rec"><span class="num" style="color:var(--gold)">'+challengeData.streak+'</span><span class="lbl">روز پیوسته</span></div>';
-  html += '<div class="scard"><span class="num">'+challengeData.done.length+'</span><span class="lbl">کل چالش‌ها</span></div>';
-  var cntMedal = (MEDALS['challenge_count'] && MEDALS['challenge_count'].count) || 0;
-  html += '<div class="scard rec"><span class="num" style="color:var(--gold)">'+cntMedal+'</span><span class="lbl">مدال چالش</span></div>';
-  html += '</div>';
+  var totalCh = (MEDALS['challenge_count'] && MEDALS['challenge_count'].count) || 0;
+  html += '<div class="scard rec"><span class="num" style="color:var(--gold)">'+totalCh+'</span><span class="lbl">کل چالش‌های انجام‌شده</span></div></div>';
   html += '<h3 style="margin:14px 0 8px">📜 تاریخچه (۱۰ مورد اخیر)</h3>';
   var hist = challengeData.done.slice(-10).reverse();
   if(!hist.length){ html += '<div class="empty">هنوز چالشی انجام ندی</div>'; }
@@ -4290,6 +4225,7 @@ function renderChallengeDetail(){
   var body = $('challengeBody'); if(body) body.innerHTML = html;
 }
 
+/* ============ WEEKLY MISSIONS ============ */
 function renderWeeklyMissions(){
   updateWeeklyMissions();
   var html = '<h3 style="margin-bottom:10px">📜 مأموریت‌های این هفته</h3>';
@@ -4321,9 +4257,9 @@ function renderWeeklyMissions(){
         var m = MISSIONS.list.find(function(x){return x.id === mid});
         if(!m || !m.done || m.claimed) return;
         m.claimed = true;
-        addXP(m.reward, 'مأموریت هفتگی');
-        /* ★ صدا پخش */
+        /* ★ صدای دریافت پاداش */
         playSnd('MissionClaim');
+        addXP(m.reward, 'مأموریت هفتگی');
         saveMissions();
         renderWeeklyMissions();
         showToast('🎁 ' + m.reward + ' XP گرفتی!');
@@ -4332,6 +4268,7 @@ function renderWeeklyMissions(){
   }
 }
 
+/* ============ HIDDEN ACH ============ */
 function renderHiddenAch(){
   var u = Object.keys(HIDDEN_ACH).length;
   var html = '<p style="text-align:center;margin-bottom:12px;font-size:13px">🔮 '+u+' از '+HIDDEN_ACH_LIST.length+' نشان کشف شده</p><div class="medals">';
@@ -4345,8 +4282,7 @@ function renderHiddenAch(){
   var body = $('hiddenAchBody'); if(body) body.innerHTML = html;
 }
 
-/* ★ حذف جدول رهبری — تابع حذف شد */
-
+/* ============ TAGS PANEL ============ */
 function renderTagsPanel(){
   var tags = getAllTags();
   var keys = Object.keys(tags).sort(function(a,b){return tags[b]-tags[a]});
@@ -4424,31 +4360,6 @@ if('serviceWorker' in navigator){
   try{ var swCode = "self.addEventListener('install',e=>self.skipWaiting());self.addEventListener('activate',e=>self.clients.claim());self.addEventListener('fetch',e=>{});"; navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(swCode)).catch(function(){}); }catch(e){}
 }
 
-/* ============ ★ MIGRATION ★ ============ */
-/* گزینه ب: هم string قدیمی هم timestamp جدید */
-function migrateState(){
-  if(!STATE || !STATE.cards) return;
-  var migrated = 0;
-  Object.keys(STATE.cards).forEach(function(k){
-    var s = STATE.cards[k];
-    /* nextDue: اگر string قدیمی بود، تبدیل به midnight timestamp */
-    if(s.nextDue && typeof s.nextDue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.nextDue)){
-      s.nextDue = new Date(s.nextDue + 'T00:00:00').getTime();
-      migrated++;
-    }
-    /* firstSeenMs از firstSeenDate */
-    if(s.firstSeenDate && !s.firstSeenMs){
-      s.firstSeenMs = new Date(s.firstSeenDate + 'T00:00:00').getTime();
-    }
-    /* ★ اگر کارت دیده‌شده ولی firstSeenMs نداشت، از lastSeen استفاده کن */
-    if(s.seen && !s.firstSeenMs && s.lastSeen){
-      s.firstSeenMs = new Date(s.lastSeen + 'T00:00:00').getTime();
-    }
-  });
-  if(migrated > 0) console.log('Migrated ' + migrated + ' cards to ms-based due');
-  saveState();
-}
-
 /* ============ INIT ============ */
 async function init(){
   try{
@@ -4461,29 +4372,34 @@ async function init(){
     if(!Array.isArray(TOPICS)) TOPICS = [];
     var st = loadLS(KEYS.settings);
     if(st) SETTINGS = Object.assign({}, DEF, st);
-    /* ★ تبدیل partialDays قدیمی به partialHours */
-    if(st && st.partialDays !== undefined && !st.partialHours) SETTINGS.partialHours = st.partialDays * 24;
-    /* ★ تبدیل soundPomoStart/PomoEnd قدیمی به soundPomo */
-    if(st && (st.soundPomoStart || st.soundPomoEnd) && !st.soundPomo) SETTINGS.soundPomo = st.soundPomoStart || st.soundPomoEnd || 'soft';
-    if(st && !st.soundMissionClaim) SETTINGS.soundMissionClaim = 'bell';
-    if(!SETTINGS.correctSteps || SETTINGS.correctSteps[0] > 1000){
-      /* اگر correctSteps قدیمی روز-محور بود، تبدیل به ساعت */
-      if(SETTINGS.correctSteps && SETTINGS.correctSteps[0] <= 30){
-        SETTINGS.correctSteps = SETTINGS.correctSteps.map(function(d){return d * 24});
-      } else {
-        SETTINGS.correctSteps = DEF.correctSteps.slice();
-      }
+    /* ★ مهاجرت: اگه فیلدهای قدیمی هست، تبدیل کن */
+    if(SETTINGS.correctSteps && !SETTINGS.correctStepsHours){
+      SETTINGS.correctStepsHours = SETTINGS.correctSteps.map(function(d){ return d * 24; });
     }
+    if(SETTINGS.partialDays && !SETTINGS.partialHours){
+      SETTINGS.partialHours = SETTINGS.partialDays * 24;
+    }
+    if(!SETTINGS.correctStepsHours) SETTINGS.correctStepsHours = DEF.correctStepsHours;
+    if(!SETTINGS.partialHours) SETTINGS.partialHours = DEF.partialHours;
+    if(SETTINGS.newCardHours == null) SETTINGS.newCardHours = DEF.newCardHours;
+    if(SETTINGS.soundPomo == null) SETTINGS.soundPomo = DEF.soundPomo;
+    if(SETTINGS.soundMissionClaim == null) SETTINGS.soundMissionClaim = DEF.soundMissionClaim;
     MEDALS = loadLS(KEYS.medals) || {};
     HIDDEN_ACH = loadLS(KEYS.hiddenAch) || {};
     MISSIONS = loadLS(KEYS.missions) || {list:[], weekStart:null};
     xpData = loadLS(KEYS.xp) || {xp:0, level:1, history:[], boostUntil:null};
     challengeData = loadLS(KEYS.challenge) || {current:null, streak:0, done:[], history:[], level:1};
     if(challengeData && !challengeData.history) challengeData.history = [];
-    NAV_STACK = loadNavStack();
-
+    /* ★ مهاجرت timestamp در nextDue */
+    Object.keys(STATE.cards||{}).forEach(function(k){
+      var s = STATE.cards[k];
+      if(s && s.nextDue && typeof s.nextDue === 'string' && s.nextDue.indexOf('T') < 0 && s.nextDue.length <= 10){
+        var t = toMs(s.nextDue);
+        if(t) s.nextDue = t;
+      }
+    });
     FOLDERS = {quick:false,filters:false,review:false,manage:false,game:false};
-
+    NAV_STACK = [];
     applyTheme(loadLS(KEYS.theme) || 'dark');
     applyFontSize(SETTINGS.fontSize || 'normal');
     applyCompact(SETTINGS.compact);
@@ -4492,17 +4408,11 @@ async function init(){
     applyGlass(SETTINGS.glass);
     applyFolders();
     pomoLoad(); pomoRender();
-
     var sndBtn = $('btnSound');
     if(sndBtn) sndBtn.classList.toggle('on', !!SETTINGS.sound);
     var dfBtn = $('btnDeepFocus');
     if(dfBtn) dfBtn.classList.toggle('on', !!SETTINGS.deepFocus);
-
     if(SETTINGS.reminderOn && 'Notification' in window && Notification.permission === 'default'){ try{ Notification.requestPermission(); }catch(e){} }
-
-    /* ★ Migration */
-    migrateState();
-
     checkFriday();
     generateDailyChallenge();
     generateWeeklyMissions();
@@ -4517,16 +4427,14 @@ async function init(){
     updateTodayWidget();
     checkShare();
     checkMedals();
+    autoMarkSubRead();
     updateDateTime();
     updateBackBtn();
-
     setInterval(updateDateTime, 1000);
     setInterval(pickMotivation, 90000);
     setInterval(checkReminder, 60000);
     setInterval(function(){ saveState(); saveSettings(); saveTopics(); saveXP(); saveChallenge(); }, 60000);
-
     try{ openIDB().then(function(){ return loadIDB(); }).then(function(idbData){ if(idbData && !s) STATE = idbData; }).catch(function(){}); }catch(e){}
-
     console.log('v24 initialized OK');
   }catch(err){ console.error('INIT ERROR:', err); alert('خطا در راه‌اندازی: ' + err.message); }
 }
