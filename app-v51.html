@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><meta name="apple-mobile-web-app-capable" content="yes"><title>فلش‌کارت v51</title></head>
+<body style="background:#0f172a;color:#e2e8f0;font-family:Tahoma,Arial;padding:24px;text-align:center"><div id="m">⏳ در حال بارگذاری فلش‌کارت v51...</div>
+<script type="text/plain" id="patchjs">
+/* ===== v50 PATCH: IndexedDB storage + compact keys + verified import ===== */
+var LAST_ENGINE='',_sv=null,_busy=false,_dirty=false,_busyP=null,_loaded=false,_corrupt=false;
+function h53(s){var h1=0xdeadbeef,h2=0x41c6ce57;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0)}
+function ck(q,a){var s=(q||'')+'\u0001'+(a||'');return 'c'+h53(s).toString(36)+s.length.toString(36)}
+function mk(k){k=k||'';var i=k.indexOf('|||');return i>=0?ck(k.slice(0,i),k.slice(i+3)):k}
+function openIDB(){return new Promise(function(res){var done=false;function fin(v){if(!done){done=true;res(v)}}setTimeout(function(){fin(false)},5000);try{var r=indexedDB.open('FC49_MEDIA',2);r.onupgradeneeded=function(e){var db=e.target.result;['media','state'].forEach(function(n){if(!db.objectStoreNames.contains(n))db.createObjectStore(n)})};r.onsuccess=function(e){idb=e.target.result;idb.onversionchange=function(){try{idb.close()}catch(x){}idb=null};fin(true)};r.onerror=r.onblocked=function(){fin(false)}}catch(e){fin(false)}})}
+function idbPutState(str){return new Promise(function(res){if(!idb)return res(false);try{var tx=idb.transaction('state','readwrite');tx.objectStore('state').put(str,'main');tx.oncomplete=function(){res(true)};tx.onerror=tx.onabort=function(){res(false)}}catch(e){res(false)}})}
+function idbGetState(){return new Promise(function(res){if(!idb)return res(null);try{var q=idb.transaction('state','readonly').objectStore('state').get('main');q.onsuccess=function(){res(q.result||null)};q.onerror=function(){res(null)}}catch(e){res(null)}})}
+function warn(on){var w=document.getElementById('saveWarn');if(!w){if(!on)return;w=document.createElement('div');w.id='saveWarn';w.style.cssText='position:fixed;bottom:8px;left:8px;right:8px;z-index:500;background:#dc2626;color:#fff;padding:10px 12px;border-radius:10px;font-size:12px;text-align:center';w.textContent='⚠️ ذخیره‌سازی روی این مرورگر انجام نمی‌شه! همین الان از تنظیمات → 📤 خروجی پشتیبان بگیر.';document.body.appendChild(w)}w.style.display=on?'block':'none'}
+function persist(){
+  if(!_loaded)return Promise.resolve(false);
+  DATA.savedAt=Date.now();DATA.v=50;
+  var str;try{str=JSON.stringify(DATA,function(k,v){return k.charAt(0)==='_'?undefined:v})}catch(e){warn(true);return Promise.resolve(false)}
+  return idbPutState(str).then(function(ok){
+    if(ok){LAST_ENGINE='idb';warn(false);return true}
+    try{localStorage.setItem(LS_KEY,str);LAST_ENGINE='ls';warn(false);return true}catch(e){LAST_ENGINE='';warn(true);return false}
+  });
+}
+function _flush(){if(_busy){_dirty=true;return _busyP}_busy=true;_busyP=persist().then(function(ok){_busy=false;if(_dirty){_dirty=false;return _flush()}return ok});return _busyP}
+function save(){if(_sv)clearTimeout(_sv);_sv=setTimeout(function(){_sv=null;_flush()},300)}
+function saveNow(){if(_sv){clearTimeout(_sv);_sv=null}return _flush()}
+function applyLoaded(d){['cards','readSubtopics','dailyRecords','topics','xp','medals','hidden','missions','plans','journal','daily','unlockables','unlockActive','simplify','batch','challenge','folders'].forEach(function(k){if(d[k]!=null)DATA[k]=d[k]});DATA.settings=Object.assign({},DEF,d.settings||{});DATA.savedAt=d.savedAt||0}
+function migrateKeys(){
+  var ch=false,out={};
+  Object.keys(DATA.cards||{}).forEach(function(k){var nk=mk(k),s=DATA.cards[k];if(nk!==k)ch=true;if(s&&typeof s==='object'){s.key=nk;delete s._renderTime;delete s._inSimplify}if(!out[nk])out[nk]=s});
+  DATA.cards=out;
+  function mapArr(a){return (a||[]).map(function(k){var n=mk(k);if(n!==k)ch=true;return n})}
+  if(DATA.batch)DATA.batch.keys=mapArr(DATA.batch.keys);
+  if(DATA.daily)DATA.daily.keys=mapArr(DATA.daily.keys);
+  (DATA.simplify||[]).forEach(function(x){if(x&&x.originalKey){var n=mk(x.originalKey);if(n!==x.originalKey){x.originalKey=n;ch=true}}});
+  return ch;
+}
+async function loadAll(){
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  try{var m=JSON.parse(sessionStorage.getItem('v50miss')||'[]');if(m.length)setTimeout(function(){alert('⚠️ بخشی از پچ جا نیفتاد: '+m.join(' | '))},1500)}catch(e){}
+  var a=null,b=null,s=await idbGetState();
+  if(s){try{a=JSON.parse(s)}catch(e){_corrupt=true}}
+  try{var r=localStorage.getItem(LS_KEY);if(r)b=JSON.parse(r)}catch(e){}
+  var d=(a&&(!b||(a.savedAt||0)>=(b.savedAt||0)))?a:(b||a);
+  if(_corrupt&&!d){alert('⚠️ داده‌ی ذخیره‌شده خراب است. برای محافظت، ذخیره‌ی خودکار متوقف شد. فایل پشتیبانت رو وارد کن.');return false}
+  _loaded=true;
+  if(!d)return false;
+  applyLoaded(d);
+  var changed=migrateKeys();
+  if((b&&d===b)||changed){var ok=await persist();if(ok&&LAST_ENGINE==='idb'&&b){try{localStorage.removeItem(LS_KEY)}catch(e){}}}
+  return true;
+}
+function downloadJson(data,name){var bl=new Blob([JSON.stringify(data,function(k,v){return k.charAt(0)==='_'?undefined:v})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(a.href)},4000)}
+window.importBackupV50=function(ev){
+  var f=ev.target.files[0];ev.target.value='';if(!f)return;
+  var r=new FileReader();
+  r.onerror=function(){alert('❌ فایل خوانده نشد')};
+  r.onload=async function(){
+    try{
+      var d=JSON.parse(r.result),p=d.data||d,N={};
+      var M={cards:['cards'],readSubtopics:['readSubtopics'],dailyRecords:['dailyRecords'],topics:['topics'],settings:['settings'],xp:['xp'],medals:['medals'],hidden:['hidden','hiddenAch'],missions:['missions'],plans:['plans'],journal:['journal'],daily:['daily','dailyCards'],unlockables:['unlockables'],unlockActive:['unlockActive','unlockablesActive'],simplify:['simplify'],batch:['batch'],challenge:['challenge'],folders:['folders']};
+      Object.keys(M).forEach(function(k){M[k].forEach(function(s){if(N[k]==null){if(p&&p[s]!=null)N[k]=p[s];else if(p&&p.state&&p.state[s]!=null)N[k]=p.state[s]}})});
+      if(!N.cards&&!N.topics&&!N.xp){handleJson(r.result);return}
+      if(!confirm('📊 فایل پشتیبان:\n\n📚 درس‌ها: '+(N.topics?N.topics.length:0)+'\n🎴 حالت کارت: '+(N.cards?Object.keys(N.cards).length:0)+'\n📅 روزهای ثبت‌شده: '+(N.dailyRecords?Object.keys(N.dailyRecords).length:0)+'\n⭐ XP: '+(N.xp?N.xp.xp:0)+'\n\n⚠️ همه چیز فعلی جایگزین می‌شه.'))return;
+      Object.keys(N).forEach(function(k){if(N[k]!=null)DATA[k]=N[k]});
+      var Dd={cards:{},readSubtopics:{},dailyRecords:{},topics:[],xp:{xp:0,level:1,history:[],boostUntil:null},medals:{},hidden:{},missions:{list:[],weekStart:null},plans:[],journal:{},daily:{date:null,keys:[],done:false},unlockables:{},unlockActive:{},simplify:[],batch:{keys:[],ts:0},challenge:{current:null,streak:0,done:[],history:[],level:1},folders:{quick:false,filters:false,review:false,manage:false,game:false}};
+      Object.keys(Dd).forEach(function(k){if(DATA[k]==null)DATA[k]=Dd[k]});
+      DATA.settings=Object.assign({},DEF,DATA.settings||{});
+      migrateKeys();
+      var all=getAllCards(),linked=0,seenN=0;
+      all.forEach(function(c){var s=DATA.cards[c.key];if(s){linked++;if(s.seen)seenN++}});
+      var orph=Object.keys(DATA.cards).length-linked;
+      _loaded=true;_corrupt=false;
+      var ok=await saveNow();
+      if(ok&&LAST_ENGINE==='idb'){var back=await idbGetState();try{ok=JSON.parse(back).savedAt===DATA.savedAt}catch(e){ok=false}}
+      if(!ok){alert('❌ ذخیره‌سازی ناموفق بود (مرورگر اجازه نداد). صفحه رو رفرش نکن؛ ✅ از تنظیمات → ℹ️ وضعیت رو چک کن و برام بفرست.');try{goHome();updateCounts()}catch(e){}return}
+      alert('✅ وارد شد و ذخیره تأیید شد\n\n🎴 '+linked+' از '+all.length+' کارت به وضعیتشون وصل شد ('+seenN+' دیده‌شده)'+(orph>0?'\n⚠️ '+orph+' وضعیت بدون کارت متناظر':''));
+      setTimeout(function(){location.reload()},400);
+    }catch(err){alert('❌ خطا: '+err.message);console.error(err)}
+  };
+  r.readAsText(f);
+};
+$('btnStorage').onclick=async function(){
+  var sz=0;try{sz=JSON.stringify(DATA,function(k,v){return k.charAt(0)==='_'?undefined:v}).length}catch(x){}
+  var per='؟',est='';
+  try{if(navigator.storage&&navigator.storage.persisted)per=(await navigator.storage.persisted())?'بله':'خیر'}catch(x){}
+  try{if(navigator.storage&&navigator.storage.estimate){var q=await navigator.storage.estimate();est='\n📦 مصرف/سهمیه: '+Math.round((q.usage||0)/1024)+' KB / '+Math.round((q.quota||0)/1048576)+' MB'}}catch(x){}
+  alert('💾 موتور ذخیره: '+(LAST_ENGINE==='idb'?'IndexedDB ✅':LAST_ENGINE==='ls'?'localStorage ⚠️':'هنوز ذخیره نشده/ناموفق ❌')+'\nحجم داده: '+(sz/1024).toFixed(0)+' KB\nذخیره ماندگار: '+per+est+'\n📚 درس: '+DATA.topics.length+' | 🎴 کارت: '+getAllCards().length+' | وضعیت‌ها: '+Object.keys(DATA.cards).length+'\n⭐ XP: '+DATA.xp.xp+' / سطح '+DATA.xp.level);
+};
+/* ===== end v50 PATCH ===== */
+</script>
+<script type="text/plain" id="patchjs2">
+/* ===== v51 PATCH: focus layout, smart scroll, topic medals ===== */
+(function(){
+var css=[
+'.panel,.folder,.item{scroll-margin-top:64px}',
+'@media (max-width:900px){',
+'body.focus-mode.in-session{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding:62px 6px calc(6px + env(safe-area-inset-bottom))}',
+'body.focus-mode.in-session .page-wrap{display:flex;flex:1;min-height:0;width:100%;max-width:100%}',
+'body.focus-mode.in-session .main-col{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;width:100%}',
+'body.focus-mode.in-session .card-area.show{display:flex;flex-direction:column;flex:1;min-height:0;margin-bottom:6px;padding:12px;overflow-y:auto}',
+'body.focus-mode.in-session .q{flex:1 0 auto;min-height:90px;padding:22px 10px 12px;font-size:clamp(20px,5.6vw,28px)}',
+'body.focus-mode.in-session .a{font-size:clamp(20px,5vw,26px);padding:12px 10px;margin-top:4px}',
+'body.focus-mode.in-session .actions,body.focus-mode.in-session .nav,body.focus-mode.in-session .quiz-options{flex-shrink:0;margin-bottom:6px}',
+'body.focus-mode.in-session .act{padding:15px 3px;font-size:14px}',
+'body.focus-mode.in-session .act.study{padding:18px}',
+'body.focus-mode.in-session .nav button{padding:10px}',
+'body.focus-mode.in-session .quiz-opt{padding:10px 12px}',
+'}'].join('');
+var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+var ca=$('cardArea');
+function sy(){document.body.classList.toggle('in-session',ca.classList.contains('show'))}
+new MutationObserver(sy).observe(ca,{attributes:true,attributeFilter:['class']});sy();
+})();
+
+function v51scroll(el){
+  if(!el)return;
+  var tb=document.querySelector('.topbar');
+  var y=el.getBoundingClientRect().top+window.scrollY-((tb?tb.offsetHeight:56)+14);
+  window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+}
+showPanel=function(id){
+  hidePanels();
+  var el=$(id);if(el)el.classList.add('show');
+  var w=$('welcome');if(w)w.style.display='none';
+  ['cardArea','actions','quizOptions','nav'].forEach(function(i){var e=$(i);if(e)e.classList.remove('show')});
+  setTimeout(function(){v51scroll(el)},80);
+};
+var _v51tf=toggleF;
+toggleF=function(n){
+  _v51tf(n);
+  var el=document.querySelector('.folder[data-f="'+n+'"]');
+  if(el&&el.classList.contains('open'))setTimeout(function(){v51scroll(el)},60);
+};
+window.toggleF=toggleF;
+var _v51hta=handleTopicAct;
+handleTopicAct=function(a,tid,sid){
+  _v51hta(a,tid,sid);
+  if(a!=='tgl'&&a!=='menu'&&a!=='smenu')return;
+  setTimeout(function(){
+    var sel=a==='smenu'?'[data-a="smenu"][data-t="'+tid+'"][data-s="'+sid+'"]':'[data-a="'+a+'"][data-t="'+tid+'"]';
+    var b=document.querySelector('#topicsList '+sel);if(!b)return;
+    if(a==='tgl'){if(CURRENT_TAB[tid])v51scroll(b.closest('.item'));return}
+    var d=a==='menu'?b.closest('.item').querySelector('.drop'):b.closest('.sub-row').nextElementSibling;
+    if(d&&d.classList.contains('drop'))d.scrollIntoView({block:'nearest',behavior:'smooth'});
+  },40);
+};
+
+function topicProg(t){
+  var tot=0,sn=0;
+  (t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){
+    var st=DATA.cards[ck(c.q||'',c.a||'')];
+    if(st&&st.deleted)return;
+    tot++;if(st&&st.seen)sn++;
+  })});
+  return {total:tot,seen:sn};
+}
+function checkTopicMedals(){
+  var n=[];
+  DATA.topics.forEach(function(t){
+    var p=topicProg(t),k='topic_'+t.id;
+    if(p.total>0&&p.seen>=p.total&&!DATA.medals[k]){DATA.medals[k]={date:today(),topic:t.name};n.push(t)}
+  });
+  if(n.length){save();showMedal({emoji:pickTopicEmoji(n[0].name),name:'درس «'+n[0].name+'» تموم شد'+(n.length>1?' (+'+(n.length-1)+')':'')})}
+}
+var _v51cm=checkMedals;
+checkMedals=function(){_v51cm();try{checkTopicMedals()}catch(e){}};
+var _v51rm=renderMedals;
+renderMedals=function(){
+  _v51rm();
+  var b=$('medalsBody');if(!b)return;
+  var h='',any=false;
+  DATA.topics.forEach(function(t){
+    var p=topicProg(t);if(!p.total)return;
+    any=true;
+    var un=!!DATA.medals['topic_'+t.id];
+    h+='<div class="medal dynamic'+(un?' un':'')+'" title="'+esc(t.name)+': '+p.seen+'/'+p.total+'"><span class="e">'+pickTopicEmoji(t.name)+'</span><span class="n">'+esc(t.name)+'</span><span class="n" style="direction:ltr">'+p.seen+'/'+p.total+'</span>'+(un?'':'<span class="lock">🔒</span>')+'</div>';
+  });
+  if(any)b.insertAdjacentHTML('beforeend','<h3 style="margin:14px 0 6px">⚡ مدال‌های درس‌ها</h3><div class="medals">'+h+'</div>');
+};
+/* ===== end v51 PATCH ===== */
+</script>
+<script>
+(function(){
+var SRC='app-v47.html';
+function fail(t){document.getElementById('m').textContent=t}
+fetch(SRC+'?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(function(src){
+  var miss=[];
+  function rep(a,b){if(src.indexOf(a)<0){miss.push(a.slice(0,40));return}src=src.split(a).join(b)}
+  src=src.replace(/<title>[^<]*<\/title>/,'<title>فلش‌کارت v51</title>');
+  rep("$('fileBackup').addEventListener('change',function(e){","$('fileBackup').addEventListener('change',function(e){if(window.importBackupV50)return window.importBackupV50(e);");
+  rep('id="fileBackup" accept=".json"','id="fileBackup"');
+  var n=src.length;src=src.replace(/\n\s*await openIDB\(\);/,'');if(src.length===n)miss.push('openIDB');
+  rep('var ok=load();','await openIDB();var ok=await loadAll();');
+  rep('setInterval(save,15000);','');
+  rep('version:49,exportedAt','version:50,exportedAt');
+  rep('/* ========== INIT ========== */',document.getElementById('patchjs').textContent+document.getElementById('patchjs2').textContent+'\n/* ========== INIT ========== */');
+  try{sessionStorage.setItem('v50miss',JSON.stringify(miss))}catch(e){}
+  document.open();document.write(src);document.close();
+}).catch(function(e){fail('❌ نتونستم '+SRC+' رو بخونم ('+e.message+'). مطمئن شو app-v47.html کنار همین فایل آپلود شده.')});
+})();
+</script></body></html>
