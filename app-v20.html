@@ -1,983 +1,3 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f172a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DR فلش‌کارت">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRFIg2YHZhNi024zYp9ix2KoiLCJzaG9ydF9uYW1lIjoiRFIgRmxhc2giLCJzdGFydF91cmwiOiIuLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiMwZjE3MmEiLCJ0aGVtZV9jb2xvciI6IiMwZjE3MmEiLCJvcmllbnRhdGlvbiI6InBvcnRyYWl0IiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmclMjB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnJTIwdmlld0JveD0nMCAwIDEwMCAxMDAnJTNFJTNDcmVjdCUyMHdpZHRoPScxMDAnJTIwaGVpZ2h0PScxMDAnJTIwcng9JzIyJyUyMGZpbGw9JyUyMzNiODJmNicvJTNFJTNDdGV4dCUyMHglM0Q1MCUyMHklM0Q2OCUyMGZvbnQtc2l6ZSUzRDQ2JTIwdGV4dC1hbmNob3IlM0RtaWRkbGUlMjBmaWxsPSclMjNmZmYnJTIwZm9udC13ZWlnaHQlM0Rib2xkJTNFRFIlM0MvdGV4dCUzRSUzQy9zdmclM0UiLCJzaXplcyI6IjE5MngxOTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%233b82f6'/%3E%3Ctext x='50' y='68' font-size='46' text-anchor='middle' fill='%23fff' font-weight='bold'%3EDR%3C/text%3E%3C/svg%3E">
-<title>فلش‌کارت v47</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--bd:#334155;--text:#e2e8f0;--muted:#94a3b8;--accent:#3b82f6;--green:#4ade80;--yellow:#fbbf24;--red:#f87171;--purple:#a78bfa;--gold:#fbbf24;--pink:#f472b6;--cyan:#22d3ee;--med:#06b6d4;--pageW:1180px}
-body.light{--bg:#f1f5f9;--card:#fff;--card2:#f8fafc;--bd:#cbd5e1;--text:#0f172a;--muted:#64748b}
-body.dim{--bg:#1a1a2e;--card:#24243e;--card2:#2d2d4a;--bd:#3d3d5c;--text:#d0d0e0;--muted:#8888a0}
-body.blue{--bg:#0a1628;--card:#0f2544;--card2:#153260;--bd:#1e4a8a;--text:#dbeafe;--muted:#93c5fd;--accent:#60a5fa}
-body.green{--bg:#0a1f14;--card:#0f2f1f;--card2:#14452d;--bd:#1e6b42;--text:#dcfce7;--muted:#86efac;--accent:#4ade80}
-body.purple{--bg:#1a0f2e;--card:#241842;--card2:#2f1f54;--bd:#4c2d85;--text:#ede9fe;--muted:#c4b5fd;--accent:#a78bfa}
-body.red{--bg:#1f0a0a;--card:#2f0f0f;--card2:#451414;--bd:#6b1e1e;--text:#fee2e2;--muted:#fca5a5;--accent:#f87171}
-body.night{--bg:#050810;--card:#0c1425;--card2:#141e33;--bd:#1f2a44;--text:#c8d4e8;--muted:#6b7a94}
-body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:6px;padding-top:66px;font-size:15px;line-height:1.7;overflow-x:hidden;-webkit-text-size-adjust:100%}
-.topbar{position:fixed;top:6px;right:6px;left:6px;max-width:var(--pageW);margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:5px 7px;background:var(--card);border-radius:12px;border:1px solid var(--bd);z-index:50;gap:5px;box-shadow:0 4px 20px rgba(0,0,0,.25)}
-.topbar .btns{display:flex;gap:3px;align-items:center;overflow-x:auto;padding-bottom:1px;flex:1;scrollbar-width:none}
-.topbar .btns::-webkit-scrollbar{display:none}
-.icon-btn{background:transparent;border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:0;cursor:pointer;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-width:32px;min-height:32px;flex-shrink:0;transition:.15s}
-.icon-btn:hover{background:var(--card2);border-color:var(--accent)}
-.icon-btn.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.icon-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.dt-box{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.dt-box .d{font-size:10px;color:var(--muted);white-space:nowrap}
-.dt-box .t{color:var(--accent);font-weight:700;font-family:'Courier New',monospace;direction:ltr;font-size:11px;white-space:nowrap}
-.pomodoro{display:flex;align-items:center;gap:3px;background:var(--card2);border:1px solid var(--bd);border-radius:16px;padding:5px 8px;font-size:10px;font-weight:600;cursor:pointer;flex-shrink:0;user-select:none;transition:.15s}
-.pomodoro.running{border-color:var(--green);color:var(--green)}
-.pomodoro.brk{border-color:var(--yellow);color:var(--yellow)}
-.pomodoro .time{font-family:'Courier New',monospace;min-width:38px;text-align:center;direction:ltr}
-.level-badge{background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;font-size:10px;font-weight:700;padding:5px 9px;border-radius:16px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;border:none;flex-shrink:0;font-family:inherit}
-.page-wrap{max-width:var(--pageW);margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:8px;align-items:start}
-.main-col{min-width:0}
-.side-col{position:sticky;top:64px;display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 76px);overflow-y:auto}
-.side-col::-webkit-scrollbar{width:4px}
-.side-col::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
-.rail-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px}
-.rail-card .rh{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;text-align:center}
-.rail-item{background:var(--card2);border:1px solid var(--bd);border-radius:6px;padding:5px 7px;margin-bottom:4px;font-size:10px;display:flex;justify-content:space-between;align-items:center;gap:4px;cursor:pointer;transition:.15s}
-.rail-item:hover{border-color:var(--accent)}
-.rail-item .lbl{color:var(--muted);font-size:10px}
-.rail-item .v{font-weight:800;font-family:'Courier New',monospace;font-size:11px;color:var(--accent);direction:ltr}
-.rail-item.gold .v{color:var(--gold)}.rail-item.green .v{color:var(--green)}
-.rail-item.red .v{color:var(--red)}.rail-item.yellow .v{color:var(--yellow)}
-.rail-item.cyan .v{color:var(--cyan)}.rail-item.purple .v{color:var(--purple)}
-.rail-item.level-name-row{display:block;text-align:center;font-size:10px;color:var(--gold);font-weight:700;background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(244,114,182,.05));border:1px solid var(--gold);padding:6px 0;margin-bottom:5px}
-.today-mini .row{display:flex;justify-content:space-between;padding:4px 0;font-size:10px;border-bottom:1px dashed var(--bd);cursor:pointer;transition:.15s}
-.today-mini .row:last-child{border-bottom:none}
-.today-mini .row:hover{background:var(--card2);margin:0 -4px;padding:4px 4px;border-radius:4px}
-.today-mini .row .lbl{color:var(--muted)}
-.today-mini .row .v{font-weight:800;font-family:'Courier New',monospace;direction:ltr;color:var(--accent)}
-.today-mini .row.new .v{color:var(--cyan)}.today-mini .row.correct .v{color:var(--green)}
-.today-mini .row.partial .v{color:var(--yellow)}.today-mini .row.wrong .v{color:var(--red)}
-.goal-box{margin-top:8px;padding-top:6px;border-top:1px dashed var(--bd)}
-.goal-box .goal-head{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px}
-.goal-box .goal-head .pct{color:var(--accent);font-weight:800;direction:ltr;font-family:'Courier New',monospace}
-.goal-box .goal-bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden}
-.goal-box .goal-bar>div{height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:3px;transition:width .3s}
-.rail-streak{display:flex;flex-direction:column;gap:2px}
-.rail-streak .sd{display:flex;align-items:center;justify-content:space-between;padding:3px 6px;border-radius:5px;background:var(--card2);font-size:9px;font-weight:700;font-family:'Courier New',monospace;border:1px solid var(--bd);cursor:pointer;transition:.15s}
-.rail-streak .sd:hover{border-color:var(--accent)}
-.rail-streak .sd.l1{background:rgba(74,222,128,.25);color:#4ade80}
-.rail-streak .sd.l2{background:#34d399;color:#0f172a}
-.rail-streak .sd.l3{background:#10b981;color:#fff}
-.rail-streak .sd.l4{background:#059669;color:#fff}
-.rail-streak .sd.today{outline:2px solid var(--accent);outline-offset:1px}
-.rail-streak .sd .n{font-size:8px;opacity:.75}
-.motivation{text-align:center;padding:10px 14px;font-style:italic;font-size:12px;font-weight:600;margin-bottom:6px;background:var(--card);border:1px solid var(--bd);border-radius:10px;min-height:38px}
-.mid-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:6px}
-.mid-item{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 4px;cursor:pointer;min-height:52px;display:flex;flex-direction:column;justify-content:center;text-align:center;transition:.15s}
-.mid-item:hover{border-color:var(--accent);background:var(--card2)}
-.mid-item .head{display:flex;justify-content:center;align-items:center;gap:3px;font-size:10px;font-weight:600;flex-wrap:wrap}
-.mid-item .head .icn{font-size:14px}
-.mid-item .head .num{direction:ltr;color:var(--accent);font-weight:700;font-family:'Courier New',monospace;font-size:10px}
-.mid-item .prog{height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:4px;display:none}
-.mid-item.has-prog .prog{display:block}
-.mid-item .prog>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));border-radius:2px;transition:width .3s}
-.mid-item.due-warn .prog>div{background:linear-gradient(90deg,var(--yellow),var(--red))}
-.batch-widget,.daily-cards-widget{display:none;border-radius:10px;padding:10px 12px;margin-bottom:6px}
-.batch-widget{background:linear-gradient(135deg,rgba(34,211,238,.15),rgba(167,139,250,.1));border:1px solid var(--cyan)}
-.batch-widget.show{display:block;animation:slideIn .3s}
-.batch-widget .head,.daily-cards-widget .head{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;margin-bottom:5px}
-.batch-widget .head .title{color:var(--cyan);font-weight:700}
-.batch-widget .sub{font-size:11px;color:var(--muted);margin-bottom:6px}
-.daily-cards-widget{background:linear-gradient(135deg,rgba(244,114,182,.15),rgba(251,191,36,.08));border:1px solid var(--pink)}
-.daily-cards-widget.show{display:block;animation:slideIn .3s}
-.daily-cards-widget.done{background:linear-gradient(135deg,rgba(74,222,128,.15),rgba(34,211,238,.1));border-color:var(--green)}
-.daily-cards-widget .head .title{color:var(--pink);font-weight:700}
-.daily-cards-widget.done .head .title{color:var(--green)}
-.daily-cards-widget .sub{font-size:11px;color:var(--muted);margin-bottom:6px}
-@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.notice{padding:8px 12px;border-radius:8px;margin-bottom:8px;font-size:12px;display:none;align-items:center;gap:6px;border:1px solid transparent}
-.notice.show{display:flex}
-.notice.info{background:rgba(59,130,246,.12);border-color:var(--accent);color:var(--accent)}
-.notice .x{margin-right:auto;background:transparent;border:none;color:inherit;cursor:pointer;font-size:16px;padding:0 4px}
-.btn{padding:7px 12px;border-radius:7px;border:1px solid var(--bd);background:var(--card2);color:var(--text);font-family:inherit;cursor:pointer;font-size:12px;transition:.15s}
-.btn:hover{border-color:var(--accent)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.danger{background:var(--red);border-color:var(--red);color:#fff}
-.btn.gold{background:linear-gradient(135deg,var(--gold),var(--pink));border-color:var(--gold);color:#0f172a;font-weight:600}
-.btn.cyan{background:linear-gradient(135deg,var(--cyan),var(--accent));border-color:var(--cyan);color:#fff;font-weight:600}
-.btn.small{padding:4px 8px;font-size:11px}
-.folder{background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-bottom:6px;overflow:hidden}
-.folder-h{padding:10px 12px;cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;transition:.15s}
-.folder-h:hover{background:var(--card2)}
-.folder-h .arr{color:var(--muted);transition:transform .3s;font-size:9px;display:inline-block}
-.folder.open .folder-h .arr{transform:rotate(-90deg)}
-.folder-h .ttl{flex:1}
-.folder-h .badge{background:var(--card2);padding:2px 8px;border-radius:8px;border:1px solid var(--bd);color:var(--muted);font-size:10px;direction:ltr}
-.folder-body{display:none;padding:8px;border-top:1px solid var(--bd)}
-.folder.open .folder-body{display:block}
-.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px}
-.menu-btn{background:var(--card2);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:10px 5px;cursor:pointer;font-family:inherit;font-size:10px;text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center;transition:.15s}
-.menu-btn:hover{border-color:var(--accent);background:var(--bg)}
-.menu-btn .e{font-size:18px;line-height:1}
-.menu-btn .n{font-weight:600}
-.menu-btn .c{font-size:9px;color:var(--muted);background:var(--bg);padding:1px 6px;border-radius:8px;border:1px solid var(--bd);direction:ltr}
-.menu-btn.zero{opacity:.5}
-.welcome{text-align:center;padding:22px 16px;background:var(--card);border-radius:12px;border:1px solid var(--bd);margin-bottom:8px}
-.welcome h2{font-size:18px;margin-bottom:6px}
-.welcome .day-info{color:var(--gold);font-size:12px;font-weight:700;margin-bottom:6px;min-height:18px}
-.welcome p{color:var(--muted);font-size:13px}
-.welcome .srow{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-.welcome .stat{background:var(--card2);padding:8px 14px;border-radius:8px;border:1px solid var(--bd);min-width:70px}
-.welcome .stat .v{font-size:18px;font-weight:700;color:var(--accent);display:block;direction:ltr}
-.welcome .stat .l{font-size:10px;color:var(--muted)}
-.card-area{background:var(--card);border-radius:14px;border:2px solid var(--bd);padding:18px;margin-bottom:8px;min-height:300px;position:relative;display:none}
-.card-area.show{display:block;animation:cardIn .35s}
-@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.card-area.diff0{border-color:#4ade80}.card-area.diff1{border-color:#a3e635}.card-area.diff2{border-color:#fbbf24}
-.card-area.diff3{border-color:#fb923c}.card-area.diff4{border-color:#f87171}.card-area.diff5{border-color:#dc2626}
-.card-area.diff6{border-color:#991b1b}.card-area.diff7{border-color:#7f1d1d}
-.card-area.gold{border-color:var(--gold);box-shadow:0 0 16px rgba(251,191,36,.6);animation:goldGlow 2s ease-in-out infinite}
-@keyframes goldGlow{0%,100%{box-shadow:0 0 8px #fbbf24,0 0 16px #fbbf24}50%{box-shadow:0 0 12px #fbbf24,0 0 24px #fbbf24}}
-.tools{position:absolute;top:6px;left:6px;display:flex;gap:2px;flex-wrap:wrap;max-width:60%}
-.tools.right{right:6px;left:auto;max-width:auto}
-.tool{background:transparent;border:none;font-size:15px;cursor:pointer;opacity:.4;padding:3px 5px;border-radius:5px;transition:.15s}
-.tool:hover{opacity:1;background:var(--card2)}
-.tool.on{opacity:1}
-.tool.t-del{color:var(--red)}.tool.t-susp{color:#fb923c}
-.tool.t-rev{color:var(--purple)}.tool.t-add{color:var(--green)}
-.counter{position:absolute;top:12px;right:50px;font-size:11px;color:var(--muted);font-weight:600;background:var(--card2);padding:2px 8px;border-radius:8px;border:1px solid var(--bd);direction:ltr}
-.vcount{position:absolute;bottom:8px;right:12px;font-size:10px;color:var(--muted);direction:ltr}
-.c-head{text-align:center;font-size:11px;color:var(--muted);padding:4px 40px 10px;border-bottom:1px dashed var(--bd);margin-bottom:12px}
-.c-head .tn{color:var(--accent);font-weight:600;font-size:12px}
-.c-head .sn{font-size:14px;font-weight:700;display:block;margin-top:5px}
-.c-head .sb{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;background:var(--card2);border:1px solid var(--bd);margin-top:5px}
-.q{font-size:18px;font-weight:600;padding:26px 30px;text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1.9;user-select:none}
-.a{font-size:22px;font-weight:700;padding:20px 30px;text-align:center;display:none;border-top:1px dashed var(--bd);margin-top:8px;line-height:1.8;color:var(--green);animation:ansIn .3s}
-.a.show{display:block}
-@keyframes ansIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
-.praise{text-align:center;font-size:14px;padding:6px;display:none;font-weight:700}
-.praise.show{display:block;animation:pop .4s}
-@keyframes pop{0%{transform:scale(.8);opacity:0}50%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
-.days{text-align:center;color:var(--muted);font-size:10px;padding:3px;display:none}
-.days.show{display:block}
-.aud{width:100%;margin:5px 0}
-.card-tag-row{position:absolute;bottom:8px;left:12px;display:flex;gap:3px;flex-wrap:wrap;max-width:70%}
-.card-tag{font-size:9px;padding:2px 6px;border-radius:8px;background:var(--accent);color:#fff}
-.card-gold{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--pink));color:#0f172a;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:none}
-.card-area.gold .card-gold{display:block}
-.card-photo-wrap{text-align:center;margin:6px 0}
-.card-photo{max-width:100%;max-height:200px;border-radius:8px;border:1px solid var(--bd);cursor:zoom-in}
-.card-note-display{background:rgba(251,191,36,.08);border-right:3px solid var(--gold);border-radius:6px;padding:6px 10px;margin:8px 0;font-size:11px;line-height:1.7;cursor:pointer}
-.card-note-display .lbl{font-size:9px;color:var(--gold);font-weight:700;margin-bottom:2px}
-.step-toast{position:fixed;top:120px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:16px;font-size:12px;font-weight:700;z-index:150;display:none;color:#0f172a}
-.step-toast.show{display:block;animation:pop .4s}
-.step-toast.up{background:var(--green)}
-.step-toast.down{background:var(--red);color:#fff}
-.step-toast.stay{background:var(--yellow)}
-.xp-toast{position:fixed;top:160px;left:50%;transform:translateX(-50%);padding:5px 14px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;font-size:12px;font-weight:700;z-index:150;display:none;direction:ltr}
-.xp-toast.show{display:block;animation:xpFloat 1.5s ease-out}
-.xp-toast.neg{background:linear-gradient(135deg,var(--red),#dc2626)}
-@keyframes xpFloat{0%{opacity:0;transform:translateX(-50%) translateY(10px)}20%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-30px)}}
-.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--green);color:#0f172a;padding:8px 18px;border-radius:16px;font-weight:600;font-size:12px;z-index:300;display:none;max-width:90%}
-.toast.show{display:block;animation:fadeUp .3s}
-@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.levelup-modal,.story-modal,.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:250;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
-.modal-bg{z-index:200}
-.levelup-modal.show,.story-modal.show,.modal-bg.show{display:flex}
-.levelup-box,.story-box{background:var(--card);border-radius:18px;padding:24px 20px;text-align:center;max-width:360px;width:100%;border:2px solid var(--gold);animation:levelUp .5s cubic-bezier(.34,1.56,.64,1)}
-@keyframes levelUp{0%{transform:scale(.3) rotate(-10deg);opacity:0}60%{transform:scale(1.08) rotate(3deg)}100%{transform:scale(1) rotate(0);opacity:1}}
-.levelup-box .big,.story-box .emoji{font-size:60px;margin-bottom:10px;animation:bounce 1s infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.levelup-box h2,.story-box h2{font-size:20px;color:var(--gold);margin-bottom:6px;font-weight:800}
-.levelup-box .lvl-num{font-size:38px;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;direction:ltr}
-.levelup-box .title-new{font-size:14px;margin-bottom:10px;font-weight:600}
-.levelup-box .reward{font-size:11px;color:var(--muted);margin-bottom:12px;padding:6px 12px;background:var(--card2);border-radius:8px}
-.story-box .story-name{font-size:14px;font-weight:700;margin-bottom:10px}
-.story-box .story-text{font-size:12px;color:var(--muted);line-height:1.9;text-align:right;padding:12px;background:var(--card2);border-radius:10px;margin-bottom:12px;border-right:3px solid var(--gold)}
-.actions{display:none;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
-.actions.show{display:grid}
-.actions.study{grid-template-columns:1fr}
-.act{padding:14px 4px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
-.act:hover{transform:translateY(-2px)}
-.act.correct{border-color:var(--green);color:var(--green)}
-.act.partial{border-color:var(--yellow);color:var(--yellow)}
-.act.wrong{border-color:var(--red);color:var(--red)}
-.act.study{border-color:var(--accent);color:var(--accent);padding:20px;font-size:15px}
-.quiz-options{display:none;grid-template-columns:1fr;gap:6px;margin-bottom:6px}
-.quiz-options.show{display:grid}
-.quiz-opt{padding:12px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:right;display:flex;align-items:center;gap:8px;transition:.15s}
-.quiz-opt:hover{border-color:var(--accent)}
-.quiz-opt .letter{background:var(--card2);border:1px solid var(--bd);border-radius:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-weight:800;font-size:12px;flex-shrink:0;color:var(--accent)}
-.quiz-opt.correct{border-color:var(--green);background:rgba(74,222,128,.15);color:var(--green)}
-.quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,.15);color:var(--red)}
-.nav{display:none;gap:5px;margin-bottom:6px}
-.nav.show{display:grid;grid-template-columns:1fr 1fr}
-.nav button{padding:12px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--text);font-family:inherit;cursor:pointer;font-size:13px;font-weight:600}
-.end{display:none;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:8px}
-.end.show{display:grid}
-.end button{padding:10px 5px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--text);font-family:inherit;cursor:pointer;font-size:11px;font-weight:600;transition:.15s}
-.end button:hover{border-color:var(--accent)}
-.end button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
-.end button.danger{background:var(--red);color:#fff;border-color:var(--red)}
-.panel{background:var(--card);border-radius:12px;border:1px solid var(--bd);padding:14px;margin-bottom:10px;display:none}
-.panel.show{display:block;animation:panelIn .3s}
-@keyframes panelIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.panel h2{font-size:14px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:6px}
-.panel h2 button{background:transparent;border:1px solid var(--bd);color:var(--text);cursor:pointer;font-size:11px;padding:4px 10px;border-radius:6px;font-family:inherit}
-.item{background:var(--card2);border-radius:10px;padding:10px;margin-bottom:6px;border:1px solid var(--bd)}
-.item-h{display:flex;justify-content:space-between;align-items:center;gap:5px;flex-wrap:wrap}
-.item-name{font-weight:600;font-size:12px;flex:1;display:flex;align-items:center;gap:5px;min-width:0}
-.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
-.mini{background:transparent;border:1px solid var(--bd);color:var(--text);border-radius:5px;padding:4px 8px;cursor:pointer;font-size:11px;font-family:inherit;white-space:nowrap;margin:1px;transition:.15s}
-.mini:hover{border-color:var(--accent);background:var(--bg)}
-.prog{height:4px;background:var(--bd);border-radius:3px;overflow:hidden;margin-top:6px}
-.prog>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));transition:width .4s}
-.meta{font-size:9px;color:var(--muted);margin-top:4px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.due-btn{background:rgba(251,191,36,.15);border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:2px 8px;font-size:9px;font-weight:700;cursor:pointer;font-family:inherit}
-.sub-row{padding:7px 9px;margin-top:5px;background:var(--bg);border-radius:6px;display:flex;align-items:center;gap:5px;font-size:11px;flex-wrap:wrap;border:1px solid transparent;transition:.15s}
-.sub-row:hover{border-color:var(--bd)}
-.sub-row input[type=checkbox]{accent-color:var(--green);width:14px;height:14px;cursor:pointer}
-.sub-row .sn{flex:1;min-width:80px}
-.topic-cards{display:none;padding:6px;background:var(--bg);border-radius:6px;margin-top:5px}
-.topic-cards.open{display:block}
-.drop{background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:4px;margin-top:5px}
-.drop-i{display:block;width:100%;padding:7px 10px;text-align:right;background:transparent;border:none;color:var(--text);cursor:pointer;font-family:inherit;font-size:11px;border-radius:5px}
-.drop-i:hover{background:var(--card2)}
-.drop-i.danger{color:var(--red)}
-.modal{background:var(--card);border-radius:14px;padding:18px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;border:1px solid var(--bd);position:relative;animation:modalIn .3s}
-@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-.modal .modal-close{position:absolute;top:8px;left:8px;background:transparent;border:1px solid var(--bd);color:var(--text);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:inherit}
-.modal .modal-close:hover{background:var(--card2);border-color:var(--red);color:var(--red)}
-.modal h3{font-size:15px;margin-bottom:12px;font-weight:700;padding-left:36px}
-.modal label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;margin-top:8px}
-.modal input,.modal textarea,.modal select{width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:6px;padding:9px 10px;font-family:inherit;font-size:12px;color-scheme:dark}
-.modal textarea{min-height:70px;resize:vertical;line-height:1.7}
-.modal-acts{display:flex;gap:5px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
-.sect{background:var(--card2);border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid var(--bd)}
-.sect h4{font-size:10px;margin-bottom:8px;color:var(--muted);letter-spacing:1px;font-weight:700}
-.sect label{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:11px;gap:6px;flex-wrap:wrap}
-.sect input[type=number],.sect input[type=text],.sect select{width:140px;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:5px;padding:5px 7px;font-family:inherit;font-size:11px;color-scheme:dark;text-align:center}
-.sect input[type=number]{direction:ltr}
-.sect input[type=range]{width:140px;accent-color:var(--accent)}
-.sect input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
-.sect input[type=time],.sect input[type=date]{width:140px;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:5px;padding:5px 7px;font-family:inherit;font-size:11px;color-scheme:dark;direction:ltr}
-.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:5px}
-.sgrid .btn{width:100%;text-align:center;padding:9px}
-.sound-row{display:flex;align-items:center;gap:5px;justify-content:space-between;flex-wrap:wrap}
-.sound-row select{flex:1;min-width:110px}
-.sound-row .sound-test{padding:5px 10px;font-size:11px;background:var(--accent);color:#fff;border-color:var(--accent);border-radius:5px;cursor:pointer;font-family:inherit;font-weight:700}
-.empty{text-align:center;color:var(--muted);padding:30px 12px;font-size:12px}
-.badge{display:inline-block;padding:2px 7px;border-radius:8px;font-size:9px;background:var(--card2);border:1px solid var(--bd);margin:0 2px;direction:ltr}
-.badge.g{color:var(--green);border-color:var(--green)}
-.badge.y{color:var(--yellow);border-color:var(--yellow)}
-.badge.r{color:var(--red);border-color:var(--red)}
-.badge.gold{color:var(--gold);border-color:var(--gold)}
-.badge.silver{color:#c0c0c0;border-color:#c0c0c0}
-.badge.bronze{color:#cd7f32;border-color:#cd7f32}
-.badge.cyan{color:var(--cyan);border-color:var(--cyan)}
-.badge.purple{color:var(--purple);border-color:var(--purple)}
-.badge.med{color:var(--med);border-color:var(--med)}
-.rank-section{margin-bottom:12px;background:var(--card2);border-radius:10px;padding:10px;border:2px solid var(--bd)}
-.rank-section.gold{border-color:var(--gold)}
-.rank-section.silver{border-color:#c0c0c0}
-.rank-section.bronze{border-color:#cd7f32}
-.rank-section .rank-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--bd)}
-.rank-section .rank-title{font-size:13px;font-weight:800}
-.rank-section .rank-count{font-size:11px;padding:3px 8px;border-radius:8px;background:var(--bg);border:1px solid var(--bd);direction:ltr;font-family:'Courier New',monospace}
-.rank-section.gold .rank-count{color:var(--gold);border-color:var(--gold)}
-.rank-section.silver .rank-count{color:#c0c0c0;border-color:#c0c0c0}
-.rank-section.bronze .rank-count{color:#cd7f32;border-color:#cd7f32}
-.rank-section .rank-card{padding:7px 9px;background:var(--bg);border-radius:6px;margin-bottom:5px;font-size:11px;line-height:1.6;cursor:pointer;border:1px solid transparent;transition:.15s}
-.rank-section .rank-card:hover{border-color:var(--accent)}
-.rank-section .rank-card .meta-row{font-size:9px;color:var(--muted);margin-top:3px;display:flex;gap:6px;flex-wrap:wrap}
-.chart{display:flex;align-items:flex-end;gap:3px;height:120px;padding:8px;background:var(--bg);border-radius:8px;margin:8px 0;overflow-x:auto}
-.cbar{flex:1;min-width:20px;background:linear-gradient(180deg,var(--accent),var(--purple));border-radius:3px 3px 0 0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;min-height:2px}
-.cbar .v{font-size:8px;padding-bottom:2px;font-weight:600;direction:ltr}
-.clabels{display:flex;gap:3px;padding:0 8px;margin-bottom:8px}
-.clabels>div{flex:1;min-width:20px;font-size:8px;text-align:center;color:var(--muted)}
-.heat{display:grid;grid-template-columns:repeat(15,1fr);gap:2px;padding:8px;background:var(--bg);border-radius:8px;margin:8px 0}
-.hcell{aspect-ratio:1;background:var(--bd);border-radius:2px;cursor:pointer}
-.hcell.l1{background:rgba(74,222,128,.25)}.hcell.l2{background:#34d399}
-.hcell.l3{background:#10b981}.hcell.l4{background:#059669}
-.hcell.l5{background:#047857}.hcell.l6{background:#065f46}
-.hcell.l7{background:#064e3b}.hcell.l8{background:#022c22}
-.hleg{display:flex;align-items:center;gap:3px;justify-content:center;font-size:9px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}
-.hleg .b{width:11px;height:11px;border-radius:2px}
-.sgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:10px}
-.scard{background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:9px;text-align:center}
-.scard .num{font-size:18px;font-weight:700;display:block;margin-bottom:2px;direction:ltr}
-.scard .lbl{font-size:9px;color:var(--muted)}
-.scard.rec{background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.05));border-color:var(--gold)}
-.pbar2{height:10px;background:var(--bd);border-radius:5px;overflow:hidden;margin:5px 0}
-.pbar2>div{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));transition:width .4s}
-.srow{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--card2);border-radius:6px;margin-bottom:4px;font-size:11px;border:1px solid var(--bd);gap:6px;flex-wrap:wrap}
-.srow .num{direction:ltr;font-family:'Courier New',monospace}
-.topic-stat{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--card2);border-radius:8px;margin-bottom:5px;border:1px solid var(--bd)}
-.topic-stat .emoji{font-size:20px;flex-shrink:0}
-.topic-stat .info{flex:1;min-width:0}
-.topic-stat .info .name{font-size:12px;font-weight:600;margin-bottom:3px}
-.topic-stat .info .pbar{height:5px;margin:0}
-.topic-stat .stats{text-align:left;font-size:10px;color:var(--muted);direction:ltr;white-space:nowrap}
-.topic-stat .stars{font-size:9px;color:var(--gold);margin-top:2px;letter-spacing:1px}
-.medals{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin:10px 0}
-.medal{background:var(--card2);border:2px solid var(--bd);border-radius:8px;padding:9px 4px;text-align:center;opacity:.35;position:relative;transition:.3s}
-.medal.un{opacity:1}
-.medal.br.un{border-color:#cd7f32;background:linear-gradient(135deg,rgba(205,127,50,.2),rgba(205,127,50,.05))}
-.medal.si.un{border-color:#c0c0c0;background:linear-gradient(135deg,rgba(192,192,192,.2),rgba(192,192,192,.05))}
-.medal.go.un{border-color:var(--gold);background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(251,191,36,.05))}
-.medal.di.un{border-color:var(--cyan);background:linear-gradient(135deg,rgba(34,211,238,.2),rgba(34,211,238,.05))}
-.medal.cr.un{border-color:var(--pink);background:linear-gradient(135deg,rgba(244,114,182,.2),rgba(244,114,182,.05))}
-.medal .e{font-size:22px;display:block;margin-bottom:2px}
-.medal .n{font-size:8px;color:var(--muted);line-height:1.3}
-.medal.un .n{color:var(--text);font-weight:600}
-.medal .lock{position:absolute;top:3px;right:3px;font-size:9px}
-.medal.counter-medal{border-color:var(--gold);background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(244,114,182,.15))}
-.medal.counter-medal .cnt{position:absolute;top:3px;right:5px;background:linear-gradient(135deg,var(--gold),var(--pink));color:#0f172a;font-size:9px;font-weight:800;padding:1px 5px;border-radius:6px;direction:ltr}
-.medal.dynamic.un{border-color:var(--med);background:linear-gradient(135deg,rgba(6,182,212,.2),rgba(59,130,246,.1))}
-.medal.step-medal.un{border-color:var(--yellow);background:linear-gradient(135deg,rgba(251,191,36,.25),rgba(251,191,36,.05))}
-.medal.hidden-medal{background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(244,114,182,.15));border-color:var(--purple);border-style:dashed}
-.mission{background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:6px;display:flex;gap:10px;align-items:center;border-right:4px solid var(--accent);transition:.15s}
-.mission.done{border-right-color:var(--green)}
-.mission.claim{border-right-color:var(--gold)}
-.mission .ico{font-size:22px;flex-shrink:0}
-.mission .body{flex:1;min-width:0}
-.mission .name{font-size:12px;font-weight:600;margin-bottom:3px}
-.mission .desc{font-size:10px;color:var(--muted);margin-bottom:5px}
-.mission .pbar{height:5px;margin:0}
-.mission .reward{font-size:10px;color:var(--gold);font-weight:600;white-space:nowrap}
-.mission .claim-btn{background:linear-gradient(135deg,var(--gold),var(--pink));color:#0f172a;border:none;border-radius:6px;padding:5px 10px;font-family:inherit;font-weight:700;font-size:10px;cursor:pointer}
-.recbtn{background:var(--red);color:#fff;border:none;border-radius:50%;width:50px;height:50px;cursor:pointer;font-size:20px;display:inline-flex;align-items:center;justify-content:center}
-.recbtn:hover{transform:scale(1.05)}
-.recprog{height:7px;background:var(--bd);border-radius:4px;overflow:hidden;margin:8px 0}
-.recprog>div{height:100%;background:var(--red);width:0%}
-.cal-wrap{background:var(--bg);border-radius:8px;padding:10px;margin:8px 0}
-.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:600}
-.cal-head button{background:var(--card2);border:1px solid var(--bd);color:var(--text);cursor:pointer;padding:4px 10px;border-radius:5px;font-family:inherit;font-size:11px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dow{text-align:center;font-size:10px;color:var(--muted);padding:5px 0;font-weight:600}
-.cal-day{aspect-ratio:1;background:var(--card2);border:1px solid var(--bd);border-radius:5px;padding:3px;font-size:10px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:.15s}
-.cal-day:hover{border-color:var(--accent);transform:scale(1.05)}
-.cal-day.empty-day{background:transparent;border-color:transparent;cursor:default}
-.cal-day.today{border-color:var(--accent);border-width:2px;font-weight:700}
-.cal-day.active-1{background:rgba(74,222,128,.15)}
-.cal-day.active-2{background:rgba(74,222,128,.3)}
-.cal-day.active-3{background:rgba(74,222,128,.5)}
-.cal-day .n{font-weight:700;font-size:11px}
-.cal-day .t{font-size:7px;color:var(--muted);margin-top:1px;direction:ltr}
-.cal-day .note-icon{position:absolute;top:1px;left:1px;font-size:7px}
-.tag-chip{display:inline-flex;align-items:center;gap:3px;padding:4px 9px;background:var(--accent);color:#fff;border-radius:10px;font-size:10px;margin:2px;border:none;font-family:inherit;cursor:default}
-.tag-chip.clickable{cursor:pointer;transition:.15s}
-.tag-chip.clickable:hover{background:var(--purple)}
-.tag-chip .rm{background:transparent;border:none;color:#fff;cursor:pointer;font-size:12px;padding:0 2px}
-.tag-cloud{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
-.level-detail{background:var(--card2);border-radius:10px;padding:12px;margin-bottom:8px}
-.level-detail .big{font-size:48px;text-align:center;margin-bottom:6px}
-.level-detail .lvl{font-size:20px;font-weight:900;text-align:center;color:var(--accent);direction:ltr}
-.level-detail .title{text-align:center;color:var(--gold);font-weight:700;margin-bottom:10px}
-.level-detail .row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px dashed var(--bd)}
-.level-detail .row .val{direction:ltr;font-family:'Courier New',monospace}
-.shortcuts-list{background:var(--card2);border-radius:8px;padding:10px;font-size:12px;line-height:2}
-.shortcuts-list .sc-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px dashed var(--bd);gap:6px}
-.shortcuts-list kbd{background:var(--bg);border:1px solid var(--bd);border-radius:4px;padding:2px 6px;font-family:'Courier New',monospace;font-size:10px;direction:ltr;color:var(--accent);font-weight:700}
-.plan-card{background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:8px;border-right:4px solid var(--med)}
-.plan-card.done{border-right-color:var(--green);opacity:.7}
-.plan-card .head{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-.plan-card .name{font-size:13px;font-weight:700}
-.plan-card .due{font-size:10px;color:var(--muted);direction:ltr}
-.plan-card .stat-row{display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-bottom:5px}
-.plan-card .pbar{height:7px;margin-bottom:6px}
-.plan-card .actions{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end}
-.unlock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;margin:8px 0}
-.unlock-card{background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:9px;text-align:center;position:relative;cursor:pointer;transition:.2s}
-.unlock-card:hover{transform:translateY(-2px)}
-.unlock-card.locked{opacity:.5;filter:grayscale(.6)}
-.unlock-card.unlocked{border-color:var(--gold);background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(244,114,182,.05))}
-.unlock-card .icon{font-size:28px;display:block;margin-bottom:5px}
-.unlock-card .name{font-size:10px;font-weight:600;margin-bottom:3px}
-.unlock-card .req{font-size:8px;color:var(--muted);direction:ltr}
-.unlock-card .lock{position:absolute;top:5px;right:5px;font-size:11px}
-.unlock-card .active-badge{position:absolute;top:5px;left:5px;font-size:8px;background:var(--green);color:#0f172a;padding:1px 5px;border-radius:5px;font-weight:800}
-.journal-entry{background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:10px;margin-bottom:6px;border-right:3px solid var(--med)}
-.journal-entry .date{font-size:10px;color:var(--muted);margin-bottom:5px}
-.journal-entry .text{font-size:12px;line-height:1.8}
-.journal-textarea{width:100%;min-height:90px;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:8px;padding:9px;font-family:inherit;font-size:12px;color-scheme:dark;line-height:1.7;resize:vertical}
-.simplify-item{background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:10px;margin-bottom:8px;border-right:3px solid var(--med)}
-.simplify-item .item-head{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-.simp-card{background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:8px;margin-bottom:6px}
-.simp-card .field{margin-bottom:5px}
-.simp-card .field label{font-size:9px;color:var(--muted);display:block;margin-bottom:2px}
-.simp-card .field textarea{width:100%;background:var(--card2);border:1px solid var(--bd);color:var(--text);border-radius:5px;padding:6px 8px;font-family:inherit;font-size:11px;color-scheme:dark;line-height:1.6;resize:vertical;min-height:40px}
-.simp-card .row-acts{display:flex;gap:3px;justify-content:flex-end;margin-top:3px}
-.simp-card .split-number{display:inline-block;background:var(--med);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:6px;margin-bottom:5px}
-.simp-actions{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;margin-top:8px;padding-top:6px;border-top:1px dashed var(--bd)}
-.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:400;overflow:hidden;display:none}
-.confetti-container.show{display:block}
-.confetti-piece{position:absolute;width:9px;height:9px;top:-20px;animation:confettiFall linear forwards}
-@keyframes confettiFall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
-.confetti-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,var(--gold),var(--pink));color:#0f172a;padding:16px 32px;border-radius:16px;font-size:20px;font-weight:900;z-index:401;animation:confettiBanner 2s ease forwards}
-@keyframes confettiBanner{0%{transform:translate(-50%,-50%) scale(0)}20%{transform:translate(-50%,-50%) scale(1.1)}30%,80%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-50%) scale(0)}}
-.pwa-prompt{position:fixed;bottom:14px;left:10px;right:10px;max-width:380px;margin:0 auto;background:var(--card);border:1px solid var(--accent);border-radius:10px;padding:10px;z-index:80;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.pwa-prompt.show{display:block;animation:slideIn .3s}
-.pwa-prompt .row{display:flex;gap:8px;align-items:center}
-.pwa-prompt .txt{flex:1;font-size:11px}
-.step-btns{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:6px;margin:8px 0}
-.step-btn{background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:10px;cursor:pointer;font-family:inherit;font-size:11px;color:var(--text);text-align:center;transition:.15s}
-.step-btn:hover{border-color:var(--accent)}
-.step-btn .n{display:block;font-weight:700;font-size:14px;margin-bottom:3px;color:var(--accent)}
-.menu-tree{background:var(--card2);border:1px solid var(--bd);border-radius:8px;padding:6px;max-height:220px;overflow-y:auto;margin-bottom:6px}
-.tree-topic{padding:8px 10px;cursor:pointer;border-radius:5px;font-size:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center;transition:.15s}
-.tree-topic:hover{background:var(--bg)}
-.tree-topic .arrow{color:var(--muted);font-size:9px;transition:transform .3s}
-.tree-topic.open .arrow{transform:rotate(180deg)}
-.tree-subs{padding-right:18px;display:none}
-.tree-subs.open{display:block}
-.tree-sub{padding:6px 9px;cursor:pointer;border-radius:5px;font-size:11px;display:flex;align-items:center;gap:5px}
-.tree-sub input{accent-color:var(--green)}
-#challengeCard{background:linear-gradient(135deg,rgba(251,191,36,.12),rgba(167,139,250,.12));border:1px solid var(--gold);border-radius:10px;padding:12px;margin-bottom:6px;position:relative;transition:.3s}
-#challengeCard.done{background:linear-gradient(135deg,rgba(74,222,128,.15),rgba(34,211,238,.1));border-color:var(--green)}
-#challengeCard.done #challengeTitle{color:var(--green)}
-#xpBar{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px;margin-bottom:6px;cursor:pointer;transition:.15s}
-#xpBar:hover{border-color:var(--accent)}
-body.compact{font-size:13px}
-body.compact .q{font-size:16px;padding:20px 24px;min-height:100px}
-body.compact .a{font-size:18px;padding:16px 24px}
-body.compact .card-area{padding:14px}
-body.focus-mode .folders,body.focus-mode .motivation,body.focus-mode .mid-bar,body.focus-mode .daily-cards-widget,body.focus-mode .batch-widget,body.focus-mode .side-col,body.focus-mode #challengeCard,body.focus-mode #xpBar{display:none!important}
-body.focus-mode .page-wrap{grid-template-columns:1fr;max-width:800px}
-body.glass .topbar,body.glass .folder,body.glass .card-area,body.glass .panel,body.glass .welcome,body.glass .rail-card,body.glass .daily-cards-widget,body.glass .batch-widget,body.glass .mid-item{background:rgba(30,41,59,.55);backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);border-color:rgba(148,163,184,.15)}
-@media (max-width:900px){
-  .page-wrap{grid-template-columns:1fr}
-  .side-col{position:static;max-height:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .end{grid-template-columns:repeat(2,1fr)}
-}
-@media (max-width:600px){
-  body{padding:4px;padding-top:64px;font-size:14px}
-  .topbar{padding:4px 5px;gap:4px;border-radius:10px}
-  .topbar .dt-box .d{display:none}
-  .topbar .dt-box .t{font-size:10px}
-  .mid-bar{grid-template-columns:repeat(3,1fr);gap:4px}
-  .mid-item{padding:7px 4px;min-height:46px}
-  .mid-item .head{font-size:9px;gap:2px}
-  .mid-item .head .icn{font-size:13px}
-  .folder-grid{grid-template-columns:repeat(3,1fr);gap:5px}
-  .menu-btn{padding:9px 4px;font-size:9px}
-  .menu-btn .e{font-size:16px}
-  .q{font-size:16px;padding:20px 20px;min-height:110px}
-  .a{font-size:19px;padding:16px 20px}
-  .card-area{min-height:280px;padding:14px}
-  .act{padding:13px 3px;font-size:12px}
-  .end{grid-template-columns:1fr}
-  .side-col{grid-template-columns:1fr}
-  .heat{grid-template-columns:repeat(10,1fr)}
-  .nav button{padding:13px;font-size:13px}
-  .welcome{padding:20px 12px}
-  .welcome h2{font-size:17px}
-  .sgrid{grid-template-columns:1fr}
-  .unlock-grid{grid-template-columns:repeat(2,1fr)}
-  .sgrid2{grid-template-columns:repeat(3,1fr)}
-  .modal{padding:14px}
-}
-@media (max-width:400px){
-  .mid-bar{grid-template-columns:repeat(2,1fr)}
-  .folder-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media print{
-  body{background:#fff!important;color:#000!important;padding:0!important}
-  .topbar,.side-col,.folders,.mid-bar,.motivation,#challengeCard,#xpBar,.welcome,.actions,.nav,.toast,.daily-cards-widget,.batch-widget{display:none!important}
-}
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
-</style>
-</head>
-<body>
-  <!-- ========== TOPBAR ========== -->
-<div class="topbar">
-  <div class="btns">
-    <button class="icon-btn" id="btnHome" title="خانه (9)"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg></button>
-    <div class="pomodoro" id="pomo"><span id="pomoPhase">تمرکز</span><span class="time" id="pomoTime">25:00</span></div>
-    <button class="icon-btn" id="btnAddCard" title="کارت جدید"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
-    <button class="icon-btn" id="btnUpload" title="بارگذاری"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button>
-    <button class="icon-btn" id="btnSearch" title="جستجو"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
-    <button class="icon-btn" id="btnFocus" title="تمرکز (9)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></button>
-    <button class="icon-btn" id="btnFull" title="تمام صفحه"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button>
-    <button class="icon-btn" id="btnTheme" title="تم"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-    <button class="icon-btn" id="btnSound" title="صدا"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
-    <button class="icon-btn" id="btnSettings" title="تنظیمات"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-  </div>
-  <div class="dt-box">
-    <span class="d" id="dateSh">—</span>
-    <span class="d" id="dateGr">—</span>
-    <span class="t" id="clockNow">—</span>
-  </div>
-  <button class="level-badge" id="levelBadge" title="جزئیات سطح">
-    <span id="levelAvatar">🌱</span><span>سطح <span id="levelNum">1</span></span>
-  </button>
-</div>
-
-<input type="file" id="fileQuick" accept=".json,.txt" multiple style="display:none">
-<input type="file" id="filePhoto" accept="image/*" style="display:none">
-
-<!-- ========== MAIN LAYOUT ========== -->
-<div class="page-wrap">
-  <main class="main-col">
-
-    <div class="motivation" id="motiv"></div>
-
-    <!-- ========== MID BAR: 5 SHORTCUTS ========== -->
-    <div class="mid-bar">
-      <div class="mid-item" id="midTopics"><div class="head"><span class="icn">📚</span><span>درس‌ها</span><span class="num" id="cTopics">0</span></div></div>
-      <div class="mid-item has-prog" id="midDue"><div class="head"><span class="icn">⏰</span><span>سررسیده</span><span class="num" id="cDue">0</span></div><div class="prog"><div id="cDueProg" style="width:0%"></div></div></div>
-      <div class="mid-item" id="midHard"><div class="head"><span class="icn">🔁</span><span>سخت‌ها</span><span class="num" id="cHard">0</span></div></div>
-      <div class="mid-item" id="midNew"><div class="head"><span class="icn">🆕</span><span>جدیدها</span><span class="num" id="cNew">0</span></div></div>
-      <div class="mid-item" id="midPlan"><div class="head"><span class="icn">📅</span><span>برنامه مطالعه</span><span class="num" id="cPlan">0</span></div></div>
-    </div>
-
-    <!-- ========== BATCH WIDGET ========== -->
-    <div class="batch-widget" id="batchW">
-      <div class="head"><span class="title">🎴 نوبت ساخت اخیر</span><span class="badge cyan" id="batchCount">0</span></div>
-      <div class="sub">کارت‌هایی که تازه ساختی — فقط همینا رو مرور کن</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <button class="btn primary" id="batchGo">▶ مرور نوبت</button>
-        <button class="btn" id="batchClear">✖ پاک کردن</button>
-      </div>
-    </div>
-
-    <!-- ========== DAILY CARDS WIDGET (GOAL) ========== -->
-    <div class="daily-cards-widget" id="dailyW">
-      <div class="head"><span class="title">🎴 کارت‌های روز (هدف)</span><span class="badge" id="dailyCount">0</span></div>
-      <div class="sub" id="dailySub"></div>
-      <div><button class="btn primary" id="dailyGo">▶ بزن!</button></div>
-    </div>
-
-    <div class="notice info" id="fridayN"><span>📤 جمعه است! وقت پشتیبان‌گیری</span><button class="x" onclick="this.parentElement.classList.remove('show')">×</button></div>
-
-    <!-- ========== FOLDERS ========== -->
-    <div class="folders">
-      <div class="folder" data-f="quick">
-        <div class="folder-h" onclick="toggleF('quick')"><span class="arr">▼</span><span class="ttl">⚡ دسترسی سریع</span><span class="badge" id="bQuick">0</span></div>
-        <div class="folder-body"><div class="folder-grid">
-          <button class="menu-btn" data-m="all"><span class="e">📋</span><span class="n">همه</span><span class="c" id="mAll">0</span></button>
-          <button class="menu-btn" data-m="due"><span class="e">⏰</span><span class="n">سررسیده</span><span class="c" id="mDue">0</span></button>
-          <button class="menu-btn" data-m="new"><span class="e">🆕</span><span class="n">جدیدها</span><span class="c" id="mNew">0</span></button>
-          <button class="menu-btn" data-m="todayCorrect"><span class="e">✅</span><span class="n">درست امروز</span><span class="c" id="mTC">0</span></button>
-          <button class="menu-btn" data-m="todayPartial"><span class="e">🟡</span><span class="n">حدودی امروز</span><span class="c" id="mTP">0</span></button>
-          <button class="menu-btn" data-m="todayWrong"><span class="e">🔴</span><span class="n">غلط امروز</span><span class="c" id="mTW">0</span></button>
-        </div></div>
-      </div>
-
-      <div class="folder" data-f="filters">
-        <div class="folder-h" onclick="toggleF('filters')"><span class="arr">▼</span><span class="ttl">🔎 فیلترها</span><span class="badge" id="bFilt">0</span></div>
-        <div class="folder-body"><div class="folder-grid">
-          <button class="menu-btn" data-m="hard"><span class="e">🔁</span><span class="n">سخت‌ها</span><span class="c" id="mHard">0</span></button>
-          <button class="menu-btn" data-m="starred"><span class="e">⭐</span><span class="n">ستاره</span><span class="c" id="mStar">0</span></button>
-          <button class="menu-btn" data-m="suspended"><span class="e">⏸</span><span class="n">معلق</span><span class="c" id="mSusp">0</span></button>
-          <button class="menu-btn" data-m="deleted"><span class="e">🗑</span><span class="n">حذف‌شده</span><span class="c" id="mDel">0</span></button>
-          <button class="menu-btn" data-m="pinned"><span class="e">📌</span><span class="n">پین‌شده</span><span class="c" id="mPin">0</span></button>
-          <button class="menu-btn" data-m="mostViews"><span class="e">👁</span><span class="n">پربازدید</span><span class="c" id="mViews">0</span></button>
-          <button class="menu-btn" data-m="mostWrongs"><span class="e">❌</span><span class="n">بیشترین غلط</span><span class="c" id="mWrongs">0</span></button>
-          <button class="menu-btn" data-m="tagFilter"><span class="e">🏷</span><span class="n">برچسب‌ها</span></button>
-        </div></div>
-      </div>
-
-      <div class="folder" data-f="review">
-        <div class="folder-h" onclick="toggleF('review')"><span class="arr">▼</span><span class="ttl">🎴 حالت‌های مرور</span></div>
-        <div class="folder-body"><div class="folder-grid">
-          <button class="menu-btn" data-m="randomAll"><span class="e">🎲</span><span class="n">تصادفی</span></button>
-          <button class="menu-btn" data-m="exam"><span class="e">📝</span><span class="n">آزمون</span></button>
-          <button class="menu-btn" data-m="quiz4"><span class="e">🎯</span><span class="n">چهارگزینه‌ای</span></button>
-          <button class="menu-btn" data-m="stepFilter"><span class="e">📊</span><span class="n">فیلتر پله</span></button>
-          <button class="menu-btn" data-m="timeFilter"><span class="e">📅</span><span class="n">فیلتر زمانی</span></button>
-          <button class="menu-btn" data-m="calendar"><span class="e">📅</span><span class="n">تقویم</span></button>
-        </div></div>
-      </div>
-
-      <div class="folder" data-f="manage">
-        <div class="folder-h" onclick="toggleF('manage')"><span class="arr">▼</span><span class="ttl">📚 مدیریت و برنامه</span><span class="badge" id="bMan">0</span></div>
-        <div class="folder-body"><div class="folder-grid">
-          <button class="menu-btn" data-m="topics"><span class="e">📚</span><span class="n">درس‌ها</span></button>
-          <button class="menu-btn" data-m="subjectSearch"><span class="e">🔍</span><span class="n">جستجوی موضوعی</span></button>
-          <button class="menu-btn" data-m="studyPlan"><span class="e">📅</span><span class="n">برنامه مطالعه</span></button>
-          <button class="menu-btn" data-m="journal"><span class="e">📔</span><span class="n">یادداشت روزانه</span></button>
-          <button class="menu-btn" data-m="simplify"><span class="e">🗂</span><span class="n">پوشه ساده‌سازی</span><span class="c" id="mSimp">0</span></button>
-        </div></div>
-      </div>
-
-      <div class="folder" data-f="game">
-        <div class="folder-h" onclick="toggleF('game')"><span class="arr">▼</span><span class="ttl">🎮 بازی و پیشرفت</span></div>
-        <div class="folder-body"><div class="folder-grid">
-          <button class="menu-btn" data-m="stats"><span class="e">📊</span><span class="n">آمار</span></button>
-          <button class="menu-btn" data-m="medals"><span class="e">🏆</span><span class="n">مدال‌ها</span></button>
-          <button class="menu-btn" data-m="unlockables"><span class="e">🎁</span><span class="n">پاداش‌ها</span></button>
-          <button class="menu-btn" data-m="heatmap"><span class="e">🔥</span><span class="n">نقشه حرارتی</span></button>
-          <button class="menu-btn" data-m="records"><span class="e">📈</span><span class="n">رکوردها</span></button>
-          <button class="menu-btn" data-m="growth"><span class="e">📉</span><span class="n">نمودار رشد</span></button>
-          <button class="menu-btn" data-m="challengeDetail"><span class="e">🎯</span><span class="n">چالش‌ها</span></button>
-          <button class="menu-btn" data-m="weeklyMissions"><span class="e">📜</span><span class="n">مأموریت هفتگی</span></button>
-          <button class="menu-btn" data-m="hiddenAch"><span class="e">🔮</span><span class="n">نشان‌های مخفی</span></button>
-        </div></div>
-      </div>
-    </div>
-
-    <!-- ========== CHALLENGE ========== -->
-    <div id="challengeCard">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
-        <span id="challengeTitle" style="font-size:12px;font-weight:700;color:var(--gold)">🎯 چالش روزانه</span>
-        <span id="challengeStreak" style="font-size:10px;color:var(--muted)">🔥 0 روز</span>
-      </div>
-      <div id="challengeType" style="font-size:10px;color:var(--cyan);margin-bottom:3px"></div>
-      <div id="challengeText" style="font-size:12px;margin-bottom:6px">—</div>
-      <div style="height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-bottom:4px"><div id="challengeProgress" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--pink));width:0%;border-radius:3px;transition:width .4s"></div></div>
-      <div id="challengeStat" style="font-size:10px;color:var(--muted);direction:ltr">0 / 0</div>
-    </div>
-
-    <!-- ========== XP BAR ========== -->
-    <div id="xpBar" title="کلیک = جزئیات سطح">
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px"><span id="xpLevel">سطح ۱</span><span id="xpNum" style="direction:ltr">0 / 0</span></div>
-      <div style="height:5px;background:var(--bd);border-radius:3px;overflow:hidden"><div id="xpProg" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));width:0%;transition:width .4s"></div></div>
-    </div>
-
-    <!-- ========== WELCOME ========== -->
-    <div class="welcome" id="welcome">
-      <h2>👋 خوش آمدی</h2>
-      <div class="day-info" id="wDayInfo"></div>
-      <p>یک منو انتخاب کن یا از «درس‌ها» شروع کن</p>
-      <div class="srow" id="wStats"></div>
-    </div>
-
-    <!-- ========== CARD AREA ========== -->
-    <div class="card-area" id="cardArea">
-      <div class="card-gold" id="cardGold">👑 کارت طلایی</div>
-      <div class="tools">
-        <button class="tool t-add" id="tAdd" title="کارت جدید">➕</button>
-        <button class="tool" id="tNote" title="یادداشت">📝</button>
-        <button class="tool" id="tStar" title="ستاره (S)">⭐</button>
-        <button class="tool" id="tEdit" title="ویرایش (H)">✏</button>
-        <button class="tool" id="tPin" title="پین (J)">📌</button>
-        <button class="tool t-rev" id="tRev" title="معکوس (6)">🔄</button>
-        <button class="tool" id="tTag" title="برچسب">🏷</button>
-        <button class="tool" id="tSimp" title="ساده‌سازی (Ctrl+O)" style="color:var(--med)">🗂</button>
-      </div>
-      <div class="tools right">
-        <button class="tool t-susp" id="tSusp" title="تعلیق (K)">⏸</button>
-        <button class="tool t-del" id="tDel" title="حذف (8)">🗑</button>
-      </div>
-      <div class="counter" id="counter">1 / 1</div>
-      <div class="c-head" id="chead"></div>
-      <div id="cardPhotoWrap" class="card-photo-wrap" style="display:none"><img class="card-photo" id="cardPhoto" alt=""></div>
-      <div class="q" id="cardQ">—</div>
-      <div class="a" id="cardA"></div>
-      <div id="cardExtra"></div>
-      <div class="card-note-display" id="cardNoteDisplay" style="display:none"><div class="lbl">📝 یادداشت</div><div id="cardNoteText"></div></div>
-      <div class="praise" id="praise"></div>
-      <div class="days" id="days"></div>
-      <div class="vcount" id="vcount">0</div>
-      <div class="card-tag-row" id="cardTags"></div>
-    </div>
-
-    <div class="step-toast" id="stepToast"></div>
-    <div class="xp-toast" id="xpToast"></div>
-
-    <div class="actions" id="actions">
-      <button class="act correct" data-a="correct">✅ درست (1)</button>
-      <button class="act partial" data-a="partial">🟡 حدودی (2)</button>
-      <button class="act wrong" data-a="wrong">🔴 غلط (3)</button>
-    </div>
-    <div class="quiz-options" id="quizOptions"></div>
-    <div class="nav" id="nav"><button id="navNext">بعدی →</button><button id="navPrev">← قبلی</button></div>
-    <div class="end" id="endSub">
-      <button class="primary" id="btnEndQuick">⚡ مرور سریع</button>
-      <button class="danger" id="btnEndWrong">🔴 مرور غلط‌ها</button>
-      <button id="btnEndBack">📚 درس‌ها</button>
-      <button id="btnEndHome">🏠 خانه</button>
-    </div>
-
-    <!-- ========== PANELS ========== -->
-
-    <div class="panel" id="pTopics">
-      <h2><span>📚 درس‌ها</span><button onclick="goHome()">بستن</button></h2>
-      <div style="display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap">
-        <button class="btn primary" id="btnNewTopic">+ درس جدید</button>
-        <button class="btn" id="btnUpJson">JSON</button>
-        <button class="btn" id="btnUpTxt">TXT</button>
-        <button class="btn" id="btnExpandAll">باز/بسته</button>
-        <button class="btn" id="btnExpSplit">خروجی تقسیمی</button>
-      </div>
-      <input type="file" id="fileJson" accept=".json" multiple style="display:none">
-      <input type="file" id="fileTxt" accept=".txt" multiple style="display:none">
-      <div id="topicsList"></div>
-    </div>
-
-    <div class="panel" id="pDue">
-      <h2><span>⏰ سررسیده‌ها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="dueInfo" style="font-size:11px;color:var(--muted);margin-bottom:8px;padding:6px 10px;background:var(--card2);border-radius:6px"></div>
-      <div id="dueList"></div>
-    </div>
-
-    <div class="panel" id="pSubject">
-      <h2><span>🔍 جستجوی موضوعی</span><button onclick="goHome()">بستن</button></h2>
-      <input type="text" id="subjInput" placeholder="نام درس یا مبحث..." style="width:100%;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:7px;padding:9px;font-family:inherit;margin-bottom:10px;color-scheme:dark">
-      <div id="subjResults"></div>
-    </div>
-
-    <div class="panel" id="pSubDetail">
-      <h2><span id="subTitle"></span><button onclick="goHome()">بستن</button></h2>
-      <div id="subBody"></div>
-    </div>
-
-    <div class="panel" id="pPlan">
-      <h2><span>📅 برنامه مطالعه</span><button onclick="goHome()">بستن</button></h2>
-      <button class="btn primary" id="btnNewPlan" style="width:100%;margin-bottom:10px">+ برنامه جدید</button>
-      <div id="planBody"></div>
-    </div>
-
-    <div class="panel" id="pJournal">
-      <h2><span>📔 یادداشت روزانه</span><button onclick="goHome()">بستن</button></h2>
-      <div style="margin-bottom:12px">
-        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:5px">امروز — <span id="journalDate"></span></label>
-        <textarea id="journalText" class="journal-textarea" placeholder="امروز چطور بود؟..."></textarea>
-        <button class="btn primary" id="journalSave" style="margin-top:6px;width:100%">💾 ذخیره</button>
-      </div>
-      <h3 style="font-size:12px;color:var(--muted);margin:12px 0 6px">📜 یادداشت‌های قبلی</h3>
-      <div id="journalHistory"></div>
-    </div>
-
-    <div class="panel" id="pSimplify">
-      <h2><span>🗂 پوشه ساده‌سازی</span><button onclick="goHome()">بستن</button></h2>
-      <div id="simpInfo" style="font-size:11px;color:var(--muted);margin-bottom:8px;padding:6px 10px;background:var(--card2);border-radius:6px"></div>
-      <div id="simpList"></div>
-    </div>
-
-    <div class="panel" id="pUnlock">
-      <h2><span>🎁 پاداش‌های قفل‌گشا</span><button onclick="goHome()">بستن</button></h2>
-      <div class="unlock-grid" id="unlockGrid"></div>
-    </div>
-
-    <div class="panel" id="pMostWrongs">
-      <h2><span>❌ بیشترین غلط‌ها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="mostWrongsBody"></div>
-    </div>
-
-    <div class="panel" id="pMostViews">
-      <h2><span>👁 پربازدیدها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="mostViewsBody"></div>
-    </div>
-
-    <div class="panel" id="pStats">
-      <h2><span>📊 آمار</span><button onclick="goHome()">بستن</button></h2>
-      <div id="statsBody"></div>
-    </div>
-
-    <div class="panel" id="pMedals">
-      <h2><span>🏆 مدال‌ها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="medalsBody"></div>
-    </div>
-
-    <div class="panel" id="pHeatmap">
-      <h2><span>🔥 نقشه حرارتی</span><button onclick="goHome()">بستن</button></h2>
-      <div id="heatmapBody"></div>
-    </div>
-
-    <div class="panel" id="pCalendar">
-      <h2><span>📅 تقویم شمسی</span><button onclick="goHome()">بستن</button></h2>
-      <div id="calendarBody"></div>
-    </div>
-
-    <div class="panel" id="pRecords">
-      <h2><span>📈 رکوردها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="recordsBody"></div>
-    </div>
-
-    <div class="panel" id="pGrowth">
-      <h2><span>📉 نمودار رشد</span><button onclick="goHome()">بستن</button></h2>
-      <div id="growthBody"></div>
-    </div>
-
-    <div class="panel" id="pChallenge">
-      <h2><span>🎯 چالش‌ها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="challengeBody"></div>
-    </div>
-
-    <div class="panel" id="pMissions">
-      <h2><span>📜 مأموریت‌های هفتگی</span><button onclick="goHome()">بستن</button></h2>
-      <div id="missionsBody"></div>
-    </div>
-
-    <div class="panel" id="pHidden">
-      <h2><span>🔮 نشان‌های مخفی</span><button onclick="goHome()">بستن</button></h2>
-      <div id="hiddenBody"></div>
-    </div>
-
-    <div class="panel" id="pTags">
-      <h2><span>🏷 برچسب‌ها</span><button onclick="goHome()">بستن</button></h2>
-      <div id="tagsBody"></div>
-    </div>
-
-    <!-- ========== SETTINGS ========== -->
-    <div class="panel" id="pSettings">
-      <h2><span>⚙️ تنظیمات</span><button onclick="goHome()">بستن</button></h2>
-
-      <div class="sect"><h4>بازه‌های مرور (ساعت)</h4>
-        <label>حدودی <input type="number" id="setPart" min="1"></label>
-        <label>پله‌ها <input type="text" id="setSteps" placeholder="16,24,72,168,336,624,1392"></label>
-        <label>آستانه سخت <input type="number" id="setHard" min="1"></label>
-        <label>هدف روزانه <input type="number" id="setGoal" min="0"></label>
-        <label>آستانه پربازدید <input type="number" id="setViews" min="1"></label>
-      </div>
-
-      <div class="sect"><h4>جلسه و صف</h4>
-        <label>کارت هر جلسه <input type="number" id="setSess" min="5"></label>
-        <label>پیشنهاد هوشمند <input type="checkbox" id="setSmart"></label>
-        <label>شب خودکار <input type="checkbox" id="setNight"></label>
-        <label>یادآور <input type="time" id="setRemTime"></label>
-        <label>یادآور فعال <input type="checkbox" id="setRemOn"></label>
-      </div>
-
-      <div class="sect"><h4>🗂 پوشه ساده‌سازی</h4>
-        <label>آستانه کلمه <input type="number" id="setSimpW" min="5" max="500"></label>
-        <label>ورود خودکار <input type="checkbox" id="setSimpAuto"></label>
-      </div>
-
-      <div class="sect"><h4>🎴 کارت‌های روز</h4>
-        <label>تعداد <input type="number" id="setDailyC" min="1" max="20"></label>
-        <label>جایزه XP <input type="number" id="setDailyR" min="0"></label>
-        <label>فعال <input type="checkbox" id="setDailyOn"></label>
-      </div>
-
-      <div class="sect"><h4>ویژگی‌ها</h4>
-        <label>داستان مدال <input type="checkbox" id="setStory"></label>
-        <label>تم خودکار <input type="checkbox" id="setAutoTheme"></label>
-        <label>صبح از <input type="time" id="setDayStart"></label>
-        <label>شب از <input type="time" id="setNightStart"></label>
-        <label>جشن کنفتی <input type="checkbox" id="setConfetti"></label>
-        <label>یادداشت روی کارت <input type="checkbox" id="setShowNotes"></label>
-      </div>
-
-      <div class="sect"><h4>مرور سریع</h4>
-        <label>سؤال (ثانیه) <input type="number" id="setQuickQ" min="1"></label>
-        <label>جواب (ثانیه) <input type="number" id="setQuickA" min="1"></label>
-      </div>
-
-      <div class="sect"><h4>🔊 صدا</h4>
-        <label>✅ درست <span class="sound-row"><select id="sndC"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="Correct">▶</button></span></label>
-        <label>❌ غلط <span class="sound-row"><select id="sndW"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="Wrong">▶</button></span></label>
-        <label>🟡 حدودی <span class="sound-row"><select id="sndP"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="Partial">▶</button></span></label>
-        <label>📖 مطالعه <span class="sound-row"><select id="sndS"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="Study">▶</button></span></label>
-        <label>⏰ پومودورو <span class="sound-row"><select id="sndPomo"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="Pomo">▶</button></span></label>
-        <label>⭐ LevelUp <span class="sound-row"><select id="sndL"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="LevelUp">▶</button></span></label>
-        <label>🎁 پاداش <span class="sound-row"><select id="sndMC"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="piano">پیانو</option><option value="guitar">گیتار</option><option value="bell">زنگ</option><option value="trumpet">ترومپت</option><option value="drum">درام</option><option value="sax">ساکسیفون</option><option value="violin">ویولن</option></select><button type="button" class="sound-test" data-s="MissionClaim">▶</button></span></label>
-        <label>✅ تیک ساخت <span class="sound-row"><select id="sndTick"><option value="soft">نرم</option><option value="sharp">تیز</option><option value="melodic">ملودیک</option><option value="bell">زنگ</option></select><button type="button" class="sound-test" data-s="Tick">▶</button></span></label>
-        <label>ولوم <input type="range" id="setVol" min="0" max="100"></label>
-        <label>صدا فعال <input type="checkbox" id="setSnd"></label>
-      </div>
-
-      <div class="sect"><h4>⏰ پومودورو</h4>
-        <label>تمرکز (دقیقه) <input type="number" id="setPF" min="5"></label>
-        <label>استراحت (دقیقه) <input type="number" id="setPB" min="1"></label>
-        <label>استراحت بلند <input type="number" id="setPL" min="5"></label>
-      </div>
-
-      <div class="sect"><h4>🎨 تم رنگی</h4>
-        <div class="sgrid">
-          <button class="btn" data-theme="dark">🌙 تیره</button>
-          <button class="btn" data-theme="light">☀️ روشن</button>
-          <button class="btn" data-theme="dim">🌆 کم‌نور</button>
-          <button class="btn" data-theme="blue">💙 آبی</button>
-          <button class="btn" data-theme="green">💚 سبز</button>
-          <button class="btn" data-theme="purple">💜 بنفش</button>
-          <button class="btn" data-theme="red">❤️ قرمز</button>
-        </div>
-      </div>
-
-      <div class="sect"><h4>نمایش</h4>
-        <div class="sgrid">
-          <button class="btn" id="btnCompact">📐 فشرده</button>
-          <button class="btn" id="btnFocusM">🎯 تمرکز</button>
-          <button class="btn" id="btnGlass">💎 شیشه‌ای</button>
-        </div>
-      </div>
-
-      <div class="sect"><h4>راهنما</h4>
-        <button class="btn" id="btnShortcuts" style="width:100%">⌨️ میانبرها</button>
-      </div>
-
-      <div class="sect"><h4>📤 پشتیبان و ابزار</h4>
-        <div class="sgrid">
-          <button class="btn primary" id="btnExport">📤 خروجی (پشتیبان)</button>
-          <button class="btn primary" id="btnImport">📥 وارد کردن</button>
-          <input type="file" id="fileBackup" accept=".json" style="display:none">
-          <button class="btn" id="btnEmptyJson">📝 JSON خالی</button>
-          <button class="btn" id="btnMerge">🔗 ادغام</button>
-          <button class="btn" id="btnStorage">ℹ️ وضعیت</button>
-          <button class="btn" id="btnExpTxt">📄 TXT</button>
-        </div>
-      </div>
-
-      <div class="sect"><h4>⚠️ خطر</h4>
-        <button class="btn danger" id="btnReset" style="width:100%">🗑 ریست کامل</button>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ========== RIGHT RAIL ========== -->
-  <aside class="side-col">
-    <div class="rail-card">
-      <div class="rh">📅 استریک هفته</div>
-      <div class="rail-streak" id="railStreak"></div>
-    </div>
-
-    <div class="rail-card">
-      <div class="rh">🏆 رکوردها</div>
-      <div class="rail-item level-name-row" id="railLevelName">🌱 مبتدی</div>
-      <div class="rail-item cyan"><span class="lbl">⭐ امتیاز</span><span class="v" id="railXP">0</span></div>
-      <div class="rail-item green"><span class="lbl">✅ رکورد درست</span><span class="v" id="railRecC">0</span></div>
-      <div class="rail-item gold"><span class="lbl">🏆 بهترین روز</span><span class="v" id="railBestD">0</span></div>
-      <div class="rail-item purple"><span class="lbl">🆕 رکورد جدید</span><span class="v" id="railRecN">0</span></div>
-      <div class="rail-item yellow"><span class="lbl">🔥 رکورد استریک</span><span class="v" id="railRecS">0</span></div>
-    </div>
-
-    <div class="rail-card today-mini">
-      <div class="rh">📊 آمار امروز</div>
-      <div class="row new" id="rTN"><span class="lbl">🆕 جدید</span><span class="v">0</span></div>
-      <div class="row correct" id="rTC"><span class="lbl">✅ درست</span><span class="v">0</span></div>
-      <div class="row partial" id="rTP"><span class="lbl">🟡 حدودی</span><span class="v">0</span></div>
-      <div class="row wrong" id="rTW"><span class="lbl">🔴 غلط</span><span class="v">0</span></div>
-      <div class="row total" id="rTT"><span class="lbl">📈 تکرار</span><span class="v">0</span></div>
-      <div class="goal-box">
-        <div class="goal-head"><span>🎯 هدف روزانه</span><span class="pct" id="goalPct">0%</span></div>
-        <div class="goal-bar"><div id="goalBar"></div></div>
-      </div>
-    </div>
-  </aside>
-</div>
-
-<!-- ========== MODALS ========== -->
-<div class="modal-bg" id="modalBg"><div class="modal" id="modalBox"></div></div>
-<div class="levelup-modal" id="levelUpModal"><div class="levelup-box" id="levelUpBox"></div></div>
-<div class="story-modal" id="storyModal"><div class="story-box" id="storyBox"></div></div>
-<div class="confetti-container" id="confettiBox"></div>
-<div class="toast" id="toastBox"></div>
-<div class="pwa-prompt" id="pwaBox">
-  <div class="row">
-    <span style="font-size:24px">📱</span>
-    <div class="txt"><b>نصب فلش‌کارت</b><br>مثل یه اپ واقعی</div>
-    <button class="btn primary" id="pwaInstall">نصب</button>
-    <button class="btn" id="pwaDismiss" style="padding:6px 8px">✕</button>
-  </div>
-</div>
-<script>
-/* =========================================================
-   فلش‌کارت v47 — JavaScript کامل
-   ★ Storage: localStorage تک‌کلید (FC47_MAIN)
-   ★ IDB فقط برای عکس/صدا
-   ★ Import: بازگردانی کامل حالت کارت‌ها
-   ★ Auto-advance: بعد از پاسخ، بلافاصله کارت بعدی
-   ========================================================= */
-
 var $ = function(id){return document.getElementById(id)};
 
 var DEF = {
@@ -1001,9 +21,10 @@ var DEF = {
   errorCounter:0, firstStudyDay:null
 };
 
-var LS_KEY = 'FC47_MAIN';
-var LS_THEME = 'FC47_THEME';
-var LS_REM = 'FC47_LAST_REM';
+var LS_KEY = 'FC48_MAIN';
+var LS_THEME = 'FC48_THEME';
+var LS_REM = 'FC48_LAST_REM';
+var LS_RESCUE = 'FC48_RESCUE';
 
 var DATA = {
   cards:{}, readSubtopics:{}, dailyRecords:{},
@@ -1014,26 +35,20 @@ var DATA = {
   unlockables:{}, unlockActive:{}, simplify:[], batch:{keys:[],ts:0},
   challenge:{current:null,streak:0,done:[],history:[],level:1},
   folders:{quick:false,filters:false,review:false,manage:false,game:false},
-  v:47
+  v:48
 };
 
-/* ========== ذخیره‌سازی همگام ========== */
+/* ========== ذخیره‌سازی ========== */
 var _saveT = null;
 function save(){
   try{
     if(_saveT) clearTimeout(_saveT);
     _saveT = setTimeout(function(){
-      try{
-        var raw = JSON.stringify(DATA);
-        localStorage.setItem(LS_KEY, raw);
-      }catch(e){
-        console.warn('LS full, cleaning runtime fields');
+      try{ localStorage.setItem(LS_KEY, JSON.stringify(DATA)); }
+      catch(e){
         try{
           var light = JSON.parse(JSON.stringify(DATA));
-          Object.keys(light.cards).forEach(function(k){
-            delete light.cards[k]._renderTime;
-            delete light.cards[k]._inSimplify;
-          });
+          Object.keys(light.cards).forEach(function(k){delete light.cards[k]._renderTime;delete light.cards[k]._inSimplify});
           localStorage.setItem(LS_KEY, JSON.stringify(light));
         }catch(e2){ console.error('save fail', e2); }
       }
@@ -1043,16 +58,12 @@ function save(){
 function saveNow(){
   try{
     if(_saveT){ clearTimeout(_saveT); _saveT = null; }
-    var raw = JSON.stringify(DATA);
-    localStorage.setItem(LS_KEY, raw);
+    localStorage.setItem(LS_KEY, JSON.stringify(DATA));
     return true;
   }catch(e){
     try{
       var light = JSON.parse(JSON.stringify(DATA));
-      Object.keys(light.cards).forEach(function(k){
-        delete light.cards[k]._renderTime;
-        delete light.cards[k]._inSimplify;
-      });
+      Object.keys(light.cards).forEach(function(k){delete light.cards[k]._renderTime;delete light.cards[k]._inSimplify});
       localStorage.setItem(LS_KEY, JSON.stringify(light));
       return true;
     }catch(e2){ return false; }
@@ -1077,7 +88,7 @@ var idb = null;
 function openIDB(){
   return new Promise(function(res){
     try{
-      var r = indexedDB.open('FC47_MEDIA', 1);
+      var r = indexedDB.open('FC48_MEDIA', 1);
       r.onupgradeneeded = function(e){
         var db = e.target.result;
         if(!db.objectStoreNames.contains('media')) db.createObjectStore('media');
@@ -1181,7 +192,7 @@ function addXP(amt,reason){
 }
 function registerWrong(){DATA.settings.errorCounter=(DATA.settings.errorCounter||0)+1;if(DATA.settings.errorCounter>=3){DATA.settings.errorCounter=0;addXP(-1,'اشتباه')}save()}
 
-/* ========== Medals / Hidden / Unlockables ========== */
+/* ========== Medals ========== */
 var MEDALS_DEF=(function(){
   var a=[];
   a.push({id:'challenge_count',name:'چالش‌ها',emoji:'🎯',desc:'هر چالش +۱',tier:'go',counter:true});
@@ -1228,8 +239,7 @@ var UNLOCK_DEF=[
   {id:'badge_fire',name:'نشان آتش',icon:'🔥',req:'استریک ۳۰',type:'badge',value:'🔥',check:function(){return DATA.challenge.streak>=30}},
   {id:'badge_trophy',name:'نشان جام',icon:'🏆',req:'سطح ۵۰',type:'badge',value:'🏆',check:function(){return DATA.xp.level>=50}}
 ];
-
-/* ========== Sound ========== */
+    /* ========== Sound ========== */
 var SND_MODELS={
   soft:{waves:['sine'],base:1,attack:.02,decay:.1,sustain:.7,release:.3,harmonics:[]},
   sharp:{waves:['square'],base:1.4,attack:.005,decay:.05,sustain:.85,release:.15,harmonics:[]},
@@ -1281,7 +291,7 @@ function playSnd(type){
   }catch(e){}
 }
 
-/* ========== Toast / UI ========== */
+/* ========== UI Helpers ========== */
 var _toastT,_xpT;
 function toast(msg){var el=$('toastBox');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(_toastT);_toastT=setTimeout(function(){el.classList.remove('show')},1800)}
 function showXPToast(amt){var el=$('xpToast');if(!el)return;if(amt>=0){el.textContent='+'+amt+' XP';el.classList.remove('neg')}else{el.textContent=amt+' XP';el.classList.add('neg')}el.classList.remove('show');void el.offsetWidth;el.classList.add('show');clearTimeout(_xpT);_xpT=setTimeout(function(){el.classList.remove('show')},1500)}
@@ -1416,7 +426,7 @@ function checkChallengeProgress(){
 }
 function updateChallengeUI(){checkChallengeProgress()}
 
-/* ========== Hidden / Unlockables / Missions ========== */
+/* ========== Hidden / Unlockables ========== */
 function checkUnlockables(){
   var n=[];
   UNLOCK_DEF.forEach(function(u){if(!DATA.unlockables[u.id]&&u.check()){DATA.unlockables[u.id]={date:today()};n.push(u)}});
@@ -1446,6 +456,8 @@ function checkHidden(){
     if(un.length){save();un.forEach(function(id){var d=HIDDEN_DEF.find(function(x){return x.id===id});if(d)showMedal(d)})}
   }catch(e){}
 }
+
+/* ========== Missions ========== */
 function weekStart(d){var dt=d?new Date(d+'T00:00:00'):new Date();var day=dt.getDay();var diff=(day+1)%7;var sat=new Date(dt);sat.setDate(sat.getDate()-diff);return sat.getFullYear()+'-'+String(sat.getMonth()+1).padStart(2,'0')+'-'+String(sat.getDate()).padStart(2,'0')}
 function genMissions(){
   var ws=weekStart(null);
@@ -1555,7 +567,6 @@ function updateDT(){
 /* ========== Session / Queue ========== */
 var SESSION={queue:[],idx:0,mode:'',answers:[],subInfo:null,lastSubInfo:null,exam:false,quick:false,quiz4:false,startTime:0,examTime:0,examTimer:null,ordered:false,q4Options:null,q4Selected:false,wrongKeys:[]};
 var TOTAL_TODAY=0;
-
 function buildQueue(mode,keys,ordered){
   var ks=keys||getAllCards().map(function(c){return c.key});
   var out=[];
@@ -1759,8 +770,7 @@ function autoMarkSubRead(){
     if(ch)save();
   }catch(e){}
 }
-
-/* ========== START SESSION ========== */
+    /* ========== START SESSION ========== */
 function startSession(mode,keys,subInfo,opts){
   opts=opts||{};
   SESSION.ordered=!!opts.ordered;
@@ -1871,7 +881,7 @@ function renderQ4(c,s){
       qo.querySelectorAll('.quiz-opt').forEach(function(x){x.style.pointerEvents='none'});
       if(correct){b.classList.add('correct');playSnd('Correct')}
       else{b.classList.add('wrong');qo.querySelectorAll('.quiz-opt')[SESSION.q4Options.correct].classList.add('correct');playSnd('Wrong')}
-      answerCard(correct?'correct':'wrong', true);
+      answerCard(correct?'correct':'wrong',true);
     };
   });
 }
@@ -1902,9 +912,7 @@ function showStepChange(os,ns){
   el.className='step-toast show '+(ns>os?'up':ns<os?'down':'');
   clearTimeout(el._t);el._t=setTimeout(function(){el.className='step-toast'},1200);
 }
-
-/* ★★★ ANSWER — با رفتن خودکار سریع به بعدی ★★★ */
-function answerCard(type, fromQ4){
+function answerCard(type,fromQ4){
   var c=SESSION.queue[SESSION.idx];if(!c)return;
   var s=getS(c.key);
   var wasNew=!s.seen;
@@ -1915,7 +923,6 @@ function answerCard(type, fromQ4){
   if(!DATA.dailyRecords[td])DATA.dailyRecords[td]={total:0,newCards:0,correct:0,wrong:0,partial:0};
   var now=Date.now();
   var xpGain=0;
-
   if(wasNew&&type==='study'){
     s.seen=true;s.firstSeenDate=td;s.firstSeenMs=now;s.lastSeen=td;
     s.stepIndex=0;s.nextDue=addHours(now,DATA.settings.newCardHours||16);
@@ -1924,11 +931,11 @@ function answerCard(type, fromQ4){
     SESSION.answers.push({key:c.key,type:'study',time:elapsed});
     addXP(xpGain,'کارت جدید');TOTAL_TODAY++;
     if(!DATA.settings.firstStudyDay)DATA.settings.firstStudyDay=today();
-    save();autoMarkSubRead();
+    saveNow();autoMarkSubRead();
     checkMedals();checkStepMedals();checkHidden();
     updateCombo();updateChallengeUI();updateMissions();renderRailToday();
     checkConfetti();
-    setTimeout(nextCard, 350);
+    setTimeout(nextCard,350);
     return;
   }
   s.seen=true;s.lastSeen=td;
@@ -1965,14 +972,13 @@ function answerCard(type, fromQ4){
   SESSION.answers.push({key:c.key,type:type,time:elapsed});
   if(xpGain>0)addXP(xpGain,'مرور');
   TOTAL_TODAY++;
-  saveNow(); /* ★ ذخیره همگام فوری بعد از هر پاسخ */
+  saveNow();
   autoMarkSubRead();
   checkMedals();checkStepMedals();checkHidden();
   updateCombo();updateChallengeUI();updateMissions();renderRailToday();
   checkConfetti();
-  /* ★★★ Auto-advance سریع ★★★ */
-  var delay = fromQ4 ? 800 : (type==='correct' ? 450 : 350);
-  setTimeout(nextCard, delay);
+  var delay=fromQ4?800:(type==='correct'?450:350);
+  setTimeout(nextCard,delay);
 }
 function checkConfetti(){if(TOTAL_TODAY>0&&TOTAL_TODAY%100===0){showConfetti('🎉 '+TOTAL_TODAY+' کارت!');playSnd('LevelUp')}}
 function nextCard(){
@@ -1998,7 +1004,6 @@ function showSummary(){
   var w=SESSION.answers.filter(function(a){return a.type==='wrong'}).length;
   var t=SESSION.answers.length;
   var tt=Math.round((Date.now()-SESSION.startTime)/1000);
-  /* ★ نمایش دکمه‌های پایان در همه حالت‌ها ★ */
   var e=$('endSub');if(e)e.classList.add('show');
   var eq=$('btnEndWrong');
   if(eq){if(SESSION.wrongKeys&&SESSION.wrongKeys.length>0){eq.style.display='';eq.textContent='🔴 مرور غلط‌ها ('+SESSION.wrongKeys.length+')'}else eq.style.display='none'}
@@ -2315,7 +1320,7 @@ function openTagEditor(c){
 }
 function getAllTags(){var s={};DATA.topics.forEach(function(t){(t.subtopics||[]).forEach(function(sub){(sub.cards||[]).forEach(function(c){(c.tags||[]).forEach(function(tag){s[tag]=(s[tag]||0)+1})})})});return s}
 
-/* ========== DUE PANEL ========== */
+/* ========== DUE / MOST ========== */
 function showDuePanel(){
   showPanel('pDue');
   var due=getAllCards().filter(function(c){return isDue(c.key)});
@@ -2330,8 +1335,6 @@ function showDuePanel(){
   $('rvAll').onclick=function(){startSession('due')};
   document.querySelectorAll('#dueList [data-tn]').forEach(function(b){b.onclick=function(){var tn=b.dataset.tn;var ks=groups[tn].map(function(c){return c.key});startSession('all',ks)}});
 }
-
-/* ========== MOST WRONGS / VIEWS ========== */
 function getRanked(cards,valFn){
   if(!cards.length)return[];
   var sorted=cards.slice().sort(function(a,b){return valFn(b)-valFn(a)});
@@ -2374,7 +1377,7 @@ function showMostViews(){
   el.querySelectorAll('.rank-card[data-k]').forEach(function(b){b.onclick=function(){startSession('all',[b.dataset.k])}});
 }
 
-/* ========== STATS ========== */
+/* ========== STATS / MEDALS / etc ========== */
 function getMastery(tid){var t=DATA.topics.find(function(x){return x.id===tid});if(!t)return 0;var tot=0,ms=0,last=DATA.settings.correctStepsHours.length-1;(t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){tot++;var k=ck(c.q||'',c.a||'');var st=DATA.cards[k];if(st&&st.seen&&(st.stepIndex||0)>=last)ms++})});return tot?Math.round(ms/tot*100):0}
 function renderStats(){
   var all=getAllCards(),total=all.length,seen=0,mastered=0,newC=0,starred=0,tC=0,tP=0,tW=0,tV=0,steps=[0,0,0,0,0,0,0];
@@ -2568,11 +1571,10 @@ function renderUnlockables(){
   });
 }
 
-/* ========== PLAN PANEL — با اسکرول خودکار ========== */
+/* ========== PLAN (با اسکرول خودکار) ========== */
 function showPlanPanel(){
   showPanel('pPlan');
   renderPlanPanel();
-  /* ★ تغییر I: اسکرول خودکار به لیست برنامه‌ها ★ */
   setTimeout(function(){
     var el=$('planBody');
     if(el){
@@ -2635,11 +1637,10 @@ function renderJournal(){
 }
 $('journalSave').onclick=function(){var ta=$('journalText');if(!ta)return;var text=ta.value.trim(),td=today();if(!text)delete DATA.journal[td];else DATA.journal[td]=text;save();checkHidden();renderJournal();toast('📔 ذخیره')};
 
-/* ========== SIMPLIFY — با اسکرول خودکار ========== */
+/* ========== SIMPLIFY (با اسکرول خودکار) ========== */
 function showSimplifyPanel(){
   showPanel('pSimplify');
   renderSimplify();
-  /* ★ تغییر J: اسکرول خودکار به ابتدای کارت‌های ساده‌سازی ★ */
   setTimeout(function(){
     var el=$('simpList');
     if(el){
@@ -2874,7 +1875,10 @@ function showTimeFilter(){
   };
 }
 
-/* ========== IMPORT / EXPORT — کامل ★ ========== */
+/* ============================================================
+   ★★★ IMPORT — نسخه نهایی که همه فرمت‌ها را می‌شناسد ★★★
+   پشتیبانی از: v43, v44, v45, v46, v47, v48
+   ============================================================ */
 function downloadJson(data,name){
   var b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;
@@ -2892,8 +1896,7 @@ function handleJson(text){
   else if(d.topic){if(d.subtopics)d.subtopics.forEach(function(s){(s.cards||[]).forEach(function(c){add(d.topic,s.name,c.q,c.a,c.tags)})});else if(d.cards)d.cards.forEach(function(c){add(d.topic,'عمومی',c.q,c.a,c.tags)});else throw new Error('ساختار اشتباه')}
   else throw new Error('فرمت ناشناخته');
   DATA.topics=DATA.topics.filter(function(t){t.subtopics=(t.subtopics||[]).filter(function(s){return (s.cards||[]).length>0});return t.subtopics.length>0});
-  saveNow();updateCounts();
-  toast('اضافه: '+added+' / رد: '+skipped);
+  saveNow();updateCounts();toast('اضافه: '+added+' / رد: '+skipped);
   if($('pTopics').classList.contains('show'))renderTopics();
   renderWelcomeStats();
 }
@@ -2911,39 +1914,13 @@ function handleTxt(text,name){
   if($('pTopics').classList.contains('show'))renderTopics();
 }
 
-/* ★★★ EXPORT — با همه چیز ★★★ */
 $('btnExport').onclick=function(){
-  var d={
-    version:47,
-    exportedAt:new Date().toISOString(),
-    /* ★ همه چیز کامل ذخیره می‌شود ★ */
-    data:{
-      v:DATA.v,
-      cards:DATA.cards,
-      readSubtopics:DATA.readSubtopics,
-      dailyRecords:DATA.dailyRecords,
-      topics:DATA.topics,
-      settings:DATA.settings,
-      xp:DATA.xp,
-      medals:DATA.medals,
-      hidden:DATA.hidden,
-      missions:DATA.missions,
-      plans:DATA.plans,
-      journal:DATA.journal,
-      daily:DATA.daily,
-      unlockables:DATA.unlockables,
-      unlockActive:DATA.unlockActive,
-      simplify:DATA.simplify,
-      batch:DATA.batch,
-      challenge:DATA.challenge,
-      folders:DATA.folders
-    }
-  };
+  var d={version:48,exportedAt:new Date().toISOString(),data:DATA};
   downloadJson(d,'flashcard-backup-'+today()+'.json');
   toast('✅ دانلود · '+Object.keys(DATA.cards).length+' کارت');
 };
 
-/* ★★★ IMPORT — بازگردانی کامل ★★★ */
+/* ★★★ IMPORT نهایی ★★★ */
 $('btnImport').onclick=function(){$('fileBackup').click()};
 $('fileBackup').addEventListener('change',function(e){
   var f=e.target.files[0];if(!f)return;
@@ -2952,42 +1929,98 @@ $('fileBackup').addEventListener('change',function(e){
     try{
       var d=JSON.parse(r.result);
       var payload=d.data||d;
-      var info='نسخه: '+(d.version||'?')+'\n';
-      if(payload.topics){var tc=0;payload.topics.forEach(function(t){(t.subtopics||[]).forEach(function(s){tc+=(s.cards||[]).length})});info+='📚 درس: '+payload.topics.length+'\n📦 کارت: '+tc+'\n'}
-      var stateCount=Object.keys(payload.cards||{}).length;
-      info+='📊 حالت کارت: '+stateCount+'\n';
-      if(payload.xp)info+='⭐ XP: '+payload.xp.xp+' / سطح '+payload.xp.level+'\n';
-      if(payload.medals)info+='🏆 مدال: '+Object.keys(payload.medals).length+'\n';
-      info+='\n⚠️ همه چیز فعلی جایگزین می‌شه!';
+      var N={};
+
+      /* cards — همه جا */
+      if(payload.cards) N.cards=payload.cards;
+      else if(payload.state&&payload.state.cards) N.cards=payload.state.cards;
+
+      /* readSubtopics */
+      if(payload.readSubtopics) N.readSubtopics=payload.readSubtopics;
+      else if(payload.state&&payload.state.readSubtopics) N.readSubtopics=payload.state.readSubtopics;
+
+      /* dailyRecords — حیاتی */
+      if(payload.dailyRecords) N.dailyRecords=payload.dailyRecords;
+      else if(payload.state&&payload.state.dailyRecords) N.dailyRecords=payload.state.dailyRecords;
+
+      /* topics */
+      if(payload.topics) N.topics=payload.topics;
+      /* settings */
+      if(payload.settings) N.settings=payload.settings;
+      /* xp */
+      if(payload.xp) N.xp=payload.xp;
+      /* medals */
+      if(payload.medals) N.medals=payload.medals;
+
+      /* hidden: v48 یا v46/v45 با نام قدیمی */
+      if(payload.hidden) N.hidden=payload.hidden;
+      else if(payload.hiddenAch) N.hidden=payload.hiddenAch;
+
+      /* missions */
+      if(payload.missions) N.missions=payload.missions;
+      /* plans */
+      if(payload.plans) N.plans=payload.plans;
+      /* journal */
+      if(payload.journal) N.journal=payload.journal;
+
+      /* daily: v48 یا v45/v46 با نام قدیمی */
+      if(payload.daily) N.daily=payload.daily;
+      else if(payload.dailyCards) N.daily=payload.dailyCards;
+
+      /* unlockables */
+      if(payload.unlockables) N.unlockables=payload.unlockables;
+      if(payload.unlockActive) N.unlockActive=payload.unlockActive;
+      else if(payload.unlockablesActive) N.unlockActive=payload.unlockablesActive;
+
+      /* simplify */
+      if(payload.simplify) N.simplify=payload.simplify;
+      /* batch */
+      if(payload.batch) N.batch=payload.batch;
+      /* challenge */
+      if(payload.challenge) N.challenge=payload.challenge;
+      /* folders */
+      if(payload.folders) N.folders=payload.folders;
+
+      var stateCount=N.cards?Object.keys(N.cards).length:0;
+      var recCount=N.dailyRecords?Object.keys(N.dailyRecords).length:0;
+      var topicCount=N.topics?N.topics.length:0;
+      var xpVal=N.xp?N.xp.xp:0;
+
+      var info='📊 خلاصه فایل پشتیبان:\n\n';
+      info+='📚 درس‌ها: '+topicCount+'\n';
+      info+='🎴 حالت کارت: '+stateCount+'\n';
+      info+='📅 روزهای ثبت‌شده: '+recCount+'\n';
+      info+='⭐ XP: '+xpVal+'\n\n';
+      info+='⚠️ همه چیز فعلی جایگزین می‌شه.';
       if(!confirm(info))return;
 
-      /* ★★★ جایگزینی کامل همه چیز ★★★ */
-      if(payload.cards)DATA.cards=payload.cards;
-      if(payload.readSubtopics)DATA.readSubtopics=payload.readSubtopics;
-      if(payload.dailyRecords)DATA.dailyRecords=payload.dailyRecords;
-      if(payload.topics)DATA.topics=payload.topics;
-      if(payload.settings)DATA.settings=Object.assign({},DEF,payload.settings);
-      if(payload.xp)DATA.xp=payload.xp;
-      if(payload.medals)DATA.medals=payload.medals;
-      if(payload.hidden)DATA.hidden=payload.hidden;
-      if(payload.missions)DATA.missions=payload.missions;
-      if(payload.plans)DATA.plans=payload.plans;
-      if(payload.journal)DATA.journal=payload.journal;
-      if(payload.daily)DATA.daily=payload.daily;
-      if(payload.unlockables)DATA.unlockables=payload.unlockables;
-      if(payload.unlockActive)DATA.unlockActive=payload.unlockActive;
-      if(payload.simplify)DATA.simplify=payload.simplify;
-      if(payload.batch)DATA.batch=payload.batch;
-      if(payload.challenge)DATA.challenge=payload.challenge;
-      if(payload.folders)DATA.folders=payload.folders;
-      DATA.v=47;
+      /* اعمال */
+      Object.keys(N).forEach(function(k){if(N[k]!=null)DATA[k]=N[k]});
+      DATA.settings=Object.assign({},DEF,DATA.settings||{});
+      DATA.cards=DATA.cards||{};
+      DATA.dailyRecords=DATA.dailyRecords||{};
+      DATA.readSubtopics=DATA.readSubtopics||{};
+      DATA.topics=DATA.topics||[];
+      DATA.xp=DATA.xp||{xp:0,level:1,history:[],boostUntil:null};
+      DATA.medals=DATA.medals||{};
+      DATA.hidden=DATA.hidden||{};
+      DATA.missions=DATA.missions||{list:[],weekStart:null};
+      DATA.plans=DATA.plans||[];
+      DATA.journal=DATA.journal||{};
+      DATA.daily=DATA.daily||{date:null,keys:[],done:false};
+      DATA.unlockables=DATA.unlockables||{};
+      DATA.unlockActive=DATA.unlockActive||{};
+      DATA.simplify=DATA.simplify||[];
+      DATA.batch=DATA.batch||{keys:[],ts:0};
+      DATA.challenge=DATA.challenge||{current:null,streak:0,done:[],history:[],level:1};
+      DATA.folders=DATA.folders||{quick:false,filters:false,review:false,manage:false,game:false};
+      DATA.v=48;
 
-      /* ★ ذخیره فوری همگام ★ */
       var ok=saveNow();
-      if(!ok)alert('⚠️ ذخیره‌سازی ناموفق! فضای مرورگر کمه.');
-      alert('✅ وارد شد\n📊 '+stateCount+' حالت کارت بازگردانی شد');
-      setTimeout(function(){location.reload()},400);
-    }catch(err){alert('❌ خطا\n'+err.message);console.error(err)}
+      if(!ok){alert('⚠️ ذخیره‌سازی ناموفق!');return}
+      alert('✅ وارد شد\n\n🎴 '+stateCount+' کارت\n📅 '+recCount+' روز ثبت‌شده');
+      setTimeout(function(){location.reload()},500);
+    }catch(err){alert('❌ خطا: '+err.message);console.error(err)}
   };
   r.readAsText(f);
 });
@@ -3034,7 +2067,7 @@ $('btnReset').onclick=function(){
   if(!confirm('آخرین هشدار!'))return;
   try{localStorage.removeItem(LS_KEY);localStorage.removeItem(LS_THEME)}catch(e){}
   try{if(idb)idb.close()}catch(e){}
-  try{indexedDB.deleteDatabase('FC47_MEDIA')}catch(e){}
+  try{indexedDB.deleteDatabase('FC48_MEDIA')}catch(e){}
   setTimeout(function(){location.reload()},500);
 };
 
@@ -3162,7 +2195,7 @@ $('batchGo').onclick=function(){
 };
 $('batchClear').onclick=function(){if(confirm('پاک؟'))clearBatch()};
 
-/* ========== RIGHT RAIL CLICKS ========== */
+/* ========== RIGHT RAIL ========== */
 ['rTN','rTC','rTP','rTW','rTT'].forEach(function(id,idx){
   var el=$(id);if(!el)return;
   el.onclick=function(){var m=['new','todayCorrect','todayPartial','todayWrong','randomAll'][idx];if(m==='randomAll'){var a=getAllCards().filter(function(c){return isActive(c.key)&&isSeen(c.key)});if(!a.length)return toast('خالی');startSession('all',shuffle(a).slice(0,30).map(function(c){return c.key}))}else startSession(m)};
@@ -3249,8 +2282,6 @@ function addMidStudy(cur){
 /* ========== NAV ========== */
 $('navNext').onclick=nextCard;
 $('navPrev').onclick=prevCard;
-
-/* ========== KEYBOARD — با Auto-advance ★ ========== */
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     if($('levelUpModal').classList.contains('show')){closeLevelUp();return}
@@ -3326,20 +2357,11 @@ var mBg=$('modalBg');if(mBg)mBg.onclick=function(e){if(e.target===this)closeModa
 var lBg=$('levelUpModal');if(lBg)lBg.onclick=function(e){if(e.target===this)closeLevelUp()};
 var sBg=$('storyModal');if(sBg)sBg.onclick=function(e){if(e.target===this)closeStory()};
 
-/* ========== PWA — با Service Worker ★ ========== */
+/* ========== PWA ========== */
 var deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;var p=$('pwaBox');if(p)p.classList.add('show')});
 $('pwaInstall').onclick=function(){var p=$('pwaBox');if(p)p.classList.remove('show');if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(function(c){if(c.outcome==='accepted')toast('✅ نصب');deferredPrompt=null})}else alert('📱 آیفون: Share → Add to Home Screen\n🤖 اندروید: منو → Install App')};
 $('pwaDismiss').onclick=function(){var p=$('pwaBox');if(p)p.classList.remove('show')};
-
-/* ★ سرویس‌ورکر درست ★ */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('data:text/javascript;charset=utf-8,'+encodeURIComponent(
-    "self.addEventListener('install',e=>self.skipWaiting());"+
-    "self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));"+
-    "self.addEventListener('fetch',e=>{e.respondWith(caches.open('fc47').then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(res=>{if(e.request.method==='GET')c.put(e.request,res.clone());return res}).catch(()=>c.match(e.request)))))})"
-  )).catch(function(){});
-}
 
 /* ========== REMINDER ========== */
 function checkReminder(){
@@ -3360,7 +2382,7 @@ function checkReminder(){
 async function init(){
   try{
     var ok=load();
-    console.log('v47: load()',ok,'cards:',Object.keys(DATA.cards).length,'topics:',DATA.topics.length);
+    console.log('v48: load()',ok,'cards:',Object.keys(DATA.cards).length,'topics:',DATA.topics.length);
     await openIDB();
     applyTheme(localStorage.getItem(LS_THEME)||'dark');
     applyCompact(DATA.settings.compact);
@@ -3384,16 +2406,11 @@ async function init(){
     setInterval(checkReminder,60000);
     setInterval(save,15000);
     if(DATA.settings.simplifyAuto)setTimeout(autoCheckSimplify,5000);
-    console.log('★ v47 ready — cards:',Object.keys(DATA.cards).length);
-  }catch(err){
-    console.error('INIT ERROR:',err);
-  }
+    console.log('★ v48 ready — cards:',Object.keys(DATA.cards).length);
+  }catch(err){console.error('INIT ERROR:',err)}
 }
 document.addEventListener('visibilitychange',function(){if(document.hidden)saveNow()});
 window.addEventListener('beforeunload',saveNow);
 window.addEventListener('pagehide',saveNow);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
-</script>
-</body>
-</html>
