@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0f172a"><meta name="apple-mobile-web-app-capable" content="yes"><title>فلش‌کارت</title></head>
+<body style="background:#0f172a;color:#e2e8f0;font-family:Tahoma,Arial;padding:24px;text-align:center"><div id="m">⏳ در حال بارگذاری فلش‌کارت...</div>
+<script type="text/plain" id="patchjs">
+
+/* ===== v50 PATCH: IndexedDB storage + compact keys + verified import ===== */
+var LAST_ENGINE='',_sv=null,_busy=false,_dirty=false,_busyP=null,_loaded=false,_corrupt=false;
+function h53(s){var h1=0xdeadbeef,h2=0x41c6ce57;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0)}
+function ck(q,a){var s=(q||'')+'\u0001'+(a||'');return 'c'+h53(s).toString(36)+s.length.toString(36)}
+function mk(k){k=k||'';var i=k.indexOf('|||');return i>=0?ck(k.slice(0,i),k.slice(i+3)):k}
+function openIDB(){return new Promise(function(res){var done=false;function fin(v){if(!done){done=true;res(v)}}setTimeout(function(){fin(false)},5000);try{var r=indexedDB.open('FC49_MEDIA',2);r.onupgradeneeded=function(e){var db=e.target.result;['media','state'].forEach(function(n){if(!db.objectStoreNames.contains(n))db.createObjectStore(n)})};r.onsuccess=function(e){idb=e.target.result;idb.onversionchange=function(){try{idb.close()}catch(x){}idb=null};fin(true)};r.onerror=r.onblocked=function(){fin(false)}}catch(e){fin(false)}})}
+function idbPutState(str){return new Promise(function(res){if(!idb)return res(false);try{var tx=idb.transaction('state','readwrite');tx.objectStore('state').put(str,'main');tx.oncomplete=function(){res(true)};tx.onerror=tx.onabort=function(){res(false)}}catch(e){res(false)}})}
+function idbGetState(){return new Promise(function(res){if(!idb)return res(null);try{var q=idb.transaction('state','readonly').objectStore('state').get('main');q.onsuccess=function(){res(q.result||null)};q.onerror=function(){res(null)}}catch(e){res(null)}})}
+function warn(on){var w=document.getElementById('saveWarn');if(!w){if(!on)return;w=document.createElement('div');w.id='saveWarn';w.style.cssText='position:fixed;bottom:8px;left:8px;right:8px;z-index:500;background:#dc2626;color:#fff;padding:10px 12px;border-radius:10px;font-size:12px;text-align:center';w.textContent='⚠️ ذخیره‌سازی روی این مرورگر انجام نمی‌شه! همین الان از تنظیمات → 📤 خروجی پشتیبان بگیر.';document.body.appendChild(w)}w.style.display=on?'block':'none'}
+function persist(){
+  if(!_loaded)return Promise.resolve(false);
+  DATA.savedAt=Date.now();DATA.v=50;
+  var str;try{str=JSON.stringify(DATA,function(k,v){return k.charAt(0)==='_'?undefined:v})}catch(e){warn(true);return Promise.resolve(false)}
+  return idbPutState(str).then(function(ok){
+    if(ok){LAST_ENGINE='idb';warn(false);return true}
+    try{localStorage.setItem(LS_KEY,str);LAST_ENGINE='ls';warn(false);return true}catch(e){LAST_ENGINE='';warn(true);return false}
+  });
+}
+function _flush(){if(_busy){_dirty=true;return _busyP}_busy=true;_busyP=persist().then(function(ok){_busy=false;if(_dirty){_dirty=false;return _flush()}return ok});return _busyP}
+function save(){if(_sv)clearTimeout(_sv);_sv=setTimeout(function(){_sv=null;_flush()},300)}
+function saveNow(){if(_sv){clearTimeout(_sv);_sv=null}return _flush()}
+function applyLoaded(d){['cards','readSubtopics','dailyRecords','topics','xp','medals','hidden','missions','plans','journal','daily','unlockables','unlockActive','simplify','batch','challenge','folders','freeze','exam','recAnn'].forEach(function(k){if(d[k]!=null)DATA[k]=d[k]});DATA.settings=Object.assign({},DEF,d.settings||{});DATA.savedAt=d.savedAt||0}
+function migrateKeys(){
+  var ch=false,out={};
+  Object.keys(DATA.cards||{}).forEach(function(k){var nk=mk(k),s=DATA.cards[k];if(nk!==k)ch=true;if(s&&typeof s==='object'){s.key=nk;delete s._renderTime;delete s._inSimplify}if(!out[nk])out[nk]=s});
+  DATA.cards=out;
+  function mapArr(a){return (a||[]).map(function(k){var n=mk(k);if(n!==k)ch=true;return n})}
+  if(DATA.batch)DATA.batch.keys=mapArr(DATA.batch.keys);
+  if(DATA.daily)DATA.daily.keys=mapArr(DATA.daily.keys);
+  (DATA.simplify||[]).forEach(function(x){if(x&&x.originalKey){var n=mk(x.originalKey);if(n!==x.originalKey){x.originalKey=n;ch=true}}});
+  return ch;
+}
+async function loadAll(){
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  try{var m=JSON.parse(sessionStorage.getItem('v50miss')||'[]');if(m.length)setTimeout(function(){alert('⚠️ بخشی از پچ جا نیفتاد: '+m.join(' | '))},1500)}catch(e){}
+  var a=null,b=null,s=await idbGetState();
+  if(s){try{a=JSON.parse(s)}catch(e){_corrupt=true}}
+  try{var r=localStorage.getItem(LS_KEY);if(r)b=JSON.parse(r)}catch(e){}
+  var d=(a&&(!b||(a.savedAt||0)>=(b.savedAt||0)))?a:(b||a);
+  if(_corrupt&&!d){alert('⚠️ داده‌ی ذخیره‌شده خراب است. برای محافظت، ذخیره‌ی خودکار متوقف شد. فایل پشتیبانت رو وارد کن.');return false}
+  _loaded=true;
+  if(!d)return false;
+  applyLoaded(d);
+  var changed=migrateKeys();
+  if((b&&d===b)||changed){var ok=await persist();if(ok&&LAST_ENGINE==='idb'&&b){try{localStorage.removeItem(LS_KEY)}catch(e){}}}
+  return true;
+}
+function downloadJson(data,name){var bl=new Blob([JSON.stringify(data,function(k,v){return k.charAt(0)==='_'?undefined:v})],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(a.href)},4000)}
+window.importBackupV50=function(ev){
+  var f=ev.target.files[0];ev.target.value='';if(!f)return;
+  var r=new FileReader();
+  r.onerror=function(){alert('❌ فایل خوانده نشد')};
+  r.onload=async function(){
+    try{
+      var d=JSON.parse(r.result),p=d.data||d,N={};
+      var M={cards:['cards'],readSubtopics:['readSubtopics'],dailyRecords:['dailyRecords'],topics:['topics'],settings:['settings'],xp:['xp'],medals:['medals'],hidden:['hidden','hiddenAch'],missions:['missions'],plans:['plans'],journal:['journal'],daily:['daily','dailyCards'],unlockables:['unlockables'],unlockActive:['unlockActive','unlockablesActive'],simplify:['simplify'],batch:['batch'],challenge:['challenge'],folders:['folders'],freeze:['freeze'],exam:['exam'],recAnn:['recAnn']};
+      Object.keys(M).forEach(function(k){M[k].forEach(function(s){if(N[k]==null){if(p&&p[s]!=null)N[k]=p[s];else if(p&&p.state&&p.state[s]!=null)N[k]=p.state[s]}})});
+      if(!N.cards&&!N.topics&&!N.xp){handleJson(r.result);return}
+      if(!confirm('📊 فایل پشتیبان:\n\n📚 درس‌ها: '+(N.topics?N.topics.length:0)+'\n🎴 حالت کارت: '+(N.cards?Object.keys(N.cards).length:0)+'\n📅 روزهای ثبت‌شده: '+(N.dailyRecords?Object.keys(N.dailyRecords).length:0)+'\n⭐ XP: '+(N.xp?N.xp.xp:0)+'\n\n⚠️ همه چیز فعلی جایگزین می‌شه.'))return;
+      Object.keys(N).forEach(function(k){if(N[k]!=null)DATA[k]=N[k]});
+      var Dd={cards:{},readSubtopics:{},dailyRecords:{},topics:[],xp:{xp:0,level:1,history:[],boostUntil:null},medals:{},hidden:{},missions:{list:[],weekStart:null},plans:[],journal:{},daily:{date:null,keys:[],done:false},unlockables:{},unlockActive:{},simplify:[],batch:{keys:[],ts:0},challenge:{current:null,streak:0,done:[],history:[],level:1},folders:{quick:false,filters:false,review:false,manage:false,game:false}};
+      Object.keys(Dd).forEach(function(k){if(DATA[k]==null)DATA[k]=Dd[k]});
+      DATA.settings=Object.assign({},DEF,DATA.settings||{});
+      migrateKeys();
+      var all=getAllCards(),linked=0,seenN=0;
+      all.forEach(function(c){var s=DATA.cards[c.key];if(s){linked++;if(s.seen)seenN++}});
+      var orph=Object.keys(DATA.cards).length-linked;
+      _loaded=true;_corrupt=false;
+      var ok=await saveNow();
+      if(ok&&LAST_ENGINE==='idb'){var back=await idbGetState();try{ok=JSON.parse(back).savedAt===DATA.savedAt}catch(e){ok=false}}
+      if(!ok){alert('❌ ذخیره‌سازی ناموفق بود (مرورگر اجازه نداد). صفحه رو رفرش نکن؛ ✅ از تنظیمات → ℹ️ وضعیت رو چک کن و برام بفرست.');try{goHome();updateCounts()}catch(e){}return}
+      alert('✅ وارد شد و ذخیره تأیید شد\n\n🎴 '+linked+' از '+all.length+' کارت به وضعیتشون وصل شد ('+seenN+' دیده‌شده)'+(orph>0?'\n⚠️ '+orph+' وضعیت بدون کارت متناظر':''));
+      setTimeout(function(){location.reload()},400);
+    }catch(err){alert('❌ خطا: '+err.message);console.error(err)}
+  };
+  r.readAsText(f);
+};
+$('btnStorage').onclick=async function(){
+  var sz=0;try{sz=JSON.stringify(DATA,function(k,v){return k.charAt(0)==='_'?undefined:v}).length}catch(x){}
+  var per='؟',est='';
+  try{if(navigator.storage&&navigator.storage.persisted)per=(await navigator.storage.persisted())?'بله':'خیر'}catch(x){}
+  try{if(navigator.storage&&navigator.storage.estimate){var q=await navigator.storage.estimate();est='\n📦 مصرف/سهمیه: '+Math.round((q.usage||0)/1024)+' KB / '+Math.round((q.quota||0)/1048576)+' MB'}}catch(x){}
+  alert('💾 موتور ذخیره: '+(LAST_ENGINE==='idb'?'IndexedDB ✅':LAST_ENGINE==='ls'?'localStorage ⚠️':'هنوز ذخیره نشده/ناموفق ❌')+'\nحجم داده: '+(sz/1024).toFixed(0)+' KB\nذخیره ماندگار: '+per+est+'\n📚 درس: '+DATA.topics.length+' | 🎴 کارت: '+getAllCards().length+' | وضعیت‌ها: '+Object.keys(DATA.cards).length+'\n⭐ XP: '+DATA.xp.xp+' / سطح '+DATA.xp.level);
+};
+/* ===== end v50 PATCH ===== */
+
+
+/* ===== v51 PATCH: focus layout, smart scroll, topic medals ===== */
+(function(){
+var css=[
+'.panel,.folder,.item{scroll-margin-top:64px}',
+'@media (max-width:900px){',
+'body.focus-mode.in-session{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;padding:62px 6px calc(6px + env(safe-area-inset-bottom))}',
+'body.focus-mode.in-session .page-wrap{display:flex;flex:1;min-height:0;width:100%;max-width:100%}',
+'body.focus-mode.in-session .main-col{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;width:100%}',
+'body.focus-mode.in-session .card-area.show{display:flex;flex-direction:column;flex:1;min-height:0;margin-bottom:6px;padding:12px;overflow-y:auto}',
+'body.focus-mode.in-session .q{flex:1 0 auto;min-height:90px;padding:22px 10px 12px;font-size:clamp(20px,5.6vw,28px)}',
+'body.focus-mode.in-session .a{font-size:clamp(20px,5vw,26px);padding:12px 10px;margin-top:4px}',
+'body.focus-mode.in-session .actions,body.focus-mode.in-session .nav,body.focus-mode.in-session .quiz-options{flex-shrink:0;margin-bottom:6px}',
+'body.focus-mode.in-session .act{padding:15px 3px;font-size:14px}',
+'body.focus-mode.in-session .act.study{padding:18px}',
+'body.focus-mode.in-session .nav button{padding:10px}',
+'body.focus-mode.in-session .quiz-opt{padding:10px 12px}',
+'}'].join('');
+var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+var ca=$('cardArea');
+function sy(){document.body.classList.toggle('in-session',ca.classList.contains('show'))}
+new MutationObserver(sy).observe(ca,{attributes:true,attributeFilter:['class']});sy();
+})();
+
+function v51scroll(el){
+  if(!el)return;
+  var tb=document.querySelector('.topbar');
+  var y=el.getBoundingClientRect().top+window.scrollY-((tb?tb.offsetHeight:56)+14);
+  window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+}
+showPanel=function(id){
+  hidePanels();
+  var el=$(id);if(el)el.classList.add('show');
+  var w=$('welcome');if(w)w.style.display='none';
+  ['cardArea','actions','quizOptions','nav'].forEach(function(i){var e=$(i);if(e)e.classList.remove('show')});
+  setTimeout(function(){v51scroll(el)},80);
+};
+var _v51tf=toggleF;
+toggleF=function(n){
+  _v51tf(n);
+  var el=document.querySelector('.folder[data-f="'+n+'"]');
+  if(el&&el.classList.contains('open'))setTimeout(function(){v51scroll(el)},60);
+};
+window.toggleF=toggleF;
+var _v51hta=handleTopicAct;
+handleTopicAct=function(a,tid,sid){
+  _v51hta(a,tid,sid);
+  if(a!=='tgl'&&a!=='menu'&&a!=='smenu')return;
+  setTimeout(function(){
+    var sel=a==='smenu'?'[data-a="smenu"][data-t="'+tid+'"][data-s="'+sid+'"]':'[data-a="'+a+'"][data-t="'+tid+'"]';
+    var b=document.querySelector('#topicsList '+sel);if(!b)return;
+    if(a==='tgl'){if(CURRENT_TAB[tid])v51scroll(b.closest('.item'));return}
+    var d=a==='menu'?b.closest('.item').querySelector('.drop'):b.closest('.sub-row').nextElementSibling;
+    if(d&&d.classList.contains('drop'))d.scrollIntoView({block:'nearest',behavior:'smooth'});
+  },40);
+};
+
+function topicProg(t){
+  var tot=0,sn=0;
+  (t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){
+    var st=DATA.cards[ck(c.q||'',c.a||'')];
+    if(st&&st.deleted)return;
+    tot++;if(st&&st.seen)sn++;
+  })});
+  return {total:tot,seen:sn};
+}
+function checkTopicMedals(){
+  var n=[];
+  DATA.topics.forEach(function(t){
+    var p=topicProg(t),k='topic_'+t.id;
+    if(p.total>0&&p.seen>=p.total&&!DATA.medals[k]){DATA.medals[k]={date:today(),topic:t.name};n.push(t)}
+  });
+  if(n.length){save();showMedal({emoji:pickTopicEmoji(n[0].name),name:'درس «'+n[0].name+'» تموم شد'+(n.length>1?' (+'+(n.length-1)+')':'')})}
+}
+var _v51cm=checkMedals;
+checkMedals=function(){_v51cm();try{checkTopicMedals()}catch(e){}};
+var _v51rm=renderMedals;
+renderMedals=function(){
+  _v51rm();
+  var b=$('medalsBody');if(!b)return;
+  var h='',any=false;
+  DATA.topics.forEach(function(t){
+    var p=topicProg(t);if(!p.total)return;
+    any=true;
+    var un=!!DATA.medals['topic_'+t.id];
+    h+='<div class="medal dynamic'+(un?' un':'')+'" title="'+esc(t.name)+': '+p.seen+'/'+p.total+'"><span class="e">'+pickTopicEmoji(t.name)+'</span><span class="n">'+esc(t.name)+'</span><span class="n" style="direction:ltr">'+p.seen+'/'+p.total+'</span>'+(un?'':'<span class="lock">🔒</span>')+'</div>';
+  });
+  if(any)b.insertAdjacentHTML('beforeend','<h3 style="margin:14px 0 6px">⚡ مدال‌های درس‌ها</h3><div class="medals">'+h+'</div>');
+};
+/* ===== end v51 PATCH ===== */
+
+
+/* ===== v52 PATCH: vertical streak bar + GitHub Gist sync ===== */
+var SYNC_KEYS=['cards','readSubtopics','dailyRecords','topics','xp','medals','hidden','missions','plans','journal','unlockables','unlockActive','simplify'];
+var RP=function(k,v){return k.charAt(0)==='_'?undefined:v};
+var SY={busy:false,last:0,t:null,bootDone:false},_sig='',GAPI='https://api.github.com',GFN='flashcards-sync.json';
+function buildStr(){var o={},s='';Object.keys(DATA).forEach(function(k){if(k==='savedAt'||k==='v')return;var j=JSON.stringify(DATA[k],RP);if(j===undefined)return;o[k]=j;if(SYNC_KEYS.indexOf(k)>=0)s+=k+':'+j+';'});return {o:o,sig:h53(s).toString(36)+'.'+s.length}}
+function bodyStr(b){return '{"savedAt":'+(DATA.savedAt||0)+',"v":52'+Object.keys(b.o).map(function(k){return ','+JSON.stringify(k)+':'+b.o[k]}).join('')+'}'}
+function persist(){
+  if(!_loaded)return Promise.resolve(false);
+  var b,str;
+  try{b=buildStr();if(b.sig!==_sig){_sig=b.sig;DATA.savedAt=Date.now();if(syOn())syPushSoon()}DATA.v=52;str=bodyStr(b)}catch(e){warn(true);return Promise.resolve(false)}
+  return idbPutState(str).then(function(ok){
+    if(ok){LAST_ENGINE='idb';warn(false);return true}
+    try{localStorage.setItem(LS_KEY,str);LAST_ENGINE='ls';warn(false);return true}catch(e){LAST_ENGINE='';warn(true);return false}
+  });
+}
+function idbPutKey(k,v){return new Promise(function(res){if(!idb)return res(false);try{var tx=idb.transaction('state','readwrite');tx.objectStore('state').put(v,k);tx.oncomplete=function(){res(true)};tx.onerror=tx.onabort=function(){res(false)}}catch(e){res(false)}})}
+function idbGetKey(k){return new Promise(function(res){if(!idb)return res(null);try{var q=idb.transaction('state','readonly').objectStore('state').get(k);q.onsuccess=function(){res(q.result||null)};q.onerror=function(){res(null)}}catch(e){res(null)}})}
+function syRec(){try{return JSON.parse(localStorage.getItem('FC_SYNC')||'{}')}catch(e){return {}}}
+function sySave(r){try{localStorage.setItem('FC_SYNC',JSON.stringify(r))}catch(e){}}
+function syOn(){var r=syRec();return !!(r.token&&r.gist&&r.auto!==false)}
+function syPushSoon(){clearTimeout(SY.t);SY.t=setTimeout(function(){syncOnce({})},45000)}
+async function syPack(str){
+  var enc='raw',data=str;
+  try{if(window.CompressionStream){var u=new Uint8Array(await new Response(new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer()),s='';for(var i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));data=btoa(s);enc='gz'}}catch(e){enc='raw';data=str}
+  return {v:1,enc:enc,data:data};
+}
+async function syUnpack(env){
+  if(env.enc!=='gz')return env.data;
+  var bin=atob(env.data),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  return await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+}
+function syUI(ic,msg){
+  var b=$('btnSync');if(b)b.textContent=ic;
+  var s=$('syStat');if(!s)return;var r=syRec();
+  s.textContent=(msg?msg+'\n':'')+(r.token?(r.gist?'متصل ✅':'در حال اتصال...'):'متصل نیست')+(r.lastOk?'\nآخرین همگام‌سازی موفق: '+new Date(r.lastOk).toLocaleString('fa-IR'):'');
+}
+async function syFind(H){
+  for(var p=1;p<=3;p++){
+    var r=await fetch(GAPI+'/gists?per_page=100&page='+p,{headers:H,cache:'no-store'});
+    if(r.status===401||r.status===403)throw new Error('توکن قبول نشد (دسترسی gist لازمه)');
+    if(!r.ok)throw new Error('خطای '+r.status);
+    var a=await r.json();
+    for(var i=0;i<a.length;i++)if(a[i].files&&a[i].files[GFN])return a[i].id;
+    if(a.length<100)break;
+  }
+  return null;
+}
+async function syCreate(H){
+  var f={};f[GFN]={content:JSON.stringify({v:1,enc:'raw',savedAt:0,data:'{}'})};
+  var r=await fetch(GAPI+'/gists',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H),body:JSON.stringify({description:'Flashcard sync data (private)',public:false,files:f}),cache:'no-store'});
+  if(!r.ok)throw new Error('ساخت Gist ناموفق ('+r.status+')');
+  return (await r.json()).id;
+}
+async function syPush(rec,B){
+  var env=await syPack(bodyStr(B));
+  env.savedAt=DATA.savedAt||Date.now();DATA.savedAt=env.savedAt;
+  var f={};f[GFN]={content:JSON.stringify(env)};
+  var r=await fetch(GAPI+'/gists/'+rec.gist,{method:'PATCH',headers:{Authorization:'Bearer '+rec.token,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify({files:f}),cache:'no-store'});
+  if(!r.ok)throw new Error('ارسال ناموفق ('+r.status+')');
+  rec.etag=r.headers.get('ETag')||null;rec.sig=B.sig;rec.at=env.savedAt;sySave(rec);
+}
+async function syPull(rec,env,o,d){
+  d=d||JSON.parse(await syUnpack(env));
+  var empty=!(DATA.topics&&DATA.topics.length)&&!(DATA.xp&&DATA.xp.xp>0);
+  SYNC_KEYS.forEach(function(k){if(d[k]!=null)DATA[k]=d[k]});
+  if(empty){['daily','batch','challenge','folders'].forEach(function(k){if(d[k]!=null)DATA[k]=d[k]});DATA.settings=Object.assign({},DEF,d.settings||{})}
+  migrateKeys();
+  DATA.savedAt=env.savedAt;_sig=buildStr().sig;
+  rec.sig=_sig;rec.at=env.savedAt;sySave(rec);
+  await persist();
+  if(!(o.boot&&!SY.bootDone))setTimeout(function(){location.reload()},300);
+}
+function syCount(c,x){var n=0;Object.keys(c||{}).forEach(function(k){if(c[k]&&c[k].seen)n++});return n+' کارت دیده‌شده · '+((x&&x.xp)||0)+' XP'}
+async function syncOnce(o){
+  o=o||{};var rec=syRec();
+  if(!rec.token)return {s:'off'};
+  if(SY.busy)return {s:'busy'};
+  SY.busy=true;syUI('⏳');
+  try{
+    var H={Authorization:'Bearer '+rec.token,Accept:'application/vnd.github+json'};
+    if(!rec.gist){rec.gist=(await syFind(H))||(await syCreate(H));rec.etag=null;sySave(rec)}
+    var h2=Object.assign({},H);if(rec.etag&&!o.force)h2['If-None-Match']=rec.etag;
+    var r=await fetch(GAPI+'/gists/'+rec.gist,{headers:h2,cache:'no-store'});
+    if(r.status===401||r.status===403)throw new Error('توکن قبول نشد (دسترسی gist لازمه)');
+    if(r.status===404)throw new Error('Gist پیدا نشد');
+    if(r.status!==304&&!r.ok)throw new Error('خطای '+r.status);
+    var env=null,remoteChanged=false,remoteEmpty=false;
+    if(r.status!==304){
+      var j=await r.json(),f=j.files&&j.files[GFN];
+      rec.etag=r.headers.get('ETag')||null;
+      if(!f)remoteEmpty=true;
+      else{
+        var txt=f.truncated?await (await fetch(f.raw_url,{cache:'no-store'})).text():f.content;
+        env=JSON.parse(txt);
+        if(!env.savedAt&&env.data==='{}')remoteEmpty=true;else remoteChanged=(env.savedAt!==rec.at);
+      }
+    }
+    var B=buildStr(),empty=!(DATA.topics&&DATA.topics.length)&&!(DATA.xp&&DATA.xp.xp>0);
+    var localChanged=!empty&&B.sig!==rec.sig,res='ok';
+    if(remoteEmpty||(!remoteChanged&&localChanged)){if(!empty){await syPush(rec,B);res='pushed'}}
+    else if(remoteChanged&&!localChanged){await syPull(rec,env,o);res='pulled'}
+    else if(remoteChanged&&localChanged){
+      var rt=await syUnpack(env),d=JSON.parse(rt);
+      var cloud=confirm('⚠️ هم این دستگاه و هم ابر تغییر کرده‌اند.\n\n☁️ ابر: '+syCount(d.cards,d.xp)+'\n📱 این دستگاه: '+syCount(DATA.cards,DATA.xp)+'\n\nOK = داده‌ی ابر جایگزین این دستگاه بشه\nCancel = داده‌ی این دستگاه جایگزین ابر بشه\n(از نسخه‌ی جایگزین‌شده یه پشتیبان نگه داشته می‌شه)');
+      if(cloud){await idbPutKey('bak_local',bodyStr(B));await syPull(rec,env,o,d);res='pulled'}
+      else{await idbPutKey('bak_remote',rt);await syPush(rec,B);res='pushed'}
+    }
+    rec.lastOk=new Date().toISOString();sySave(rec);SY.last=Date.now();
+    syUI('☁️');return {s:res};
+  }catch(e){
+    syUI('⚠️','❌ '+(e&&e.message||e));return {s:'err',m:String(e&&e.message||e)};
+  }finally{SY.busy=false}
+}
+var _v52la=loadAll;
+loadAll=async function(){
+  var ok=await _v52la();
+  if(!_loaded)return ok;
+  _sig=buildStr().sig;
+  if(syOn()){try{await Promise.race([syncOnce({boot:true}),new Promise(function(r){setTimeout(r,6000)})])}catch(e){}}
+  SY.bootDone=true;
+  return ok;
+};
+var _v52ss=showSummary;
+showSummary=function(){_v52ss.apply(this,arguments);if(syOn())setTimeout(function(){syncOnce({})},2500)};
+var _v52fs=fillSettings;
+fillSettings=function(){_v52fs();var a=$('syAuto');if(a)a.checked=syRec().auto!==false;syUI('☁️')};
+(function(){
+  var st=document.createElement('style');
+  st.textContent=['#syTok{width:100%;margin-top:4px;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:5px;padding:7px;font-size:12px}'].join('');
+  document.head.appendChild(st);
+  var sec=document.createElement('div');sec.className='sect';
+  sec.innerHTML='<h4>☁️ همگام‌سازی (GitHub Gist)</h4><label>توکن <input type="password" id="syTok" placeholder="ghp_..." autocomplete="off"></label><label>خودکار <input type="checkbox" id="syAuto"></label><div class="sgrid"><button class="btn primary" id="syConn">🔗 اتصال / ذخیره توکن</button><button class="btn" id="syNow">🔄 همگام‌سازی الان</button><button class="btn" id="syBak">📦 نسخه‌ی قبل از جایگزینی</button><button class="btn danger" id="syDisc">✂️ قطع اتصال</button></div><div id="syStat" style="font-size:11px;color:var(--muted);line-height:1.8;white-space:pre-line;margin-top:6px"></div>';
+  var dz=$('btnReset').closest('.sect');dz.parentNode.insertBefore(sec,dz);
+  function report(x){if(!x)return;if(x.s==='err')alert('❌ '+x.m);else toast('☁️ '+(x.s==='pulled'?'دریافت شد':x.s==='pushed'?'ارسال شد':x.s==='busy'?'در حال انجام...':'همگام است'))}
+  $('syConn').onclick=async function(){
+    var t=($('syTok').value||'').trim(),r=syRec();
+    if(!t&&!r.token)return alert('توکن رو وارد کن');
+    if(t&&t!==r.token)r={token:t,auto:true};
+    sySave(r);$('syTok').value='';
+    report(await syncOnce({force:true}));
+  };
+  $('syNow').onclick=async function(){report(await syncOnce({force:true}))};
+  $('syDisc').onclick=function(){if(confirm('اتصال قطع بشه؟ (داده‌های ابری پاک نمی‌شن)')){try{localStorage.removeItem('FC_SYNC')}catch(e){}syUI('☁️')}};
+  $('syAuto').onchange=function(){var r=syRec();r.auto=$('syAuto').checked;sySave(r)};
+  $('syBak').onclick=async function(){
+    var n=0;
+    for(var k of ['bak_local','bak_remote']){var s=await idbGetKey(k);if(s){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'application/json'}));a.download=k+'-'+today()+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);n++}}
+    if(!n)alert('هنوز نسخه‌ی پشتیبانی ساخته نشده');
+  };
+  var tb=document.createElement('button');tb.className='icon-btn';tb.id='btnSync';tb.title='همگام‌سازی';tb.textContent='☁️';
+  tb.onclick=async function(){if(!syRec().token){$('btnSettings').click();return}report(await syncOnce({force:true}))};
+  $('btnSettings').parentNode.insertBefore(tb,$('btnSettings'));
+  document.addEventListener('visibilitychange',function(){
+    if(!syOn())return;
+    if(document.hidden)syncOnce({});
+    else if(Date.now()-SY.last>90000&&!$('cardArea').classList.contains('show'))syncOnce({});
+  });
+  window.addEventListener('online',function(){if(syOn())syncOnce({})});
+})();
+/* ===== end v52 PATCH ===== */
+
+/* ===== v53 PATCH: symmetric rails, quick-review fixes, rank panels, scroll, study-day, offline ===== */
+getDayOfStudy=function(){
+  var m=null;
+  Object.keys(DATA.cards).forEach(function(k){var d=DATA.cards[k]&&DATA.cards[k].firstSeenDate;if(d&&(!m||d<m))m=d});
+  Object.keys(DATA.dailyRecords).forEach(function(d){if((DATA.dailyRecords[d].total||0)>0&&(!m||d<m))m=d});
+  if(!m)m=DATA.settings.firstStudyDay;
+  return m?daysBetween(m,today())+1:0;
+};
+renderStreakBars=function(){
+  var td=today(),tD=new Date(td+'T00:00:00'),sat=new Date(tD);sat.setDate(sat.getDate()-(tD.getDay()+1)%7);
+  var N=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه'],h='';
+  for(var i=0;i<7;i++){
+    var d=new Date(sat);d.setDate(d.getDate()+i);
+    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    var t=(DATA.dailyRecords[ds]||{}).total||0,lv=t>=200?4:t>=100?3:t>=50?2:t>0?1:0;
+    h+='<div class="sd l'+lv+(ds===td?' today':'')+'">'+N[i]+'<span class="n">'+(t||'—')+'</span></div>';
+  }
+  var e=$('railStreak');if(e)e.innerHTML=h;
+};
+(function(){
+  var pw=document.querySelector('.page-wrap'),sc=document.querySelector('.side-col');
+  var R=document.createElement('aside');R.className='side-col side-r';
+  var stc=$('railStreak').closest('.rail-card');R.appendChild(stc);
+  pw.insertBefore(R,pw.firstChild);
+  var tm=sc.querySelector('.today-mini');if(tm)sc.insertBefore(tm,sc.firstChild);
+  var gb=document.querySelector('.goal-bar'),gp=$('goalPct');if(gb&&gp)gb.appendChild(gp);
+  var st=document.createElement('style');
+  st.textContent=[
+  '@media (min-width:901px){.page-wrap{grid-template-columns:210px minmax(0,1fr) 230px}}',
+  '.side-r{position:sticky;top:64px;display:flex;flex-direction:column;gap:6px;align-self:start}',
+  '#railStreak{gap:5px}',
+  '#railStreak .sd{padding:9px 10px;font-size:11px;font-family:inherit}',
+  '#railStreak .sd .n{font-size:11px;font-weight:800;font-family:"Courier New",monospace}',
+  '.goal-bar{position:relative;height:16px}.goal-bar>div{height:100%}',
+  '#goalPct{position:absolute;left:6px;top:0;line-height:16px;font-size:10px;font-weight:800;color:#fff;text-shadow:0 0 3px #000;z-index:2}',
+  '#streakV{display:none!important}',
+  '@media (max-width:900px){.page-wrap{grid-template-columns:1fr 1fr}.main-col{grid-column:1/-1;order:0}.side-r{order:1;position:static}.side-col{order:2;display:flex;flex-direction:column;position:static;max-height:none}body{padding-left:6px}body.focus-mode.in-session{padding-left:6px}}'
+  ].join('');
+  document.head.appendChild(st);
+})();
+var _v53rt=renderRailToday;
+renderRailToday=function(){
+  _v53rt();
+  var rec=DATA.dailyRecords[today()]||{total:0},l=document.querySelector('.goal-head span');
+  if(l)l.textContent='🎯 هدف روزانه '+(rec.total||0)+' / '+(DATA.settings.dailyGoal||0);
+};
+
+/* quick review / wrong review */
+SESSION.persistWrong=[];SESSION.scope=[];
+var _keepScope=false;
+function stopQuick(){if(_quickTimer){clearTimeout(_quickTimer);_quickTimer=null}}
+var _v53hp=hidePanels;hidePanels=function(){stopQuick();_v53hp()};
+var _v53gh=goHome;goHome=function(){stopQuick();SESSION.quick=false;SESSION.queue=[];SESSION.idx=0;_v53gh()};window.goHome=goHome;
+var _v53st=startSession;
+startSession=function(mode,keys,subInfo,opts){
+  stopQuick();var pw=SESSION.persistWrong;SESSION.persistWrong=[];
+  _v53st(mode,keys,subInfo,opts);
+  if(!SESSION.queue||!SESSION.queue.length){SESSION.persistWrong=pw;return}
+  SESSION.scope=SESSION.queue.map(function(c){return c.key});
+};
+window.startSession=startSession;
+var _v53sq=startQuick;
+startQuick=function(keys,info){
+  if(!keys||!keys.length)return _v53sq(keys,info);
+  var pw=SESSION.persistWrong,sc=SESSION.scope;
+  _v53sq(keys,info);
+  SESSION.persistWrong=pw;SESSION.scope=_keepScope?sc:keys.slice();
+};
+var _v53sm=showSummary;
+showSummary=function(){
+  var q=SESSION.quick,wk=(SESSION.wrongKeys||[]).slice();
+  if(!q&&wk.length)SESSION.persistWrong=wk;
+  _v53sm.apply(this,arguments);
+  var n=(SESSION.persistWrong||[]).length,b=$('btnEndWrong');
+  if(b){b.style.display=n?'':'none';b.textContent='🔴 مرور غلط‌ها ('+n+')'}
+};
+$('btnEndQuick').onclick=function(){
+  $('endSub').classList.remove('show');
+  var ks=(SESSION.scope||[]).filter(function(k){return findCard(k)&&isActive(k)});
+  if(!ks.length)return toast('کارتی نیست');
+  _keepScope=true;startQuick(ks,SESSION.lastSubInfo);_keepScope=false;
+};
+$('btnEndWrong').onclick=function(){
+  $('endSub').classList.remove('show');
+  var w=(SESSION.persistWrong||[]).filter(function(k){return findCard(k)&&isActive(k)});
+  if(!w.length)return toast('غلطی نداری');
+  _keepScope=true;startQuick(w,null);_keepScope=false;
+};
+$('btnEndBack').onclick=function(){$('endSub').classList.remove('show');SESSION.persistWrong=[];SESSION.wrongKeys=[];showTopicsPanel()};
+$('btnEndHome').onclick=function(){$('endSub').classList.remove('show');SESSION.persistWrong=[];SESSION.wrongKeys=[];goHome()};
+
+/* most-wrong / most-viewed: no medals, no per-card badges, review + quick review per rank */
+function v53top(kind){
+  var w=kind==='w',list=w?getMostWrong():getMostViews(),ks=[];
+  getRanked(list,function(c){var s=DATA.cards[c.key]||{};return w?(s.totalWrong||0):(s.viewCount||0)}).forEach(function(g){g.cards.forEach(function(c){ks.push(c.key)})});
+  return ks;
+}
+function v53rank(kind){
+  var w=kind==='w',list=w?getMostWrong():getMostViews();
+  showPanel(w?'pMostWrongs':'pMostViews');
+  var el=$(w?'mostWrongsBody':'mostViewsBody');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty">'+(w?'هنوز کارتی غلط نخورده':'هنوز کارتی بازدید نشده')+'</div>';return}
+  var gs=getRanked(list,function(c){var s=DATA.cards[c.key]||{};return w?(s.totalWrong||0):(s.viewCount||0)}),all=v53top(kind),unit=w?'غلط':'بازدید';
+  var h='<div class="srow" style="margin-bottom:10px"><span>'+(w?'❌ بیشترین غلط':'👁 پربازدید')+' · '+all.length+' کارت</span><span><button class="mini" data-r="all" data-m="r">▶ مرور همه</button><button class="mini" data-r="all" data-m="q">⚡ سریع همه</button></span></div>';
+  gs.forEach(function(g,gi){
+    h+='<div class="rank-section '+g.cls+'"><div class="rank-head"><span class="rank-title">رتبه '+g.rank+'</span><span style="display:flex;gap:4px;align-items:center;flex-wrap:wrap"><span class="rank-count">'+unit+' '+g.val+'</span><span style="font-size:10px;color:var(--muted)">'+g.cards.length+' کارت</span><button class="mini" data-r="'+gi+'" data-m="r">▶ مرور</button><button class="mini" data-r="'+gi+'" data-m="q">⚡ سریع</button></span></div>';
+    g.cards.slice(0,20).forEach(function(c){h+='<div class="rank-card" data-k="'+esc(c.key)+'">📖 '+esc((c.q||'').substring(0,70))+'<div class="meta-row"><span>📚 '+esc(c.topicName)+'</span></div></div>'});
+    h+='</div>';
+  });
+  el.innerHTML=h;
+  el.querySelectorAll('[data-m]').forEach(function(b){b.onclick=function(){
+    var ks=b.dataset.r==='all'?all:gs[+b.dataset.r].cards.map(function(c){return c.key});
+    if(b.dataset.m==='r')startSession('all',ks);else startQuick(ks,null);
+  }});
+  el.querySelectorAll('.rank-card[data-k]').forEach(function(b){b.onclick=function(){startSession('all',[b.dataset.k])}});
+}
+showMostWrongs=function(){v53rank('w')};
+showMostViews=function(){v53rank('v')};
+(function(){
+  var fb=document.querySelector('.folder[data-f="filters"] .folder-body');if(!fb)return;
+  fb.insertAdjacentHTML('beforeend','<div class="srow" style="margin-top:8px"><span>❌ بیشترین غلط <b id="v53nw">0</b></span><span><button class="mini" data-c="w" data-m="r">▶ مرور</button><button class="mini" data-c="w" data-m="q">⚡ سریع</button></span></div><div class="srow"><span>👁 پربازدید <b id="v53nv">0</b></span><span><button class="mini" data-c="v" data-m="r">▶ مرور</button><button class="mini" data-c="v" data-m="q">⚡ سریع</button></span></div>');
+  fb.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){
+    var ks=v53top(b.dataset.c);if(!ks.length)return toast('کارتی نیست');
+    if(b.dataset.m==='r')startSession('all',ks);else startQuick(ks,null);
+  }});
+})();
+var _v53uc=updateCounts;
+updateCounts=function(){_v53uc();try{var a=$('v53nw'),b=$('v53nv');if(a)a.textContent=v53top('w').length;if(b)b.textContent=v53top('v').length}catch(e){}};
+
+/* cloud button: open settings exactly at the sync section */
+$('btnSync').onclick=async function(){
+  showPanel('pSettings');fillSettings();renderUnlockables();
+  setTimeout(function(){var s=$('syTok');if(s&&s.closest('.sect'))v51scroll(s.closest('.sect'))},260);
+  var x=await syncOnce({force:true});
+  if(x.s==='err')toast('❌ '+x.m);else if(x.s==='off')toast('اول توکن رو وارد کن');else toast('☁️ '+(x.s==='pulled'?'دریافت شد':x.s==='pushed'?'ارسال شد':'همگام است'));
+};
+
+/* offline */
+try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}
+/* ===== end v53 PATCH ===== */
+
+/* ===== v54 PATCH ===== */
+['freeze','exam'].forEach(function(k){if(SYNC_KEYS.indexOf(k)<0)SYNC_KEYS.push(k)});
+function v54ensure(){if(!DATA.freeze)DATA.freeze={used:{}};if(!DATA.freeze.used)DATA.freeze.used={};if(!DATA.exam)DATA.exam={date:'2027-10-13'}}
+
+/* ---- deleted / suspended cards must not count or appear ---- */
+function v54act(s){var n=0;(s.cards||[]).forEach(function(c){if(isActive(ck(c.q||'',c.a||'')))n++});return n}
+autoMarkSubRead=function(){
+  var ch=false;
+  DATA.topics.forEach(function(t){(t.subtopics||[]).forEach(function(s){
+    var key=t.id+'|'+s.id;if(DATA.readSubtopics[key])return;
+    var cs=(s.cards||[]).filter(function(c){return isActive(ck(c.q||'',c.a||''))});
+    if(!cs.length)return;
+    if(cs.every(function(c){var st=DATA.cards[ck(c.q||'',c.a||'')];return st&&st.seen})){DATA.readSubtopics[key]=true;ch=true}
+  })});
+  if(ch)save();
+};
+topicProg=function(t){
+  var tot=0,sn=0;
+  (t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){var k=ck(c.q||'',c.a||'');if(!isActive(k))return;tot++;var st=DATA.cards[k];if(st&&st.seen)sn++})});
+  return {total:tot,seen:sn};
+};
+countPlanCards=function(tid){var t=DATA.topics.find(function(x){return x.id===tid}),n=0;if(t)(t.subtopics||[]).forEach(function(s){n+=v54act(s)});return n};
+countPlanSeen=function(tid,sd){
+  var t=DATA.topics.find(function(x){return x.id===tid}),n=0;if(!t)return 0;
+  (t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){var k=ck(c.q||'',c.a||''),st=DATA.cards[k];if(st&&st.seen&&isActive(k)&&(!sd||(st.firstSeenDate&&st.firstSeenDate>=sd)))n++})});
+  return n;
+};
+var _v54rt=renderTopics;
+renderTopics=function(){
+  _v54rt();
+  var el=$('topicsList');if(!el)return;
+  DATA.topics.forEach(function(t){
+    var tot=0;
+    (t.subtopics||[]).forEach(function(s){
+      var n=v54act(s);tot+=n;
+      var cb=el.querySelector('input[data-a="rd"][data-t="'+t.id+'"][data-s="'+s.id+'"]');
+      var b=cb&&cb.parentNode.querySelector('.sn .badge');if(b)b.textContent=n;
+    });
+    var tb=el.querySelector('button[data-a="tgl"][data-t="'+t.id+'"]'),it=tb&&tb.closest('.item'),sp=it&&it.querySelectorAll('.meta span');
+    if(sp&&sp[1])sp[1].textContent=tot+' کارت';
+  });
+};
+var _v54uc=updateCounts;
+updateCounts=function(){_v54uc();autoMarkSubRead()};
+var _v54st=startSession;
+startSession=function(m,k,i,o){if(k&&m!=='deleted'&&m!=='suspended')k=k.filter(function(x){return isActive(x)});_v54st(m,k,i,o)};
+window.startSession=startSession;
+var _v54sq=startQuick;
+startQuick=function(k,i){if(k)k=k.filter(function(x){return isActive(x)});_v54sq(k,i)};
+
+/* ---- swipe + tap zones + card transitions ---- */
+var _v54lock=false,_v54rv=0;
+(function(){
+  var ca=$('cardArea'),x0=0,y0=0;
+  function live(){return ca.classList.contains('show')&&!SESSION.quiz4&&!SESSION.quick&&!document.querySelector('.modal-bg.show')}
+  function ans(t){var c=SESSION.queue[SESSION.idx];if(!c)return;var s=getS(c.key);if(!s.seen){if(t==='correct')answerCard('study');return}if($('cardA').classList.contains('show'))answerCard(t)}
+  ca.addEventListener('touchstart',function(e){var t=e.touches[0];x0=t.clientX;y0=t.clientY},{passive:true});
+  ca.addEventListener('touchend',function(e){
+    if(!live())return;var t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;
+    if(Math.abs(dx)>55&&Math.abs(dx)>1.4*Math.abs(dy))ans(dx<0?'correct':'wrong');
+    else if(dy<-60&&Math.abs(dy)>1.4*Math.abs(dx))ans('partial');
+  },{passive:true});
+  $('cardQ').addEventListener('click',function(){_v54rv=Date.now()});
+  ca.addEventListener('click',function(e){
+    if(!live()||e.target.closest('.tools,.tool,audio,.card-note-display,.card-photo,button'))return;
+    if(!$('cardA').classList.contains('show')||Date.now()-_v54rv<450)return;
+    var r=ca.getBoundingClientRect();ans(e.clientX>r.left+r.width/2?'correct':'wrong');
+  });
+})();
+var _v54ac=answerCard;
+answerCard=function(type,fromQ4){
+  if(_v54lock)return;_v54lock=true;
+  $('cardArea').classList.add(type==='wrong'?'fx-out-r':type==='partial'?'fx-out-u':'fx-out-l');
+  _v54ac(type,fromQ4);
+  try{v54rec()}catch(e){}
+};
+var _v54rd=render;
+render=function(){_v54lock=false;_v54rd();var ca=$('cardArea');ca.classList.remove('fx-in');void ca.offsetWidth;ca.classList.add('fx-in')};
+
+/* ---- styles: touch targets, glow, animations, ring, pop ---- */
+(function(){
+  var g=[['0','74,222,128'],['1','163,230,53'],['2','251,191,36'],['3','251,146,60'],['4','248,113,113'],['5','220,38,38'],['6','153,27,27'],['7','127,29,29']].map(function(a){return '.card-area.diff'+a[0]+'{--gl:'+a[1]+'}'}).join('');
+  var st=document.createElement('style');
+  st.textContent=g+[
+  '.card-area{border-width:3px;box-shadow:0 0 14px rgba(var(--gl,74,222,128),.55),0 0 38px rgba(var(--gl,74,222,128),.28)}',
+  '.card-area.gold{--gl:251,191,36;box-shadow:0 0 18px rgba(251,191,36,.8),0 0 46px rgba(251,191,36,.45)}',
+  '@keyframes v54in{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}',
+  '.card-area.fx-in{animation:v54in .26s ease-out}',
+  '.card-area.fx-out-l,.card-area.fx-out-r,.card-area.fx-out-u{transition:transform .3s ease-in,opacity .3s ease-in;opacity:0}',
+  '.card-area.fx-out-l{transform:translateX(-80px) rotate(-3deg)}.card-area.fx-out-r{transform:translateX(80px) rotate(3deg)}.card-area.fx-out-u{transform:translateY(-70px)}',
+  '.v54pop{position:fixed;left:50%;top:34%;z-index:600;text-align:center;pointer-events:none;max-width:86%;animation:v54up 2.5s ease-out forwards}',
+  '.v54t{background:linear-gradient(135deg,var(--gold),var(--pink));color:#0f172a;font-weight:800;font-size:16px;padding:12px 20px;border-radius:16px;box-shadow:0 8px 30px rgba(251,191,36,.45);line-height:1.8}',
+  '.v54x{margin-top:6px;font-weight:900;font-size:22px;color:var(--gold);text-shadow:0 2px 8px #000;direction:ltr}',
+  '@keyframes v54up{0%{opacity:0;transform:translate(-50%,20px) scale(.9)}12%{opacity:1;transform:translate(-50%,0) scale(1)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-90px)}}',
+  '#examBox b{color:var(--gold);font-size:15px}',
+  '@media (max-width:900px){.tool{font-size:19px;padding:6px 7px;min-width:34px;min-height:34px}.icon-btn{min-width:40px;min-height:40px}.btn{padding:11px 14px;font-size:13px}.mini{padding:9px 12px;font-size:13px}.act{padding:19px 4px;font-size:15px}.nav button{padding:15px;font-size:14px}.menu-btn{padding:14px 6px}.quiz-opt{padding:15px 14px;font-size:14px}.sub-row{padding:10px}.sub-row input[type=checkbox]{width:22px;height:22px}.due-btn{padding:6px 10px;font-size:11px}.end button{padding:14px 6px;font-size:12px}.c-head{padding-top:30px}}'
+  ].join('');
+  document.head.appendChild(st);
+  var gb=document.querySelector('.goal-bar');
+  if(gb){
+    gb.style.display='none';var gp=$('goalPct');if(gp)gp.style.display='none';
+    gb.insertAdjacentHTML('afterend','<div style="display:flex;justify-content:center;margin-top:6px"><svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="var(--bd)" stroke-width="8"/><circle id="ringArc" cx="46" cy="46" r="38" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="238.8" transform="rotate(-90 46 46)" style="transition:stroke-dashoffset .7s ease,stroke .4s"/><text id="ringTxt" x="46" y="52" text-anchor="middle" font-size="18" font-weight="800" fill="var(--text)">0%</text></svg></div>');
+  }
+})();
+var _v54rr=renderRailToday;
+renderRailToday=function(){
+  _v54rr();
+  var rec=DATA.dailyRecords[today()]||{total:0},g=DATA.settings.dailyGoal||0,p=g>0?Math.min(100,Math.round((rec.total||0)/g*100)):0,a=$('ringArc'),t=$('ringTxt');
+  if(a){a.style.strokeDashoffset=238.8*(1-p/100);a.style.stroke=p>=100?'var(--gold)':'var(--green)'}
+  if(t)t.textContent=p+'%';
+};
+
+/* ---- streak freeze (2 per week, automatic) ---- */
+function v54active(d){var r=DATA.dailyRecords[d];return !!((r&&r.total>0)||(DATA.freeze&&DATA.freeze.used&&DATA.freeze.used[d]))}
+function v54autoFreeze(){
+  v54ensure();var td=today(),y=addDays(td,-1);
+  if(v54active(y))return;
+  var L=null;for(var i=2;i<=10;i++){var d=addDays(td,-i);if(v54active(d)){L=d;break}}
+  if(!L)return;
+  var miss=[];for(var d2=addDays(L,1);d2<=y;d2=addDays(d2,1))miss.push(d2);
+  var cnt={};Object.keys(DATA.freeze.used).forEach(function(d){var w=weekStart(d);cnt[w]=(cnt[w]||0)+1});
+  for(var j=0;j<miss.length;j++){var w=weekStart(miss[j]);if((cnt[w]||0)>=2)return;cnt[w]=(cnt[w]||0)+1}
+  miss.forEach(function(d){DATA.freeze.used[d]=true});
+  save();toast('🧊 استریک‌ات با فریز نجات پیدا کرد');
+}
+getStreak=function(){var d=today();if(!v54active(d))d=addDays(d,-1);var st=0;while(v54active(d)&&st<4000){st++;d=addDays(d,-1)}return st};
+var _v54rs=renderStreakBars;
+renderStreakBars=function(){
+  _v54rs();v54ensure();
+  var e=$('railStreak');if(!e)return;
+  var tD=new Date(today()+'T00:00:00'),sat=new Date(tD);sat.setDate(sat.getDate()-(tD.getDay()+1)%7);
+  for(var i=0;i<7&&i<e.children.length;i++){
+    var d=new Date(sat);d.setDate(d.getDate()+i);
+    var ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(DATA.freeze.used[ds]&&!((DATA.dailyRecords[ds]||{}).total>0)){var n=e.children[i].querySelector('.n');if(n)n.textContent='🧊'}
+  }
+  var rh=e.parentNode.querySelector('.rh');
+  if(rh){var w=weekStart(today()),u=0;Object.keys(DATA.freeze.used).forEach(function(x){if(weekStart(x)===w)u++});rh.textContent='📅 استریک هفته · 🧊 '+Math.max(0,2-u)+' فریز'}
+};
+
+/* ---- record-break messages ---- */
+var V54PH={c:['🔥 رکورد درست‌هات شکست! امروز دقیق‌تر از همیشه‌ای','✨ بیشترین پاسخ درستِ عمرت! ادامه بده','💪 از خودِ قبلیت جلو زدی'],n:['🚀 رکورد کارت جدید شکست! کنجکاوی‌ت می‌درخشه','🌟 این‌همه کارت تازه تا حالا یاد نگرفته بودی'],t:['🏆 پرکارترین روزت! رکورد بهترین روز شکست','⚡ امروز رکورد زدی، آفرین!'],s:['🔥 رکورد استریک شکست! پیوستگی یعنی همین','📅 طولانی‌ترین زنجیره‌ی تو! نشکنش'],y:['👏 از دیروزت جلو زدی']};
+function v54pop(txt,xp){
+  var d=document.createElement('div');d.className='v54pop';d.style.transform='translateX(-50%)';
+  d.innerHTML='<div class="v54t">'+txt+'</div>'+(xp?'<div class="v54x">+'+xp+' XP</div>':'');
+  document.body.appendChild(d);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d)},2600);
+}
+function v54best(){
+  var td=today(),o={c:0,t:0,n:0,s:0},set={};
+  Object.keys(DATA.dailyRecords).forEach(function(d){if(d>=td)return;var r=DATA.dailyRecords[d]||{};o.c=Math.max(o.c,r.correct||0);o.t=Math.max(o.t,r.total||0);o.n=Math.max(o.n,r.newCards||0);if(v54active(d))set[d]=1});
+  Object.keys((DATA.freeze&&DATA.freeze.used)||{}).forEach(function(d){if(d<td)set[d]=1});
+  var run=0,prev=null;Object.keys(set).sort().forEach(function(d){run=(prev&&daysBetween(prev,d)===1)?run+1:1;if(run>o.s)o.s=run;prev=d});
+  return o;
+}
+function v54rec(){
+  v54ensure();var td=today(),r=DATA.dailyRecords[td];if(!r)return;
+  if(!DATA.recAnn||DATA.recAnn.d!==td)DATA.recAnn={d:td};
+  var A=DATA.recAnn,b=v54best(),msgs=[];
+  function chk(k,val,prev){if(prev>0&&val>prev&&!A[k]){A[k]=1;msgs.push(V54PH[k][Math.floor(Math.random()*V54PH[k].length)])}}
+  chk('c',r.correct||0,b.c);chk('n',r.newCards||0,b.n);chk('t',r.total||0,b.t);chk('s',getStreak(),b.s);
+  var y=DATA.dailyRecords[addDays(td,-1)],onlyY=false;
+  if(y&&y.total>0&&(r.total||0)>y.total&&!A.y){A.y=1;if(!msgs.length){msgs.push(V54PH.y[0]);onlyY=true}}
+  if(msgs.length){save();var xp=onlyY?5:20;v54pop(msgs.join('<br>'),xp);addXP(xp,'رکورد')}
+}
+
+/* ---- exam countdown (hours-based) ---- */
+(function(){
+  var m=$('motiv');if(m){var d=document.createElement('div');d.id='examBox';d.className='motivation';d.style.cssText='display:none;cursor:pointer';m.parentNode.insertBefore(d,m.nextSibling);d.onclick=function(){$('btnSettings').click()}}
+  var sec=document.createElement('div');sec.className='sect';
+  sec.innerHTML='<h4>⏳ شمارش معکوس امتحان</h4><label>تاریخ امتحان <input type="date" id="exDate"></label><div id="exJ" style="font-size:11px;color:var(--muted)"></div>';
+  var dz=$('btnReset').closest('.sect');dz.parentNode.insertBefore(sec,dz);
+  $('exDate').onchange=function(){v54ensure();DATA.exam.date=this.value||null;save();v54exam();$('exJ').textContent=this.value?jalali(this.value):''};
+  var s2=document.createElement('div');s2.className='sect';
+  s2.innerHTML='<h4>💾 نسخه‌ی تک‌فایل</h4><button class="btn primary" id="btnStand" style="width:100%">⬇️ دانلود app-v54-standalone.html</button><div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.8">یک فایل کامل که بدون app-v47 و بدون اینترنت با دوبار کلیک باز می‌شود.</div>';
+  dz.parentNode.insertBefore(s2,dz);
+  $('btnStand').onclick=async function(){
+    var s=await idbGetKey('full_html');
+    if(!s)return alert('این نسخه خودش تک‌فایله، یا اول باید یک بار از app-v54.html روی اینترنت باز بشه.');
+    var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/html'}));a.download='app-v54-standalone.html';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  };
+})();
+function v54exam(){
+  var b=$('examBox');if(!b)return;v54ensure();
+  var ex=DATA.exam&&DATA.exam.date;if(!ex){b.style.display='none';return}
+  var ms=new Date(ex+'T00:00:00').getTime()-Date.now();
+  if(ms<=0){b.textContent='🎓 روز امتحان رسید — موفق باشی!';b.style.display='';return}
+  var h=Math.floor(ms/3600000),dd=Math.floor(h/24),hh=h%24,left=0;
+  getAllCards().forEach(function(c){if(isActive(c.key)&&isNew(c.key))left++});
+  b.innerHTML='⏳ تا امتحان ('+jalali(ex)+'): <b>'+dd+'</b> روز و <b>'+hh+'</b> ساعت'+(left?' · نخونده: '+left+' ← روزی ~'+Math.ceil(left/Math.max(1,dd))+' کارت جدید':'');
+  b.style.display='';
+}
+var _v54fs=fillSettings;
+fillSettings=function(){_v54fs();v54ensure();var e=$('exDate');if(e){e.value=DATA.exam.date||'';$('exJ').textContent=e.value?jalali(e.value):''}};
+var _v54la=loadAll;
+loadAll=async function(){var r=await _v54la();try{if(_loaded){v54ensure();v54autoFreeze();v54exam()}}catch(e){}return r};
+setInterval(function(){try{v54exam()}catch(e){}},60000);
+/* ===== end v54 PATCH ===== */
+
+</script>
+<script>
+(function(){
+var SRC='app-v47.html',M=document.getElementById('m'),MARK='FC49_MAIN';
+function idbOpen(){return new Promise(function(res){try{var r=indexedDB.open('FC49_MEDIA',2);r.onupgradeneeded=function(e){var db=e.target.result;['media','state'].forEach(function(n){if(!db.objectStoreNames.contains(n))db.createObjectStore(n)})};r.onsuccess=function(){res(r.result)};r.onerror=r.onblocked=function(){res(null)}}catch(e){res(null)}})}
+function idbGet(db,k){return new Promise(function(res){if(!db)return res(null);try{var q=db.transaction('state').objectStore('state').get(k);q.onsuccess=function(){res(q.result||null)};q.onerror=function(){res(null)}}catch(e){res(null)}})}
+function idbPut(db,k,v){return new Promise(function(res){if(!db)return res(false);try{var tx=db.transaction('state','readwrite');tx.objectStore('state').put(v,k);tx.oncomplete=function(){res(true)};tx.onerror=tx.onabort=function(){res(false)}}catch(e){res(false)}})}
+function build(src,db){
+  var patch=document.getElementById('patchjs').textContent,miss=[];
+  function rep(x,y){if(src.indexOf(x)<0){miss.push(x.slice(0,40));return}src=src.split(x).join(y)}
+  src=src.replace(/<title>[^<]*<\/title>/,'<title>فلش‌کارت</title>');
+  rep("$('fileBackup').addEventListener('change',function(e){","$('fileBackup').addEventListener('change',function(e){if(window.importBackupV50)return window.importBackupV50(e);");
+  rep('id="fileBackup" accept=".json"','id="fileBackup"');
+  var n=src.length;src=src.replace(/\n\s*await openIDB\(\);/,'');if(src.length===n)miss.push('openIDB');
+  rep('var ok=load();','await openIDB();var ok=await loadAll();');
+  rep('setInterval(save,15000);','');
+  rep('version:49,exportedAt','version:50,exportedAt');
+  rep('/* ========== INIT ========== */',patch+'\n/* ========== INIT ========== */');
+  try{sessionStorage.setItem('v50miss',JSON.stringify(miss))}catch(e){}
+  return idbPut(db,'full_html',src).then(function(){try{if(db)db.close()}catch(e){}document.open();document.write(src);document.close()});
+}
+function ask(db){
+  M.innerHTML='<div style="font-size:15px;line-height:2">فقط برای یک بار، فایل <b>app-v47.html</b> رو انتخاب کن 👇<br><input type="file" id="pick" accept=".html,text/html" style="margin-top:12px"></div>';
+  document.getElementById('pick').onchange=function(){
+    var f=this.files[0];if(!f)return;var r=new FileReader();
+    r.onload=function(){var t=String(r.result);if(t.indexOf(MARK)<0){M.textContent='❌ این فایل درست نیست. app-v47.html رو انتخاب کن.';return}idbPut(db,'base_html',t).then(function(){build(t,db)})};
+    r.readAsText(f);
+  };
+}
+(async function(){
+  var db=await idbOpen(),src=null;
+  try{var r=await fetch(SRC,{cache:'no-store'});if(r.ok){var t=await r.text();if(t.indexOf(MARK)>=0)src=t}}catch(e){}
+  if(src)await idbPut(db,'base_html',src);else src=await idbGet(db,'base_html');
+  if(src)build(src,db);else ask(db);
+})();
+})();
+</script></body></html>
