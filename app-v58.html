@@ -4162,5 +4162,2257 @@ window.addEventListener('pagehide',saveNow);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
 </script>
+  <!-- ===== v58 PATCH 1 ===== -->
+
+<script>
+/* =========================================================
+   v58 — SYNC + SAFE REVIEW + FAST BOOT
+   این بخش باید قبل از INIT و داخل اسکریپت اصلی فایل قرار بگیرد.
+   ========================================================= */
+
+(function(){
+
+  /* ---------- version ---------- */
+
+  try{
+    document.title='فلش‌کارت v58';
+    DATA.v=58;
+  }catch(e){}
+
+
+  /* ---------- sync keys ---------- */
+
+  try{
+    if(typeof SYNC_KEYS!=='undefined'){
+      if(SYNC_KEYS.indexOf('lastReadSubtopic')<0)
+        SYNC_KEYS.push('lastReadSubtopic');
+
+      if(SYNC_KEYS.indexOf('exam')<0)
+        SYNC_KEYS.push('exam');
+
+      if(SYNC_KEYS.indexOf('freeze')<0)
+        SYNC_KEYS.push('freeze');
+
+      if(SYNC_KEYS.indexOf('recAnn')<0)
+        SYNC_KEYS.push('recAnn');
+    }
+  }catch(e){}
+
+
+  /* =========================================================
+     CARD VERSIONING
+     هدف:
+     هر کارت آخرین تغییر خودش را داشته باشد.
+     بنابراین دو دستگاه می‌توانند مستقل جلو بروند.
+     ========================================================= */
+
+  function v58TouchCard(k){
+    try{
+      if(!k)return;
+      var s=getS(k);
+      if(s)s.updatedAt=Date.now();
+    }catch(e){}
+  }
+
+  function v58CardWins(a,b){
+
+    if(!a)return b;
+    if(!b)return a;
+
+    var au=Number(a.updatedAt)||0;
+    var bu=Number(b.updatedAt)||0;
+
+    /* اگر یکی timestamp واقعی دارد و دیگری نه */
+    if(au!==bu){
+      return au>bu?a:b;
+    }
+
+    /* برای داده‌های قدیمی که updatedAt نداشتند:
+       کارت دیده‌شده بر کارت ندیده‌شده برتری دارد. */
+    if(!!a.seen!==!!b.seen){
+      return a.seen?a:b;
+    }
+
+    var ar=
+      (Number(a.firstSeenMs)||0)+
+      (Number(a.nextDue)||0)+
+      ((Number(a.stepIndex)||0)*1000000000)+
+      ((Number(a.correctCount)||0)*100000)+
+      ((Number(a.partialCount)||0)*10000)+
+      ((Number(a.wrongCount)||0)*1000)+
+      (Number(a.viewCount)||0);
+
+    var br=
+      (Number(b.firstSeenMs)||0)+
+      (Number(b.nextDue)||0)+
+      ((Number(b.stepIndex)||0)*1000000000)+
+      ((Number(b.correctCount)||0)*100000)+
+      ((Number(b.partialCount)||0)*10000)+
+      ((Number(b.wrongCount)||0)*1000)+
+      (Number(b.viewCount)||0);
+
+    return ar>=br?a:b;
+  }
+
+
+  /* =========================================================
+     CARD MERGE
+     ========================================================= */
+
+  function v58MergeCards(remoteCards){
+
+    var localCards=DATA.cards||{};
+    var remote=remoteCards||{};
+
+    Object.keys(remote).forEach(function(k){
+
+      var r=remote[k];
+      var l=localCards[k];
+
+      if(!l){
+        localCards[k]=r;
+        return;
+      }
+
+      localCards[k]=v58CardWins(l,r);
+    });
+
+    DATA.cards=localCards;
+  }
+
+
+  /* =========================================================
+     TOPIC / SUBTOPIC MERGE
+     کارت‌های جدید یک دستگاه نباید با دستگاه دیگر حذف شوند.
+     ========================================================= */
+
+  function v58MergeTopics(remoteTopics,remoteNewer){
+
+    var localTopics=DATA.topics||[];
+    var remote=remoteTopics||[];
+
+    var topicMap={};
+
+    localTopics.forEach(function(t){
+      if(t&&t.id)topicMap[t.id]=t;
+    });
+
+    remote.forEach(function(rt){
+
+      if(!rt||!rt.id)return;
+
+      var lt=topicMap[rt.id];
+
+      if(!lt){
+        localTopics.push(rt);
+        topicMap[rt.id]=rt;
+        return;
+      }
+
+      if(remoteNewer){
+
+        if(rt.name!=null)lt.name=rt.name;
+
+        if(rt.icon!=null)lt.icon=rt.icon;
+
+        if(rt.pinned!=null)lt.pinned=rt.pinned;
+      }
+
+      lt.subtopics=lt.subtopics||[];
+
+      var subMap={};
+
+      lt.subtopics.forEach(function(ls){
+        if(ls&&ls.id)subMap[ls.id]=ls;
+      });
+
+      (rt.subtopics||[]).forEach(function(rs){
+
+        if(!rs||!rs.id)return;
+
+        var ls=subMap[rs.id];
+
+        if(!ls){
+
+          lt.subtopics.push(rs);
+          subMap[rs.id]=rs;
+
+          return;
+        }
+
+        if(remoteNewer && rs.name!=null){
+          ls.name=rs.name;
+        }
+
+        ls.cards=ls.cards||[];
+
+        var ckMap={};
+
+        ls.cards.forEach(function(c){
+          if(!c)return;
+          var k=ck(c.q||'',c.a||'');
+          ckMap[k]=true;
+        });
+
+        (rs.cards||[]).forEach(function(c){
+
+          if(!c)return;
+
+          var k=ck(c.q||'',c.a||'');
+
+          if(!ckMap[k]){
+            ls.cards.push(c);
+            ckMap[k]=true;
+          }
+
+        });
+
+      });
+
+    });
+
+    DATA.topics=localTopics;
+  }
+
+
+  /* =========================================================
+     TRUE MAP MERGE
+     برای medals / hidden / unlockables / readSubtopics
+     ========================================================= */
+
+  function v58MergeTrueMap(localMap,remoteMap){
+
+    var l=localMap||{};
+    var r=remoteMap||{};
+
+    Object.keys(r).forEach(function(k){
+
+      if(r[k]===true){
+        l[k]=true;
+      }
+
+      else if(l[k]==null){
+        l[k]=r[k];
+      }
+
+    });
+
+    return l;
+  }
+
+
+  /* =========================================================
+     DAILY RECORDS
+     double count نشود.
+     در تعارض، بیشترین مقدار هر شمارنده حفظ می‌شود.
+     ========================================================= */
+
+  function v58MergeDailyRecords(remote){
+
+    var local=DATA.dailyRecords||{};
+    var r=remote||{};
+
+    Object.keys(r).forEach(function(date){
+
+      if(!local[date]){
+        local[date]=r[date];
+        return;
+      }
+
+      var a=local[date];
+      var b=r[date];
+
+      ['total','newCards','correct','wrong','partial'].forEach(function(k){
+
+        var av=Number(a[k])||0;
+        var bv=Number(b[k])||0;
+
+        if(bv>av)a[k]=bv;
+
+      });
+
+    });
+
+    DATA.dailyRecords=local;
+  }
+
+
+  /* =========================================================
+     XP
+     هیچ‌وقت XP پایین‌تر برنگردد.
+     ========================================================= */
+
+  function v58MergeXP(remote){
+
+    var l=DATA.xp||{};
+    var r=remote||{};
+
+    l.xp=Math.max(
+      Number(l.xp)||0,
+      Number(r.xp)||0
+    );
+
+    l.level=Math.max(
+      Number(l.level)||1,
+      Number(r.level)||1
+    );
+
+    l.history=(l.history||[]).concat(r.history||[]);
+
+    if(l.history.length>500){
+      l.history=l.history.slice(-500);
+    }
+
+    DATA.xp=l;
+  }
+
+
+  /* =========================================================
+     DAILY / BATCH
+     ========================================================= */
+
+  function v58UnionKeys(a,b){
+
+    var x={};
+
+    (a||[]).forEach(function(k){
+      if(k!=null)x[k]=true;
+    });
+
+    (b||[]).forEach(function(k){
+      if(k!=null)x[k]=true;
+    });
+
+    return Object.keys(x);
+  }
+
+
+  /* =========================================================
+     COMPLETE DATA MERGE
+     ========================================================= */
+
+  function v58MergeData(remote,remoteNewer){
+
+    remote=remote||{};
+
+    /* کارت‌ها — مهم‌ترین بخش */
+    v58MergeCards(remote.cards||{});
+
+    /* ساختار درس‌ها */
+    v58MergeTopics(
+      remote.topics||[],
+      !!remoteNewer
+    );
+
+    /* مباحث خوانده‌شده:
+       اگر یکی خوانده باشد، نباید خوانده‌نشده شود. */
+    DATA.readSubtopics=v58MergeTrueMap(
+      DATA.readSubtopics||{},
+      remote.readSubtopics||{}
+    );
+
+    /* آخرین مبحث تمام‌شده */
+    try{
+
+      var a=DATA.lastReadSubtopic||null;
+      var b=remote.lastReadSubtopic||null;
+
+      if(!a && b){
+        DATA.lastReadSubtopic=b;
+      }
+      else if(a && b &&
+              (Number(b.at)||0)>(Number(a.at)||0)){
+        DATA.lastReadSubtopic=b;
+      }
+
+    }catch(e){}
+
+
+    /* رکوردهای روزانه */
+    v58MergeDailyRecords(
+      remote.dailyRecords||{}
+    );
+
+
+    /* XP */
+    v58MergeXP(
+      remote.xp||{}
+    );
+
+
+    /* medals */
+    DATA.medals=v58MergeTrueMap(
+      DATA.medals||{},
+      remote.medals||{}
+    );
+
+
+    /* hidden */
+    DATA.hidden=v58MergeTrueMap(
+      DATA.hidden||{},
+      remote.hidden||{}
+    );
+
+
+    /* unlockables */
+    DATA.unlockables=v58MergeTrueMap(
+      DATA.unlockables||{},
+      remote.unlockables||{}
+    );
+
+
+    /* unlockActive */
+    DATA.unlockActive=v58MergeTrueMap(
+      DATA.unlockActive||{},
+      remote.unlockActive||{}
+    );
+
+
+    /* simplify */
+    try{
+
+      var simp=DATA.simplify||[];
+
+      var seenS={};
+
+      simp.forEach(function(x){
+        if(x&&x.originalKey)
+          seenS[x.originalKey]=true;
+      });
+
+      (remote.simplify||[]).forEach(function(x){
+
+        if(!x)return;
+
+        var k=x.originalKey;
+
+        if(k&&!seenS[k]){
+          simp.push(x);
+          seenS[k]=true;
+        }
+
+      });
+
+      DATA.simplify=simp;
+
+    }catch(e){}
+
+
+    /* batch */
+    if(DATA.batch||remote.batch){
+
+      DATA.batch=DATA.batch||{
+        keys:[],
+        ts:0
+      };
+
+      DATA.batch.keys=v58UnionKeys(
+        DATA.batch.keys,
+        remote.batch&&remote.batch.keys
+      );
+
+      DATA.batch.ts=Math.max(
+        Number(DATA.batch.ts)||0,
+        Number(remote.batch&&remote.batch.ts)||0
+      );
+    }
+
+
+    /* daily */
+    if(DATA.daily||remote.daily){
+
+      DATA.daily=DATA.daily||{
+        date:null,
+        keys:[],
+        done:false
+      };
+
+      if(
+        remote.daily&&
+        remote.daily.date &&
+        (!DATA.daily.date || remote.daily.date>DATA.daily.date)
+      ){
+        DATA.daily.date=remote.daily.date;
+      }
+
+      DATA.daily.keys=v58UnionKeys(
+        DATA.daily.keys,
+        remote.daily&&remote.daily.keys
+      );
+
+      DATA.daily.done=!!(
+        DATA.daily.done ||
+        (remote.daily&&remote.daily.done)
+      );
+    }
+
+
+    /* journal:
+       روزهای مختلف ادغام شوند. */
+    try{
+
+      var j=DATA.journal||{};
+      var rj=remote.journal||{};
+
+      Object.keys(rj).forEach(function(d){
+
+        if(j[d]==null){
+          j[d]=rj[d];
+        }
+        else if(remoteNewer){
+          j[d]=rj[d];
+        }
+
+      });
+
+      DATA.journal=j;
+
+    }catch(e){}
+
+
+    /* plans */
+    try{
+
+      var plans=DATA.plans||[];
+      var rp=remote.plans||[];
+
+      var pm={};
+
+      plans.forEach(function(p){
+        if(p&&p.id)pm[p.id]=p;
+      });
+
+      rp.forEach(function(p){
+
+        if(!p||!p.id)return;
+
+        if(!pm[p.id]){
+          plans.push(p);
+          pm[p.id]=p;
+        }
+        else if(remoteNewer){
+          pm[p.id]=p;
+        }
+
+      });
+
+      DATA.plans=plans;
+
+    }catch(e){}
+
+
+    /* missions */
+    if(remote.missions && remoteNewer){
+      DATA.missions=remote.missions;
+    }
+
+
+    /* challenge */
+    if(remote.challenge && remoteNewer){
+      DATA.challenge=remote.challenge;
+    }
+
+
+    /* freeze */
+    if(remote.freeze && remoteNewer){
+      DATA.freeze=remote.freeze;
+    }
+
+
+    /* exam */
+    if(remote.exam && remoteNewer){
+      DATA.exam=remote.exam;
+    }
+
+
+    /* recAnn */
+    if(remote.recAnn && remoteNewer){
+      DATA.recAnn=remote.recAnn;
+    }
+
+
+    /* folders */
+    if(remote.folders && remoteNewer){
+      DATA.folders=remote.folders;
+    }
+
+
+    /* settings:
+       در تعارض، نسخهٔ سراسری جدیدتر برنده شود. */
+    if(remote.settings && remoteNewer){
+      DATA.settings=Object.assign(
+        {},
+        DATA.settings||DEF,
+        remote.settings||{}
+      );
+    }
+
+    try{
+      migrateKeys();
+    }catch(e){}
+
+  }
+
+
+  /* =========================================================
+     REFRESH AFTER SYNC
+     بدون reload
+     ========================================================= */
+
+  function v58RefreshAfterSync(){
+
+    try{
+
+      updateCounts();
+
+      renderWelcomeStats();
+
+      renderWelcomeDay();
+
+      renderRailToday();
+
+      renderDailyWidget();
+
+      renderBatch();
+
+      if(
+        $('pTopics') &&
+        $('pTopics').classList.contains('show')
+      ){
+        renderTopics();
+      }
+
+    }catch(e){}
+
+  }
+
+
+  /* =========================================================
+     PUSH
+     ========================================================= */
+
+  async function v58Push(rec,B){
+
+    var env=await syPack(bodyStr(B));
+
+    env.savedAt=DATA.savedAt||Date.now();
+
+    DATA.savedAt=env.savedAt;
+    DATA.v=58;
+
+    var f={};
+
+    f[GFN]={
+      content:JSON.stringify(env)
+    };
+
+    var r=await fetch(
+      GAPI+'/gists/'+rec.gist,
+      {
+        method:'PATCH',
+        headers:{
+          Authorization:'Bearer '+rec.token,
+          Accept:'application/vnd.github+json',
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          files:f
+        }),
+        cache:'no-store'
+      }
+    );
+
+    if(!r.ok){
+      throw new Error('ارسال ناموفق ('+r.status+')');
+    }
+
+    rec.etag=r.headers.get('ETag')||null;
+    rec.sig=B.sig;
+    rec.at=env.savedAt;
+
+    sySave(rec);
+  }
+
+
+  /* =========================================================
+     NEW SYNC ENGINE
+     ========================================================= */
+
+  async function v58SyncCore(opts){
+
+    opts=opts||{};
+
+    var rec=syRec();
+
+    if(!rec.token){
+      return {s:'off'};
+    }
+
+    if(SY.busy){
+      return {s:'busy'};
+    }
+
+    SY.busy=true;
+
+    syUI('⏳');
+
+    try{
+
+      var H={
+        Authorization:'Bearer '+rec.token,
+        Accept:'application/vnd.github+json'
+      };
+
+
+      /* ---------- gist id ---------- */
+
+      if(!rec.gist){
+
+        rec.gist=
+          (await syFind(H)) ||
+          (await syCreate(H));
+
+        rec.etag=null;
+
+        sySave(rec);
+      }
+
+
+      /* ---------- remote request ----------
+         حتی در همگام‌سازی دستی هم ETag را حفظ می‌کنیم.
+         بنابراین اگر ابر تغییر نکرده باشد، 304 می‌گیریم
+         و لازم نیست کل دادهٔ ابر پردازش شود.
+      */
+
+      var h2=Object.assign({},H);
+
+      if(rec.etag){
+        h2['If-None-Match']=rec.etag;
+      }
+
+
+      var r=await fetch(
+        GAPI+'/gists/'+rec.gist,
+        {
+          headers:h2,
+          cache:'no-store'
+        }
+      );
+
+
+      if(r.status===401||r.status===403){
+        throw new Error(
+          'توکن قبول نشد (دسترسی gist لازمه)'
+        );
+      }
+
+      if(r.status===404){
+        throw new Error('Gist پیدا نشد');
+      }
+
+      if(r.status!==304&&!r.ok){
+        throw new Error('خطای '+r.status);
+      }
+
+
+      /* ---------- remote info ---------- */
+
+      var env=null;
+      var remoteChanged=false;
+      var remoteEmpty=false;
+
+      if(r.status===304){
+
+        remoteChanged=false;
+
+      }
+      else{
+
+        var j=await r.json();
+
+        var f=j.files&&j.files[GFN];
+
+        rec.etag=r.headers.get('ETag')||rec.etag;
+
+        if(!f){
+
+          remoteEmpty=true;
+
+        }
+        else{
+
+          var txt;
+
+          if(f.truncated && f.raw_url){
+
+            var rr=await fetch(
+              f.raw_url,
+              {
+                cache:'no-store'
+              }
+            );
+
+            txt=await rr.text();
+
+          }
+          else{
+
+            txt=f.content;
+
+          }
+
+          env=JSON.parse(txt);
+
+          if(
+            !env.savedAt &&
+            env.data==='{}'
+          ){
+
+            remoteEmpty=true;
+
+          }
+          else{
+
+            remoteChanged=
+              Number(env.savedAt||0)!==
+              Number(rec.at||0);
+
+          }
+
+        }
+
+      }
+
+
+      /* ---------- local status ---------- */
+
+      var B=buildStr();
+
+      var empty=
+        !(DATA.topics&&DATA.topics.length) &&
+        !(DATA.xp&&DATA.xp.xp>0) &&
+        !(DATA.cards&&Object.keys(DATA.cards).length);
+
+
+      var localChanged=
+        !empty &&
+        B.sig!==rec.sig;
+
+
+      /* =====================================================
+         CASE 1 — cloud empty
+         ===================================================== */
+
+      if(remoteEmpty){
+
+        if(!empty){
+
+          await v58Push(rec,B);
+
+        }
+
+      }
+
+
+      /* =====================================================
+         CASE 2 — nothing changed
+         ===================================================== */
+
+      else if(
+        !remoteChanged &&
+        !localChanged
+      ){
+
+        /* هیچ کاری لازم نیست */
+
+      }
+
+
+      /* =====================================================
+         CASE 3 — فقط این دستگاه تغییر کرده
+         ===================================================== */
+
+      else if(
+        !remoteChanged &&
+        localChanged
+      ){
+
+        await v58Push(rec,B);
+
+      }
+
+
+      /* =====================================================
+         CASE 4 — فقط ابر تغییر کرده
+         ===================================================== */
+
+      else if(
+        remoteChanged &&
+        !localChanged
+      ){
+
+        if(env){
+
+          var remoteText=
+            await syUnpack(env);
+
+          var remoteData=
+            JSON.parse(remoteText);
+
+          v58MergeData(
+            remoteData,
+            true
+          );
+
+          try{
+            DATA.savedAt=env.savedAt||Date.now();
+            DATA.v=58;
+          }catch(e){}
+
+          await persist();
+
+          var nb=buildStr();
+
+          rec.sig=nb.sig;
+          rec.at=env.savedAt||Date.now();
+
+          sySave(rec);
+
+          v58RefreshAfterSync();
+        }
+
+      }
+
+
+      /* =====================================================
+         CASE 5 — هر دو دستگاه تغییر کرده‌اند
+         ادغام واقعی؛ دیگر دستگاهی جایگزین دیگری نمی‌شود.
+         ===================================================== */
+
+      else if(
+        remoteChanged &&
+        localChanged
+      ){
+
+        var rt=await syUnpack(env);
+
+        var rd=JSON.parse(rt);
+
+        var localSavedAt=
+          Number(DATA.savedAt)||0;
+
+        var remoteSavedAt=
+          Number(env&&env.savedAt)||0;
+
+        var remoteNewer=
+          remoteSavedAt>localSavedAt;
+
+
+        /* مهم‌ترین بخش */
+        v58MergeData(
+          rd,
+          remoteNewer
+        );
+
+
+        /* timestamp نهایی */
+        DATA.savedAt=Math.max(
+          Date.now(),
+          remoteSavedAt,
+          localSavedAt
+        );
+
+        DATA.v=58;
+
+
+        /* ذخیرهٔ merged */
+        await persist();
+
+
+        /* ارسال merged */
+        var MB=buildStr();
+
+        await v58Push(
+          rec,
+          MB
+        );
+
+
+        v58RefreshAfterSync();
+
+      }
+
+
+      rec.lastOk=new Date().toISOString();
+
+      sySave(rec);
+
+      SY.last=Date.now();
+
+      syUI('☁️');
+
+      var result={
+        s:
+          (
+            remoteChanged &&
+            localChanged
+          )
+            ?'merged'
+            :(
+              remoteChanged
+                ?'pulled'
+                :(
+                  localChanged
+                    ?'pushed'
+                    :'ok'
+            )
+          )
+      };
+
+      return result;
+
+    }catch(e){
+
+      syUI(
+        '⚠️',
+        '❌ '+String(
+          e&&e.message||e
+        )
+      );
+
+      return {
+        s:'err',
+        m:String(
+          e&&e.message||e
+        )
+      };
+
+    }finally{
+
+      SY.busy=false;
+
+    }
+
+  }
+
+
+  /* =========================================================
+     BOOT SYNC:
+     باز شدن برنامه منتظر همگام‌سازی نمی‌ماند.
+     همگام‌سازی کمی بعد در پس‌زمینه شروع می‌شود.
+     ========================================================= */
+
+  var V58_BOOT=true;
+
+  var _v58BootSync=v58SyncCore;
+
+  syncOnce=async function(o){
+
+    o=o||{};
+
+    if(
+      V58_BOOT &&
+      o.boot
+    ){
+      return {s:'deferred'};
+    }
+
+    return _v58BootSync(o);
+  };
+
+
+  var _v58LoadAll=loadAll;
+
+  loadAll=async function(){
+
+    var r=await _v58LoadAll();
+
+    V58_BOOT=false;
+
+    /* برنامه اول بالا می‌آید،
+       بعد ابر در پس‌زمینه بررسی می‌شود. */
+
+    if(syOn()){
+
+      setTimeout(function(){
+
+        syncOnce({});
+
+      },250);
+
+    }
+
+    try{
+      DATA.v=58;
+    }catch(e){}
+
+    return r;
+  };
+
+
+  /* =========================================================
+     هر پاسخ کارت = ثبت زمان تغییر
+     ========================================================= */
+
+  var _v58AnswerCard=answerCard;
+
+  answerCard=function(type,fromQ4){
+
+    try{
+
+      var c=
+        SESSION &&
+        SESSION.queue &&
+        SESSION.queue[SESSION.idx];
+
+      if(c){
+        v58TouchCard(c.key);
+      }
+
+    }catch(e){}
+
+    return _v58AnswerCard(
+      type,
+      fromQ4
+    );
+  };
+
+
+  /* =========================================================
+     ابزارهای کارت:
+     قبل از اجرای onclick زمان تغییر کارت ثبت شود.
+     ========================================================= */
+
+  document.addEventListener(
+    'click',
+    function(e){
+
+      try{
+
+        var b=e.target.closest(
+          '#tStar,#tSusp,#tDel,#tPin,#tRev,'+
+          '#tNote,#tEdit,#tTag,#tSimp,'+
+          '#noteSave,#noteDel,#eSave'
+        );
+
+        if(!b)return;
+
+        var c=
+          SESSION &&
+          SESSION.queue &&
+          SESSION.queue[SESSION.idx];
+
+        if(c){
+
+          v58TouchCard(c.key);
+
+        }
+
+      }catch(x){}
+
+    },
+    true
+  );
+
+
+  /* =========================================================
+     موضوع review:
+     دکمهٔ مرور درس فقط کارت‌های سررسیده را نشان بدهد.
+     ========================================================= */
+
+  var _v58HandleTopicAct=handleTopicAct;
+
+  handleTopicAct=function(a,tid,sid){
+
+    if(a==='rev'){
+
+      var ks=getDueKeysForTopic(tid);
+
+      if(!ks.length){
+        return toast('⏰ فعلاً کارت سررسیده‌ای نیست');
+      }
+
+      ACTIVE_DD=null;
+
+      return startSession(
+        'due',
+        ks,
+        {tid:tid},
+        {ordered:true}
+      );
+    }
+
+    return _v58HandleTopicAct.apply(
+      this,
+      arguments
+    );
+  };
+
+
+  /* =========================================================
+     برنامهٔ مطالعه:
+     «ادامه» فقط سررسیده‌ها.
+     ========================================================= */
+
+  var _v58RenderPlanPanel=renderPlanPanel;
+
+  renderPlanPanel=function(){
+
+    _v58RenderPlanPanel.apply(
+      this,
+      arguments
+    );
+
+    try{
+
+      var el=$('planBody');
+
+      if(!el)return;
+
+      el.querySelectorAll(
+        '[data-act="rev"]'
+      ).forEach(function(b){
+
+        b.onclick=function(){
+
+          var p=DATA.plans.find(
+            function(x){
+              return x.id===b.dataset.p;
+            }
+          );
+
+          if(!p)return;
+
+          var ks=getDueKeysForTopic(
+            p.topicId
+          );
+
+          if(!ks.length){
+            return toast(
+              '⏰ فعلاً کارت سررسیده‌ای نیست'
+            );
+          }
+
+          startSession(
+            'due',
+            ks,
+            {tid:p.topicId},
+            {ordered:true}
+          );
+
+        };
+
+      });
+
+    }catch(e){}
+
+  };
+
+
+  /* =========================================================
+     دکمهٔ ابر:
+     دیگر تنظیمات را باز نمی‌کند.
+     همان صفحه باقی می‌ماند.
+     ========================================================= */
+
+  try{
+
+    var cloudBtn=$('btnSync');
+
+    if(cloudBtn){
+
+      cloudBtn.onclick=async function(){
+
+        if(!syRec().token){
+
+          return toast(
+            '☁️ اول اتصال ابر را از تنظیمات فعال کن'
+          );
+
+        }
+
+        var x=await syncOnce({
+          force:true
+        });
+
+        if(!x)return;
+
+        if(x.s==='err'){
+
+          toast('❌ '+x.m);
+
+        }
+        else if(x.s==='busy'){
+
+          toast('☁️ همگام‌سازی در حال انجام است');
+
+        }
+        else if(x.s==='merged'){
+
+          toast('☁️ دو دستگاه با هم ادغام شدند ✅');
+
+        }
+        else if(x.s==='pulled'){
+
+          toast('☁️ آخرین وضعیت دریافت شد ✅');
+
+        }
+        else if(x.s==='pushed'){
+
+          toast('☁️ وضعیت این دستگاه ارسال شد ✅');
+
+        }
+        else{
+
+          toast('☁️ همگام است ✅');
+
+        }
+
+      };
+
+    }
+
+  }catch(e){}
+
+
+  /* =========================================================
+     اتصال ابری را از قبل حفظ کن
+     ========================================================= */
+
+  try{
+
+    window.v58SyncNow=function(){
+
+      return syncOnce({
+        force:true
+      });
+
+    };
+
+  }catch(e){}
+
+
+})();
+</script>
+
+<!-- ===== END v58 PATCH 1 ===== -->
+  <!-- =========================================================
+     v58 PATCH 3
+     Due-only review + fast card index + large-dataset optimization
+     ========================================================= -->
+
+<script>
+(function(){
+
+  /* =========================================================
+     1) FAST CARD INDEX
+     مشکل v56:
+     getAllCards() در تعداد بسیار زیادی از عملیات،
+     کل درخت درس‌ها را دوباره از صفر می‌سازد.
+     این برای ده‌ها/صدها هزار کارت بسیار کند می‌شود.
+
+     v58:
+     یک بار ایندکس کارت‌ها ساخته می‌شود و تا زمانی که ساختار
+     کارت‌ها تغییر نکرده، همان ایندکس استفاده می‌شود.
+     ========================================================= */
+
+  var V58IDX={
+    stamp:null,
+    all:null,
+    map:null
+  };
+
+  function v58StructureStamp(){
+
+    var ts=DATA.topics||[];
+    var out='T'+ts.length;
+
+    for(var i=0;i<ts.length;i++){
+
+      var t=ts[i]||{};
+      var ss=t.subtopics||[];
+
+      out+='|'+(t.id||i)+':'+ss.length;
+
+      for(var j=0;j<ss.length;j++){
+
+        var s=ss[j]||{};
+        out+='|'+(s.id||j)+':'+
+          ((s.cards||[]).length);
+
+      }
+
+    }
+
+    return out;
+  }
+
+
+  function v58InvalidateIndex(){
+
+    V58IDX.stamp=null;
+    V58IDX.all=null;
+    V58IDX.map=null;
+
+  }
+
+
+  function v58BuildIndex(){
+
+    var st=v58StructureStamp();
+
+    if(
+      V58IDX.stamp===st &&
+      V58IDX.all &&
+      V58IDX.map
+    ){
+
+      return;
+
+    }
+
+
+    var all=[];
+    var map={};
+
+    var ts=DATA.topics||[];
+
+    for(var i=0;i<ts.length;i++){
+
+      var t=ts[i]||{};
+
+      var ss=t.subtopics||[];
+
+      for(var j=0;j<ss.length;j++){
+
+        var s=ss[j]||{};
+
+        var cs=s.cards||[];
+
+        for(var k=0;k<cs.length;k++){
+
+          var c=cs[k]||{};
+
+          var q=c.q||'';
+          var a=c.a||'';
+
+          var key=ck(q,a);
+
+          var item={
+            topicId:t.id,
+            topicName:t.name,
+            subId:s.id,
+            subName:s.name,
+            q:q,
+            a:a,
+            audioQKey:c.audioQKey||null,
+            audioAKey:c.audioAKey||null,
+            photoKey:c.photoKey||null,
+            tags:c.tags||[],
+            key:key
+          };
+
+          all.push(item);
+
+          /*
+           * رفتار findCard قبلی:
+           * اولین کارت متناظر را برمی‌گرداند.
+           */
+          if(!map[key]){
+            map[key]=item;
+          }
+
+        }
+
+      }
+
+    }
+
+
+    V58IDX.stamp=st;
+    V58IDX.all=all;
+    V58IDX.map=map;
+
+  }
+
+
+  /* ---------- getAllCards ---------- */
+
+  var _v58_getAllCards=getAllCards;
+
+  getAllCards=function(){
+
+    v58BuildIndex();
+
+    return V58IDX.all;
+
+  };
+
+
+  /* ---------- findCard ---------- */
+
+  var _v58_findCard=findCard;
+
+  findCard=function(k){
+
+    v58BuildIndex();
+
+    return V58IDX.map[k]||null;
+
+  };
+
+
+  /* ---------- countBy ---------- */
+
+  var _v58_countBy=countBy;
+
+  countBy=function(fn){
+
+    v58BuildIndex();
+
+    var n=0;
+    var all=V58IDX.all;
+
+    for(var i=0;i<all.length;i++){
+
+      if(fn(all[i].key)){
+        n++;
+      }
+
+    }
+
+    return n;
+
+  };
+
+
+  /* =========================================================
+     2) DUE INDEX HELPERS
+     ========================================================= */
+
+  getDueKeysForTopic=function(tid){
+
+    var t=DATA.topics.find(
+      function(x){
+        return x.id===tid;
+      }
+    );
+
+    if(!t)return [];
+
+    var out=[];
+    var ss=t.subtopics||[];
+
+    for(var i=0;i<ss.length;i++){
+
+      var cs=ss[i].cards||[];
+
+      for(var j=0;j<cs.length;j++){
+
+        var c=cs[j]||{};
+        var k=ck(c.q||'',c.a||'');
+
+        if(isDue(k)){
+          out.push(k);
+        }
+
+      }
+
+    }
+
+    return out;
+
+  };
+
+
+  getDueKeysForSub=function(tid,sid){
+
+    var t=DATA.topics.find(
+      function(x){
+        return x.id===tid;
+      }
+    );
+
+    if(!t)return [];
+
+    var s=(t.subtopics||[]).find(
+      function(x){
+        return x.id===sid;
+      }
+    );
+
+    if(!s)return [];
+
+    var out=[];
+    var cs=s.cards||[];
+
+    for(var i=0;i<cs.length;i++){
+
+      var c=cs[i]||{};
+      var k=ck(c.q||'',c.a||'');
+
+      if(isDue(k)){
+        out.push(k);
+      }
+
+    }
+
+    return out;
+
+  };
+
+
+  /* =========================================================
+     3) MOST-WRONG / MOST-VIEWED
+     بدون ساختن دوباره آرایه ۳۰۰ هزار تایی
+     ========================================================= */
+
+  getMostWrong=function(lim){
+
+    v58BuildIndex();
+
+    var a=[];
+
+    for(var i=0;i<V58IDX.all.length;i++){
+
+      var c=V58IDX.all[i];
+      var s=DATA.cards[c.key];
+
+      if(
+        s &&
+        !s.deleted &&
+        !s.suspended &&
+        (s.totalWrong||0)>0
+      ){
+
+        a.push(c);
+
+      }
+
+    }
+
+    a.sort(function(a,b){
+
+      var sa=DATA.cards[a.key]||{};
+      var sb=DATA.cards[b.key]||{};
+
+      return(
+        (sb.totalWrong||0)-
+        (sa.totalWrong||0)
+      );
+
+    });
+
+    return lim?a.slice(0,lim):a;
+
+  };
+
+
+  getMostViews=function(lim){
+
+    v58BuildIndex();
+
+    var a=[];
+
+    for(var i=0;i<V58IDX.all.length;i++){
+
+      var c=V58IDX.all[i];
+      var s=DATA.cards[c.key];
+
+      if(
+        s &&
+        !s.deleted &&
+        !s.suspended &&
+        (s.viewCount||0)>0
+      ){
+
+        a.push(c);
+
+      }
+
+    }
+
+    a.sort(function(a,b){
+
+      var sa=DATA.cards[a.key]||{};
+      var sb=DATA.cards[b.key]||{};
+
+      return(
+        (sb.viewCount||0)-
+        (sa.viewCount||0)
+      );
+
+    });
+
+    return lim?a.slice(0,lim):a;
+
+  };
+
+
+  /* =========================================================
+     4) INVALIDATE BEFORE CARD-STRUCTURE CHANGES
+     ========================================================= */
+
+  document.addEventListener(
+    'click',
+    function(e){
+
+      var t=e.target;
+
+      if(!t)return;
+
+      var b=null;
+
+      try{
+        b=t.closest(
+          '#savN,'+
+          '#savV,'+
+          '#adSave,'+
+          '#mSave,'+
+          '#eSave,'+
+          '#sdDel,'+
+          '#subBody [data-a="edit"],'+
+          '#subBody [data-a="del"],'+
+          '.simp-actions [data-act="approve"]'
+        );
+      }catch(x){
+        b=null;
+      }
+
+      if(b){
+
+        v58InvalidateIndex();
+
+      }
+
+    },
+    true
+  );
+
+
+  /* =========================================================
+     5) EDIT CARD
+     تغییر سؤال/پاسخ می‌تواند key کارت را عوض کند.
+     ========================================================= */
+
+  try{
+
+    var _v58Edit=editCardInTopics;
+
+    editCardInTopics=function(
+      oldC,
+      nq,
+      na
+    ){
+
+      v58InvalidateIndex();
+
+      var r=_v58Edit.apply(
+        this,
+        arguments
+      );
+
+      v58InvalidateIndex();
+
+      return r;
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     6) IMPORT
+     ========================================================= */
+
+  try{
+
+    var _v58Json=handleJson;
+
+    handleJson=function(){
+
+      v58InvalidateIndex();
+
+      var r=_v58Json.apply(
+        this,
+        arguments
+      );
+
+      v58InvalidateIndex();
+
+      return r;
+
+    };
+
+  }catch(e){}
+
+
+  try{
+
+    var _v58Txt=handleTxt;
+
+    handleTxt=function(){
+
+      v58InvalidateIndex();
+
+      var r=_v58Txt.apply(
+        this,
+        arguments
+      );
+
+      v58InvalidateIndex();
+
+      return r;
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     7) SIMPLIFY → APPROVE
+     ========================================================= */
+
+  try{
+
+    var _v58Approve=approveSimp;
+
+    approveSimp=function(){
+
+      v58InvalidateIndex();
+
+      var r=_v58Approve.apply(
+        this,
+        arguments
+      );
+
+      v58InvalidateIndex();
+
+      return r;
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     8) SYNC → INVALIDATE AFTER MERGE
+     ========================================================= */
+
+  try{
+
+    var _v58Sync3=syncOnce;
+
+    syncOnce=async function(){
+
+      var r=
+        await _v58Sync3.apply(
+          this,
+          arguments
+        );
+
+      /*
+       * ممکن است دستگاه دیگر:
+       * کارت جدید اضافه کرده باشد،
+       * کارت حذف کرده باشد،
+       * یا سؤال/پاسخ را تغییر داده باشد.
+       */
+      v58InvalidateIndex();
+
+      return r;
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     9) برنامه مطالعاتی:
+     ادامه = فقط کارت‌های واقعاً سررسیده
+
+     v56 اینجا همه کارت‌های دیده‌شده را وارد مرور می‌کرد:
+     isSeen(k) && isActive(k)
+
+     همین باعث می‌شد کارت زودتر از موعد هم نمایش داده شود.
+     ========================================================= */
+
+  document.addEventListener(
+    'click',
+    function(e){
+
+      var b=null;
+
+      try{
+
+        b=e.target.closest(
+          '#planBody [data-act="rev"][data-p]'
+        );
+
+      }catch(x){
+
+        b=null;
+
+      }
+
+
+      if(!b)return;
+
+
+      /*
+       * قبل از onclick اصلی خود دکمه متوقف می‌کنیم
+       * تا کد قدیمی اجرا نشود.
+       */
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+
+      var pid=b.dataset.p;
+
+      var p=DATA.plans.find(
+        function(x){
+          return x.id===pid;
+        }
+      );
+
+      if(!p){
+        toast('برنامه پیدا نشد');
+        return;
+
+      }
+
+
+      var ks=getDueKeysForTopic(
+        p.topicId
+      );
+
+
+      /*
+       * یک بررسی نهایی:
+       * حتی اگر در فاصلهٔ ساخت لیست تا شروع مرور،
+       * زمان کارت عوض شده باشد، دوباره isDue بررسی می‌شود.
+       */
+      ks=ks.filter(
+        function(k){
+          return isDue(k)&&isActive(k);
+        }
+      );
+
+
+      if(!ks.length){
+
+        toast(
+          '⏰ فعلاً کارت سررسیده‌ای برای مرور نیست'
+        );
+
+        return;
+
+      }
+
+
+      startSession(
+        'due',
+        ks,
+        {
+          tid:p.topicId
+        },
+        {
+          ordered:true
+        }
+      );
+
+    },
+    true
+  );
+
+
+  /* =========================================================
+     10) تمام ورودی‌های مرور «سررسیده» را ایمن کن
+     ========================================================= */
+
+  try{
+
+    var _v58StartSession=startSession;
+
+    startSession=function(
+      mode,
+      keys,
+      subInfo,
+      opts
+    ){
+
+      /*
+       * اگر mode=due است،
+       * قبل از ایجاد صف دوباره کارت‌ها را چک کن.
+       *
+       * این لایهٔ دوم محافظ است.
+       */
+      if(mode==='due'){
+
+        var src=keys||[];
+
+        src=src.filter(
+          function(k){
+            return isDue(k)&&isActive(k);
+          }
+        );
+
+        keys=src;
+
+        if(!keys.length){
+
+          toast(
+            '⏰ فعلاً کارت سررسیده‌ای نیست'
+          );
+
+          return;
+
+        }
+
+      }
+
+
+      return _v58StartSession(
+        mode,
+        keys,
+        subInfo,
+        opts
+      );
+
+    };
+
+
+    window.startSession=startSession;
+
+  }catch(e){}
+
+
+  /* =========================================================
+     11) QUICK REVIEW عمداً تغییر نمی‌کند
+     چون مرور سریع برای «مرور همه کارت‌های انتخاب‌شده» است،
+     نه سیستم سررسید.
+     ========================================================= */
+
+
+  /* =========================================================
+     12) CARD TIMESTAMP نهایی
+     زمان واقعی تغییر کارت بعد از ثبت پاسخ نوشته شود.
+     ========================================================= */
+
+  try{
+
+    var _v58Answer3=answerCard;
+
+    answerCard=function(
+      type,
+      fromQ4
+    ){
+
+      var c=null;
+
+      try{
+
+        c=
+          SESSION &&
+          SESSION.queue &&
+          SESSION.queue[SESSION.idx];
+
+      }catch(e){}
+
+
+      var r=_v58Answer3.apply(
+        this,
+        arguments
+      );
+
+
+      try{
+
+        if(c){
+
+          var s=getS(c.key);
+
+          if(s){
+
+            s.updatedAt=Date.now();
+
+            /*
+             * save() غیرهمزمان است و serialize کامل
+             * را همان لحظه تحمیل نمی‌کند.
+             */
+            save();
+
+          }
+
+        }
+
+      }catch(e){}
+
+
+      return r;
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     13) بهینه‌سازی محاسبهٔ امتحان
+     فقط یک بار ایندکس کارت ساخته شود.
+     ========================================================= */
+
+  try{
+
+    var _v58Unread=v58UnreadCards;
+
+    v58UnreadCards=function(){
+
+      v58BuildIndex();
+
+      var n=0;
+
+      for(
+        var i=0;
+        i<V58IDX.all.length;
+        i++
+      ){
+
+        var k=V58IDX.all[i].key;
+
+        if(
+          isActive(k) &&
+          isNew(k)
+        ){
+
+          n++;
+
+        }
+
+      }
+
+      return n;
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     14) sync delay:
+     تغییرات محلی سریع‌تر به صف همگام‌سازی برسند.
+     ========================================================= */
+
+  try{
+
+    syPushSoon=function(){
+
+      clearTimeout(SY.t);
+
+      SY.t=setTimeout(
+        function(){
+
+          syncOnce({});
+
+        },
+        8000
+      );
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     15) Startup:
+     کارهای بسیار سنگین غیرضروری بعد از نمایش اولیه
+     در زمان آزاد مرورگر اجرا شوند.
+     ========================================================= */
+
+  function v58Idle(fn,delay){
+
+    if(
+      'requestIdleCallback' in window
+    ){
+
+      requestIdleCallback(
+        function(){
+          try{
+            fn();
+          }catch(e){}
+        },
+        {
+          timeout:delay||2000
+        }
+      );
+
+    }else{
+
+      setTimeout(
+        function(){
+
+          try{
+            fn();
+          }catch(e){}
+
+        },
+        delay||500
+      );
+
+    }
+
+  }
+
+
+  /*
+   * simplifyAuto در شروع برنامه نباید بلافاصله وسط
+   * نمایش رابط کاربری وارد پردازش شود.
+   */
+  try{
+
+    var _v58AutoSimplify=autoCheckSimplify;
+
+    autoCheckSimplify=function(){
+
+      v58Idle(
+        function(){
+          _v58AutoSimplify();
+        },
+        3000
+      );
+
+    };
+
+  }catch(e){}
+
+
+  /* =========================================================
+     16) اولین ساخت ایندکس:
+     بعد از بالا آمدن برنامه، در زمان آزاد انجام شود.
+     ========================================================= */
+
+  v58Idle(
+    function(){
+
+      try{
+        v58BuildIndex();
+      }catch(e){}
+
+    },
+    1500
+  );
+
+
+  /*
+   * دسترسی جهانی برای تست/دیباگ در نسخه 58
+   */
+  window.v58InvalidateIndex=v58InvalidateIndex;
+  window.v58BuildIndex=v58BuildIndex;
+
+
+})();
+</script>
+
+<!-- =========================================================
+     END v58 PATCH 3
+     ========================================================= -->
 </body>
 </html>
