@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>فلش‌کارت v60</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0f172a}
+#v60Frame{display:block;width:100%;height:100%;border:0;background:#0f172a}
+#v60Boot{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#0f172a;color:#e2e8f0;font:700 15px Tahoma,Arial,sans-serif;
+  z-index:999999
+}
+#v60Boot .box{
+  padding:20px 24px;border:1px solid #334155;border-radius:14px;
+  background:#1e293b;box-shadow:0 0 30px rgba(34,211,238,.14);
+  text-align:center;line-height:2
+}
+</style>
+</head>
+<body>
+<div id="v60Boot"><div class="box">در حال راه‌اندازی نسخهٔ ۶۰…</div></div>
+<iframe id="v60Frame" title="Flashcard v60" allow="autoplay" loading="eager"></iframe>
+<script>
+(function(){
+  'use strict';
+
+  var frame=document.getElementById('v60Frame');
+  var boot=document.getElementById('v60Boot');
+  var patched=false;
+  var tries=0;
+
+  function hideBoot(){if(boot)boot.style.display='none';}
+  function showBoot(msg){
+    if(!boot)return;
+    boot.style.display='flex';
+    var b=boot.querySelector('.box');
+    if(b)b.textContent=msg||'در حال راه‌اندازی…';
+  }
+
+  /*
+   * v58 خودش هستهٔ v56 را در یک iframe اجرا می‌کند.
+   * در v60 همان معماریِ سالم v58 حفظ شده است؛ بر خلاف v59
+   * هیچ srcdoc و هیچ جایگزینیِ مخربِ init وجود ندارد.
+   */
+  frame.src='./app-v58.html?v60base=1';
+
+  function getInnerApp(){
+    try{
+      var outer=frame.contentWindow;
+      if(!outer)return null;
+      var inner=outer.document.getElementById('v58Frame');
+      if(!inner||!inner.contentWindow||!inner.contentDocument)return null;
+      var W=inner.contentWindow,D=inner.contentDocument;
+      if(!W||!D||!W.DATA||!W.SESSION)return null;
+      if(!D.getElementById('cardArea'))return null;
+      return {W:W,D:D,outer:outer,inner:inner};
+    }catch(e){return null}
+  }
+
+  function waitForApp(){
+    if(patched)return;
+    tries++;
+    var a=getInnerApp();
+    if(a){
+      try{
+        patchApp(a.W,a.D,a.outer,a.inner);
+        patched=true;
+        hideBoot();
+        return;
+      }catch(e){
+        console.error('v60 patch error',e);
+        if(tries>80)showBoot('نسخهٔ ۶۰ نتوانست برنامه را آماده کند.');
+      }
+    }
+    if(tries<180)setTimeout(waitForApp,100);
+    else showBoot('نسخهٔ ۶۰ نتوانست برنامهٔ پایه را آماده کند.');
+  }
+
+  frame.addEventListener('load',waitForApp);
+  waitForApp();
+
+  function patchApp(W,D,outer,inner){
+    if(W.__V60_FINAL__)return;
+    W.__V60_FINAL__=true;
+
+    var DATA=W.DATA;
+    var SESSION=W.SESSION;
+    if(!DATA||!SESSION)throw new Error('DATA/SESSION پیدا نشد');
+
+    function toast(m){
+      try{if(typeof W.toast==='function')return W.toast(m)}catch(e){}
+      try{alert(m)}catch(e){}
+    }
+    function save(){try{if(typeof W.save==='function')return W.save()}catch(e){}}
+    async function saveNow(){
+      try{if(typeof W.saveNow==='function')return await W.saveNow()}catch(e){}
+      save();return true;
+    }
+
+    /* =========================================================
+       ۱) ظاهر کارت: عمودی‌تر، فونت متعادل‌تر، فاصلهٔ خطوط بیشتر
+       ========================================================= */
+    var style=D.createElement('style');
+    style.id='v60-final-style';
+    style.textContent=`
+      :root{
+        --v60-neon:#22d3ee;
+        --v60-neon2:#a78bfa;
+        --v60-good:#4ade80;
+        --v60-mid:#fbbf24;
+        --v60-bad:#f87171;
+      }
+
+      /* کارت در v60 از نظر عرض جمع‌وجورتر و از نظر ارتفاع بزرگ‌تر است. */
+      .card-area{
+        width:100%!important;
+        max-width:700px!important;
+        min-height:660px!important;
+        height:auto!important;
+        margin:0 auto 12px!important;
+        padding:38px 26px 54px!important;
+        border-radius:20px!important;
+      }
+      .card-area .c-head{
+        min-height:82px!important;
+        padding:46px 18px 18px!important;
+        margin-bottom:14px!important;
+      }
+      .card-area .q{
+        min-height:285px!important;
+        padding:34px 24px!important;
+        font-size:16px!important;
+        line-height:2.15!important;
+        font-weight:600!important;
+        overflow-wrap:anywhere!important;
+        white-space:normal!important;
+      }
+      .card-area .a{
+        min-height:205px!important;
+        padding:30px 24px 38px!important;
+        margin-top:14px!important;
+        font-size:16px!important;
+        line-height:2.15!important;
+        font-weight:600!important;
+        overflow-wrap:anywhere!important;
+      }
+      .card-area .q p,.card-area .a p{
+        margin:.55em 0!important;
+      }
+
+      body.focus-mode.in-session,
+      body.v58-quick-session{
+        overflow-y:auto!important;
+        overflow-x:hidden!important;
+      }
+      body.focus-mode.in-session .page-wrap{
+        display:block!important;
+        width:100%!important;
+        max-width:740px!important;
+        margin:0 auto!important;
+      }
+      body.focus-mode.in-session .main-col{
+        display:block!important;
+        width:100%!important;
+        min-width:0!important;
+      }
+      body.focus-mode.in-session .card-area.show,
+      body.v58-quick-session .card-area.show{
+        width:100%!important;
+        max-width:700px!important;
+        min-height:700px!important;
+        height:auto!important;
+        padding:38px 26px 54px!important;
+        margin:0 auto 12px!important;
+        border-radius:22px!important;
+      }
+      body.focus-mode.in-session .card-area .q,
+      body.v58-quick-session .card-area .q{
+        min-height:305px!important;
+        padding:36px 24px!important;
+        font-size:16px!important;
+        line-height:2.15!important;
+      }
+      body.focus-mode.in-session .card-area .a,
+      body.v58-quick-session .card-area .a{
+        min-height:220px!important;
+        padding:32px 24px 40px!important;
+        font-size:16px!important;
+        line-height:2.15!important;
+      }
+
+      @media(max-width:700px){
+        .card-area{
+          max-width:calc(100vw - 12px)!important;
+          min-height:620px!important;
+          padding:30px 14px 46px!important;
+        }
+        .card-area .c-head{padding:40px 8px 16px!important;min-height:76px!important}
+        .card-area .q{min-height:265px!important;padding:30px 12px!important;font-size:15.5px!important;line-height:2.1!important}
+        .card-area .a{min-height:185px!important;padding:28px 12px 34px!important;font-size:15.5px!important;line-height:2.1!important}
+        body.focus-mode.in-session .card-area.show,
+        body.v58-quick-session .card-area.show{
+          max-width:calc(100vw - 12px)!important;
+          min-height:650px!important;
+          padding:30px 14px 46px!important;
+        }
+        body.focus-mode.in-session .card-area .q,
+        body.v58-quick-session .card-area .q{min-height:280px!important;font-size:15.5px!important}
+        body.focus-mode.in-session .card-area .a,
+        body.v58-quick-session .card-area .a{min-height:195px!important;font-size:15.5px!important}
+      }
+
+      /* پاسخ‌ها: درست چپ، حدودی وسط، غلط راست */
+      #actions,.actions{
+        direction:ltr!important;
+        display:grid!important;
+        grid-template-columns:repeat(3,minmax(0,1fr))!important;
+        gap:8px!important;
+        width:100%!important;
+        max-width:700px!important;
+        margin:9px auto 7px!important;
+      }
+      #actions button,.actions button{direction:rtl!important;min-height:50px!important;border-radius:11px!important}
+      .v58-answer-good{order:1!important}
+      .v58-answer-mid{order:2!important}
+      .v58-answer-bad{order:3!important}
+
+      /* =======================================================
+         نئون قوی‌تر برای منوها، میانبرها و کلیدها
+         ======================================================= */
+      .menu-btn,.mid-item,.rail-item,.icon-btn,.btn,.mini,.drop-i,
+      .nav button,.tool,.act,.end button,.quiz-opt,.modal button,
+      .top-actions button,kbd,input[type=button],input[type=submit]{
+        transition:box-shadow .16s ease,border-color .16s ease,
+                   text-shadow .16s ease,transform .12s ease!important;
+      }
+      .menu-btn:hover,.menu-btn:focus-visible,.mid-item:hover,.mid-item:focus-visible,
+      .rail-item:hover,.rail-item:focus-visible,.icon-btn:hover,.icon-btn:focus-visible,
+      .btn:hover,.btn:focus-visible,.mini:hover,.mini:focus-visible,
+      .drop-i:hover,.drop-i:focus-visible,.nav button:hover,.nav button:focus-visible,
+      .tool:hover,.tool:focus-visible,.act:hover,.act:focus-visible,
+      .end button:hover,.end button:focus-visible,.quiz-opt:hover,.quiz-opt:focus-visible,
+      .modal button:hover,.modal button:focus-visible,.top-actions button:hover,
+      .top-actions button:focus-visible,kbd:focus-visible{
+        border-color:var(--v60-neon)!important;
+        box-shadow:0 0 8px rgba(34,211,238,.55),0 0 22px rgba(34,211,238,.22)!important;
+        text-shadow:0 0 7px rgba(34,211,238,.72)!important;
+      }
+      .menu-btn:active,.mid-item:active,.rail-item:active,.icon-btn:active,
+      .btn:active,.mini:active,.drop-i:active,.nav button:active,.tool:active,
+      .act:active,.end button:active,.quiz-opt:active,.modal button:active{
+        transform:scale(.97)!important;
+      }
+      kbd{
+        border-color:var(--v60-neon)!important;
+        color:var(--v60-neon)!important;
+        box-shadow:0 0 7px rgba(34,211,238,.35),inset 0 0 7px rgba(34,211,238,.07)!important;
+        text-shadow:0 0 7px rgba(34,211,238,.78)!important;
+      }
+      #btnSync{
+        border-color:var(--v60-neon)!important;
+        color:var(--v60-neon)!important;
+        box-shadow:0 0 8px rgba(34,211,238,.5),0 0 20px rgba(34,211,238,.18)!important;
+      }
+      #v58BackBtn,#v60BackBtn{
+        border-color:var(--v60-neon2)!important;
+        color:var(--v60-neon2)!important;
+        box-shadow:0 0 8px rgba(167,139,250,.45),0 0 20px rgba(167,139,250,.18)!important;
+        text-shadow:0 0 7px rgba(167,139,250,.75)!important;
+      }
+
+      /* Top 20: هیچ نام درس/مبحث در کارت رتبه‌بندی نمایش داده نشود. */
+      .v58-top-card .topic,.v58-top-card .topic-name,
+      .v58-top-card .subtopic,.v58-top-card .sub-name{display:none!important}
+      .v58-top-card{border-color:var(--bd)!important}
+      .v58-top-card:hover{border-color:var(--v60-neon)!important;box-shadow:0 0 10px rgba(34,211,238,.26)!important}
+
+      #v60ExamSettings{border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:8px}
+      #v60ExamSettings h4{margin-bottom:9px}
+      #v60ExamSettings label{display:block;margin:7px 0;font-size:11px;color:var(--muted)}
+      #v60ExamSettings input[type=number]{background:var(--bg);color:var(--text);border:1px solid var(--bd);border-radius:6px;padding:5px;width:78px}
+
+      .v60-last-sub{
+        outline:2px solid var(--v60-neon)!important;
+        outline-offset:3px!important;
+        border-radius:8px!important;
+        box-shadow:0 0 15px rgba(34,211,238,.35)!important;
+      }
+    `;
+    D.head.appendChild(style);
+
+    /* =========================================================
+       ۲) نسخهٔ ۶۰
+       ========================================================= */
+    try{
+      D.title='فلش‌کارت v60';
+      D.documentElement.dataset.version='60';
+      W.V60={version:60};
+    }catch(e){}
+
+    /* =========================================================
+       ۳) همگام‌سازی: دکمهٔ دستی دیگر force نمی‌کند تا ETag کار کند.
+          یعنی روی هر دستگاهی که هستی می‌توانی Sync بزنی.
+       ========================================================= */
+    var originalSync=(typeof W.syncOnce==='function')?W.syncOnce:null;
+    var lastSyncWrapper=null;
+    if(originalSync){
+      W.syncOnce=async function(opts){
+        opts=opts||{};
+        if(lastSyncWrapper)return lastSyncWrapper;
+
+        /* وضعیت پیش از Sync را فقط برای تشخیص پس‌رفت نگه می‌داریم. */
+        var before={};
+        try{
+          Object.keys(DATA.cards||{}).forEach(function(k){
+            var s=DATA.cards[k];
+            if(s)before[k]={
+              stepIndex:s.stepIndex,
+              nextDue:s.nextDue,
+              seen:s.seen,
+              updatedAt:s.updatedAt,
+              lastActionAt:s.lastActionAt
+            };
+          });
+        }catch(e){}
+
+        lastSyncWrapper=(async function(){
+          try{
+            var r=await originalSync(Object.assign({},opts,{v60:true,force:false}));
+
+            /* محافظ پس‌رفت: فقط وقتی نتیجهٔ جدید، قدیمی‌تر از وضعیت محلی قبلی باشد. */
+            var restored=0;
+            try{
+              Object.keys(before).forEach(function(k){
+                var b=before[k],a=DATA.cards&&DATA.cards[k];
+                if(!b||!a)return;
+                var bs=Number(b.stepIndex||0),as=Number(a.stepIndex||0);
+                var bu=Number(b.updatedAt||b.lastActionAt||0);
+                var au=Number(a.updatedAt||a.lastActionAt||0);
+                if(bs>as && bu>0 && au>0 && au<=bu){
+                  a.stepIndex=b.stepIndex;
+                  a.nextDue=b.nextDue;
+                  a.seen=b.seen;
+                  a.updatedAt=b.updatedAt;
+                  a.lastActionAt=b.lastActionAt;
+                  restored++;
+                }
+              });
+              if(restored){
+                await saveNow();
+                if(typeof W.render==='function')W.render();
+                toast('🛡️ از پس‌رفت ناخواستهٔ '+restored+' کارت جلوگیری شد');
+              }
+            }catch(e){}
+
+            return r;
+          }finally{
+            lastSyncWrapper=null;
+          }
+        })();
+        return await lastSyncWrapper;
+      };
+    }
+
+    function manualSync(){
+      if(typeof W.syRec!=='function'||typeof W.syncOnce!=='function'){
+        toast('☁️ بخش همگام‌سازی در دسترس نیست');
+        return;
+      }
+      var rec=W.syRec();
+      if(!rec.token){
+        toast('☁️ ابتدا اتصال ابر را از تنظیمات فعال کن');
+        return;
+      }
+      W.syncOnce({background:false,v60:true,force:false}).then(function(r){
+        if(!r)return;
+        if(r.s==='err')toast('❌ '+(r.m||'خطای همگام‌سازی'));
+        else if(r.s==='busy')toast('☁️ همگام‌سازی در حال انجام است');
+        else if(r.s==='merged')toast('☁️ اطلاعات دو دستگاه ادغام شد ✅');
+        else if(r.s==='pulled')toast('☁️ اطلاعات دریافت شد ✅');
+        else if(r.s==='pushed')toast('☁️ اطلاعات ارسال شد ✅');
+        else toast('☁️ همگام است ✅');
+      }).catch(function(e){toast('❌ '+String(e&&e.message||e))});
+    }
+
+    var cloud=D.getElementById('btnSync');
+    if(cloud)cloud.onclick=manualSync;
+    var syNow=D.getElementById('syNow');
+    if(syNow)syNow.onclick=manualSync;
+
+    /* =========================================================
+       ۴) برنامهٔ مطالعاتی: فقط کارت‌های سررسید وارد مرور شوند.
+       ========================================================= */
+    function active(k){try{return W.isActive(k)}catch(e){return true}}
+    function due(k){try{return W.isDue(k)}catch(e){return false}}
+    function dueKeys(tid,sid){
+      var out=[];
+      var topics=DATA.topics||[];
+      for(var i=0;i<topics.length;i++){
+        var t=topics[i];
+        if(!t||t.id!==tid)continue;
+        var subs=t.subtopics||[];
+        for(var j=0;j<subs.length;j++){
+          var s=subs[j];
+          if(!s)continue;
+          if(sid&&s.id!==sid)continue;
+          var cards=s.cards||[];
+          for(var z=0;z<cards.length;z++){
+            var c=cards[z]||{};
+            var k=typeof W.ck==='function'?W.ck(c.q||'',c.a||''):String(c.q||'')+'\u0000'+String(c.a||'');
+            if(active(k)&&due(k))out.push(k);
+          }
+        }
+      }
+      return out;
+    }
+    W.getDueKeysForTopicV60=dueKeys;
+
+    /* هر مسیر «مرور برنامه» را قبل از آغاز جلسه دوباره فیلتر کن. */
+    function hookPlanClicks(){
+      D.addEventListener('click',function(e){
+        var b=e.target.closest&&e.target.closest('#planBody [data-act="rev"][data-p]');
+        if(!b)return;
+        var p=(DATA.plans||[]).find(function(x){return x&&x.id===b.dataset.p});
+        if(!p)return;
+        var ks=dueKeys(p.topicId);
+        if(!ks.length){
+          e.preventDefault();e.stopImmediatePropagation();
+          toast('⏰ فعلاً کارت سررسیده‌ای برای این برنامه نیست');
+        }
+      },true);
+    }
+    hookPlanClicks();
+
+    /* =========================================================
+       ۵) میانبر + و آخرین مبحث تکمیل‌شده
+       ========================================================= */
+    function findLastSub(){
+      try{
+        var x=DATA.lastReadSubtopic;
+        return x&&x.tid&&x.sid?x:null;
+      }catch(e){return null}
+    }
+    function scrollLastSub(){
+      var x=findLastSub();
+      if(!x){toast('هنوز مبحث تمام‌شده‌ای ثبت نشده');return}
+      try{
+        if(typeof W.showTopicsPanel==='function')W.showTopicsPanel();
+      }catch(e){}
+      setTimeout(function(){
+        var row=null,all=D.querySelectorAll('#topicsList input[data-a="rd"]');
+        for(var i=0;i<all.length;i++){
+          if(all[i].dataset.t===String(x.tid)&&all[i].dataset.s===String(x.sid)){
+            row=all[i].closest('.sub-row')||all[i].parentElement;break;
+          }
+        }
+        if(!row){toast('مبحث آخر پیدا نشد');return}
+        D.querySelectorAll('.v60-last-sub').forEach(function(z){z.classList.remove('v60-last-sub')});
+        row.classList.add('v60-last-sub');
+        var top=D.querySelector('.topbar');
+        var y=row.getBoundingClientRect().top+W.scrollY-((top?top.offsetHeight:60)+12);
+        W.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+        setTimeout(function(){row.classList.remove('v60-last-sub')},1900);
+      },180);
+    }
+    W.v60ScrollLastSub=scrollLastSub;
+    D.addEventListener('keydown',function(e){
+      if(e.code==='NumpadAdd'||e.key==='+'){
+        e.preventDefault();e.stopPropagation();scrollLastSub();
+      }
+    },true);
+
+    /* =========================================================
+       ۶) برگشت: همان snapshot دقیق v58 + fallback
+       ========================================================= */
+    var backFn=(typeof W.v58Back==='function')?W.v58Back:null;
+    function exactBack(){
+      try{
+        if(backFn){backFn();return}
+      }catch(e){}
+      try{if(D.querySelector('.modal-bg.show')&&typeof W.closeModal==='function'){W.closeModal();return}}catch(e){}
+      try{if(W.goHome)W.goHome()}catch(e){
+        try{if(W.history&&W.history.length>1)W.history.back()}catch(x){}
+      }
+    }
+    var backBtn=D.getElementById('v58BackBtn');
+    if(backBtn){
+      backBtn.id='v60BackBtn';
+      backBtn.title='برگشت دقیق به صفحهٔ قبلی';
+      backBtn.onclick=exactBack;
+    }else{
+      var settingsBtn=D.getElementById('btnSettings');
+      if(settingsBtn&&settingsBtn.parentNode&&!D.getElementById('v60BackBtn')){
+        var b=D.createElement('button');
+        b.id='v60BackBtn';b.className='icon-btn';b.textContent='↩️';
+        b.title='برگشت دقیق به صفحهٔ قبلی';b.onclick=exactBack;
+        settingsBtn.parentNode.insertBefore(b,settingsBtn);
+      }
+    }
+    W.v60Back=exactBack;
+
+    /* =========================================================
+       ۷) Enter = ذخیره/تأیید در تمام پنجره‌ها
+       ========================================================= */
+    function modalSaveButton(modal){
+      if(!modal)return null;
+      var byId=modal.querySelector('#eSave,#noteSave,#mSave,#savV,#doNt2,#doEx,#doQ4,#doPlan,#savePlan,#syConn,.btn.primary');
+      if(byId&&!byId.disabled)return byId;
+      var bs=Array.from(modal.querySelectorAll('button'));
+      var re=/(ذخیره|ثبت|تأیید|شروع|اضافه|ویرایش|انجام|اتصال|ذخیره و بستن)/;
+      return bs.find(function(b){return !b.disabled&&re.test((b.textContent||'').trim())})||null;
+    }
+    D.addEventListener('keydown',function(e){
+      if(e.key!=='Enter'||e.shiftKey)return;
+      var t=e.target;
+      var modal=t&&t.closest?t.closest('.modal-bg,.story-modal,.levelup-modal'):null;
+      if(!modal)return;
+      var b=modalSaveButton(modal);
+      if(b){e.preventDefault();e.stopImmediatePropagation();b.click()}
+    },true);
+
+    /* =========================================================
+       ۸) تنظیمات امتحان: ۴ ماه پیش‌فرض + محاسبه و نمایش جداگانه
+       ========================================================= */
+    DATA.exam=DATA.exam||{};
+    if(DATA.exam.calcMonths==null)DATA.exam.calcMonths=4;
+    if(DATA.exam.calcDaily==null)DATA.exam.calcDaily=true;
+    if(DATA.exam.showDaily==null)DATA.exam.showDaily=true;
+
+    var v58Exam=W.V58&&W.V58.renderExamPlan;
+    if(typeof v58Exam==='function'){
+      W.v60RenderExamPlan=function(){
+        try{v58Exam();}catch(e){}
+        try{
+          var b=D.getElementById('examBox');
+          if(!b||DATA.exam.calcDaily!==false)return;
+          var parts=(b.innerHTML||'').split('<br>');
+          b.innerHTML=parts[0]||'';
+        }catch(e){}
+      };
+    }
+
+    function addExamV60(){
+      var p=D.getElementById('pSettings');
+      if(!p||D.getElementById('v60ExamSettings'))return;
+      var sec=D.createElement('div');
+      sec.className='sect';sec.id='v60ExamSettings';
+      sec.innerHTML=
+        '<h4>📚 محاسبهٔ مطالعه تا امتحان</h4>'+
+        '<label><input type="checkbox" id="v60CalcExam"> محاسبهٔ تعداد کارت پیشنهادی روزانه</label>'+ 
+        '<label><input type="checkbox" id="v60ShowExam"> نمایش تعداد کارت پیشنهادی روزانه</label>'+ 
+        '<label>مدت محاسبه: <input type="number" id="v60ExamMonths" min="1" max="24" step="1"> ماه</label>'+ 
+        '<div style="font-size:10px;color:var(--muted);margin-top:5px">پیش‌فرض: ۴ ماه</div>';
+      p.appendChild(sec);
+
+      var c=D.getElementById('v60CalcExam');
+      var s=D.getElementById('v60ShowExam');
+      var m=D.getElementById('v60ExamMonths');
+      if(c){c.checked=DATA.exam.calcDaily!==false;c.onchange=function(){DATA.exam.calcDaily=this.checked;save();renderExamV60()}}
+      if(s){s.checked=DATA.exam.showDaily!==false;s.onchange=function(){DATA.exam.showDaily=this.checked;save();renderExamV60()}}
+      if(m){m.value=Number(DATA.exam.calcMonths)||4;m.onchange=function(){var v=Math.max(1,Math.min(24,parseInt(this.value,10)||4));DATA.exam.calcMonths=v;save();renderExamV60()}}
+    }
+    function renderExamV60(){
+      try{
+        if(typeof W.v60RenderExamPlan==='function')W.v60RenderExamPlan();
+        else if(typeof v58Exam==='function')v58Exam();
+      }catch(e){}
+      try{
+        if(DATA.exam.calcDaily===false||DATA.exam.showDaily===false){
+          var b=D.getElementById('examBox');
+          if(b){var x=(b.innerHTML||'').split('<br>');b.innerHTML=x[0]||''}
+        }
+      }catch(e){}
+    }
+    W.v60RenderExamPlan=renderExamV60;
+    addExamV60();
+    renderExamV60();
+
+    /* =========================================================
+       ۹) Top 20 و سرعت refresh
+       ========================================================= */
+    function refreshTop(){
+      try{
+        ['mostWrongsBody','mostViewsBody'].forEach(function(id){
+          var b=D.getElementById(id);if(!b)return;
+          b.querySelectorAll('.topic,.topic-name,.subtopic,.sub-name').forEach(function(x){x.style.display='none'});
+        });
+      }catch(e){}
+    }
+    refreshTop();
+
+    /* =========================================================
+       ۱۰) به‌روزرسانی آخرین مبحث بعد از برگشت به درس‌ها
+       ========================================================= */
+    if(typeof W.showTopicsPanel==='function'){
+      var oldTopics=W.showTopicsPanel;
+      W.showTopicsPanel=function(){
+        var r=oldTopics.apply(this,arguments);
+        setTimeout(function(){refreshTop();scrollLastSub();},140);
+        return r;
+      };
+    }
+
+    /* =========================================================
+       ۱۱) MutationObserver: فقط کارهای سبک
+       ========================================================= */
+    if(typeof MutationObserver!=='undefined'){
+      var mo=new MutationObserver(function(){
+        refreshTop();
+        try{
+          var bb=D.getElementById('v60BackBtn');
+          if(bb)bb.title='برگشت دقیق به صفحهٔ قبلی';
+        }catch(e){}
+      });
+      mo.observe(D.body,{childList:true,subtree:true});
+    }
+
+    /* =========================================================
+       ۱۲) اطلاعات نسخه
+       ========================================================= */
+    W.V60={
+      version:60,
+      scrollLastSub:scrollLastSub,
+      back:exactBack,
+      manualSync:manualSync,
+      renderExamPlan:renderExamV60,
+      dueKeysForTopic:dueKeys
+    };
+
+    /* متن نسخه در عنوان نوار مرورگر/تب */
+    try{D.title='فلش‌کارت v60';}catch(e){}
+    try{
+      if(outer&&outer.document)outer.document.title='فلش‌کارت v60';
+    }catch(e){}
+  }
+})();
+</script>
+</body>
+</html>
