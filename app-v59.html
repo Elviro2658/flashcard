@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>فلش‌کارت v59</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0f172a}
+#v59Frame{display:block;width:100%;height:100%;border:0;background:#0f172a}
+#v59Boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#0f172a;color:#e2e8f0;font:700 15px Tahoma,Arial,sans-serif;z-index:999999}
+#v59Boot .box{padding:20px 24px;border:1px solid #334155;border-radius:14px;background:#1e293b;box-shadow:0 0 30px rgba(34,211,238,.12);text-align:center;line-height:2}
+</style>
+</head>
+<body>
+<div id="v59Boot"><div class="box">در حال راه‌اندازی نسخهٔ ۵۹…</div></div>
+<iframe id="v59Frame" title="Flashcard v59" allow="autoplay"></iframe>
+<script>
+(function(){
+  'use strict';
+
+  var frame=document.getElementById('v59Frame');
+  var boot=document.getElementById('v59Boot');
+  var BASE='./app-v56.html';
+
+  function hideBoot(){if(boot)boot.style.display='none'}
+  function showBoot(msg){if(boot){boot.style.display='flex';var b=boot.querySelector('.box');if(b)b.textContent=msg||'در حال راه‌اندازی…'}}
+
+  function guardBaseSync(src){
+    /* v56 قبل از اینکه patch بیرونی برسد، sync قدیمی را اجرا می‌کرد.
+       این guard را قبل از init می‌گذاریم تا دیگر هیچ pull/replace قدیمی رخ ندهد. */
+    var marker='async function init(){';
+    var guard="async function init(){try{syOn=function(){return false};syncOnce=async function(){return {s:'off'}}}catch(e){}}";
+    if(src.indexOf(marker)>=0)return src.replace(marker,guard);
+    marker='function init(){';
+    guard="function init(){try{syOn=function(){return false};syncOnce=async function(){return {s:'off'}}}catch(e){}}";
+    if(src.indexOf(marker)>=0)return src.replace(marker,guard);
+    return src;
+  }
+
+  async function bootBase(){
+    try{
+      var r=await fetch(BASE,{cache:'no-store'});
+      if(!r.ok)throw new Error('app-v56.html ('+r.status+')');
+      var src=await r.text();
+      src=guardBaseSync(src);
+      frame.srcdoc=src;
+    }catch(e){
+      console.error(e);
+      showBoot('نسخهٔ ۵۹ نتوانست برنامهٔ پایه را بارگذاری کند.');
+      return;
+    }
+
+    var tries=0;
+    function waitPatch(){
+      tries++;
+      try{
+        var W=frame.contentWindow,D=frame.contentDocument;
+        if(W&&D&&W.DATA&&W.SESSION&&D.getElementById('cardArea')){
+          patchApp(W,D);
+          hideBoot();
+          return;
+        }
+      }catch(e){}
+      if(tries<120)setTimeout(waitPatch,100);
+      else showBoot('نسخهٔ ۵۹ نتوانست برنامه را آماده کند.');
+    }
+    waitPatch();
+  }
+
+  /* Service worker بیرونی: نسخهٔ سریع و قابل به‌روزرسانی. */
+  try{
+    if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js?v=59').catch(function(){});
+  }catch(e){}
+
+  function patchApp(W,D){
+    if(W.__V59_FINAL__)return;
+    W.__V59_FINAL__=true;
+
+    var DATA=W.DATA,SESSION=W.SESSION;
+    if(!DATA||!SESSION)throw new Error('DATA/SESSION پیدا نشد');
+    var META_KEY='FC59_SYNC_META';
+    var STATE_FILE='flashcards-sync.json';
+    var DECK_FILE='flashcards-deck-v59.json';
+    var GAPI='https://api.github.com';
+    var SHARDS=32;
+    var syncLock=null,syncTimer=null,shardCache=null,shardReady=false;
+    var dirtyShards={};
+    var deckDirty=false;
+
+    function esc(s){
+      try{if(W.esc)return W.esc(String(s==null?'':s))}catch(e){}
+      return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});
+    }
+    function toast(m){try{if(W.toast)return W.toast(m)}catch(e){} }
+    function save(){try{if(W.save)W.save()}catch(e){}}
+    async function saveNow(){try{if(W.saveNow)return await W.saveNow()}catch(e){}save();return true}
+    function now(){return Date.now()}
+
+    /* ========================= ظاهر کارت ========================= */
+    var st=D.createElement('style');
+    st.id='v59-final-style';
+    st.textContent=`
+      /* کارت باریک‌تر و عمودی‌تر؛ فونت عمداً کوچک‌تر از v58 */
+      .card-area{
+        width:100%!important;
+        max-width:680px!important;
+        min-height:640px!important;
+        height:auto!important;
+        margin:0 auto 10px!important;
+        padding:32px 22px 48px!important;
+        border-radius:18px!important;
+      }
+      .card-area .c-head{
+        min-height:72px!important;
+        padding:38px 14px 16px!important;
+        margin-bottom:10px!important;
+      }
+      .card-area .q{
+        min-height:270px!important;
+        padding:34px 22px!important;
+        font-size:17px!important;
+        line-height:1.9!important;
+        font-weight:600!important;
+      }
+      .card-area .a{
+        min-height:190px!important;
+        padding:28px 22px 34px!important;
+        margin-top:10px!important;
+        font-size:17px!important;
+        line-height:1.9!important;
+        font-weight:600!important;
+      }
+      body.focus-mode.in-session{
+        height:auto!important;
+        min-height:100dvh!important;
+        overflow-y:auto!important;
+        overflow-x:hidden!important;
+        display:block!important;
+        padding:62px 8px calc(8px + env(safe-area-inset-bottom))!important;
+      }
+      body.focus-mode.in-session .page-wrap{
+        display:block!important;
+        width:100%!important;
+        max-width:720px!important;
+        margin:0 auto!important;
+      }
+      body.focus-mode.in-session .main-col{
+        display:block!important;
+        width:100%!important;
+        min-width:0!important;
+      }
+      body.focus-mode.in-session .card-area.show,
+      body.v59-quick-session .card-area.show{
+        width:100%!important;
+        max-width:680px!important;
+        min-height:640px!important;
+        height:auto!important;
+        margin:0 auto 10px!important;
+        padding:32px 22px 48px!important;
+        border-radius:18px!important;
+      }
+      body.focus-mode.in-session .card-area .q,
+      body.v59-quick-session .card-area .q{
+        min-height:270px!important;
+        padding:34px 22px!important;
+        font-size:17px!important;
+        line-height:1.9!important;
+      }
+      body.focus-mode.in-session .card-area .a,
+      body.v59-quick-session .card-area .a{
+        min-height:190px!important;
+        padding:28px 22px 34px!important;
+        font-size:17px!important;
+        line-height:1.9!important;
+      }
+      /* درست = چپ پایین، حدودی = وسط، غلط = راست پایین */
+      #actions,.actions{
+        direction:ltr!important;
+        display:grid!important;
+        grid-template-columns:repeat(3,minmax(0,1fr))!important;
+        gap:7px!important;
+        width:100%!important;
+        max-width:680px!important;
+        margin:8px auto 6px!important;
+      }
+      #actions button,.actions button{
+        direction:rtl!important;
+        min-height:48px!important;
+        border-radius:10px!important;
+      }
+      #actions .correct,.actions .correct{grid-column:1!important;grid-row:1!important;order:1!important}
+      #actions .partial,.actions .partial{grid-column:2!important;grid-row:1!important;order:2!important}
+      #actions .wrong,.actions .wrong{grid-column:3!important;grid-row:1!important;order:3!important}
+      #actions.study,.actions.study{grid-template-columns:1fr!important}
+      #actions.study .study,.actions.study .study{grid-column:1!important}
+      #btnSync{box-shadow:0 0 8px rgba(34,211,238,.4)!important}
+      #v59ExamSettings{border:1px solid var(--bd);border-radius:10px;padding:10px;margin-top:8px}
+      #v59ExamSettings h4{margin-bottom:8px}
+      #v59ShowDailyExam,#v59CalcExam{accent-color:var(--accent)}
+      @media(max-width:600px){
+        .card-area{max-width:680px!important;min-height:620px!important;padding:30px 15px 44px!important}
+        .card-area .c-head{padding:36px 8px 14px!important}
+        .card-area .q{min-height:255px!important;padding:30px 14px!important;font-size:17px!important;line-height:1.9!important}
+        .card-area .a{min-height:175px!important;padding:26px 14px 32px!important;font-size:17px!important;line-height:1.9!important}
+        body.focus-mode.in-session .card-area.show,
+        body.v59-quick-session .card-area.show{min-height:620px!important;padding:30px 15px 44px!important}
+        body.focus-mode.in-session .card-area .q,
+        body.v59-quick-session .card-area .q{min-height:255px!important;padding:30px 14px!important;font-size:17px!important}
+        body.focus-mode.in-session .card-area .a,
+        body.v59-quick-session .card-area .a{min-height:175px!important;padding:26px 14px 32px!important;font-size:17px!important}
+      }
+    `;
+    D.head.appendChild(st);
+
+    /* ========================= آخرین مبحث ========================= */
+    function loadLastSub(){
+      try{return JSON.parse(localStorage.getItem('FC59_LAST_SUB')||'null')}catch(e){return null}
+    }
+    function saveLastSub(x){try{localStorage.setItem('FC59_LAST_SUB',JSON.stringify(x))}catch(e){}}
+    function rememberCompleted(tid,sid){
+      if(!tid||!sid)return;
+      var x={tid:tid,sid:sid,at:now()};
+      DATA.lastReadSubtopic=x;
+      saveLastSub(x);
+      save();
+    }
+    function subComplete(tid,sid){
+      try{
+        var t=(DATA.topics||[]).find(function(x){return x.id===tid});if(!t)return false;
+        var s=(t.subtopics||[]).find(function(x){return x.id===sid});if(!s)return false;
+        var cards=(s.cards||[]).filter(function(c){return W.isActive?W.isActive(W.ck(c.q||'',c.a||'')):true});
+        return cards.length>0 && cards.every(function(c){var k=W.ck(c.q||'',c.a||'');var z=DATA.cards[k];return z&&z.seen});
+      }catch(e){return false}
+    }
+    if(typeof W.setSubRead==='function'){
+      var baseSetSubRead=W.setSubRead;
+      W.setSubRead=function(tid,sid,v){
+        var r=baseSetSubRead.apply(this,arguments);
+        if(v)rememberCompleted(tid,sid);
+        return r;
+      };
+    }
+    if(typeof W.autoMarkSubRead==='function'){
+      var baseAuto=W.autoMarkSubRead;
+      W.autoMarkSubRead=function(){
+        var before=Object.assign({},DATA.readSubtopics||{});
+        var r=baseAuto.apply(this,arguments);
+        Object.keys(DATA.readSubtopics||{}).forEach(function(k){
+          if(DATA.readSubtopics[k]&&!before[k]){var p=k.split('|');if(p.length>=2)rememberCompleted(p[0],p[1])}
+        });
+        return r;
+      };
+    }
+    function getLastSub(){return DATA.lastReadSubtopic||loadLastSub()}
+    function scrollLastSub(smooth){
+      var x=getLastSub();
+      if(!x||!x.tid||!x.sid){toast('هنوز مبحث تمام‌شده‌ای ثبت نشده');return}
+      setTimeout(function(){
+        var cb=D.querySelector('#topicsList input[data-a="rd"][data-t="'+esc(String(x.tid))+'"][data-s="'+esc(String(x.sid))+'"]');
+        if(!cb){
+          var all=D.querySelectorAll('#topicsList input[data-a="rd"]');
+          for(var i=0;i<all.length;i++){if(all[i].dataset.t===String(x.tid)&&all[i].dataset.s===String(x.sid)){cb=all[i];break}}
+        }
+        if(!cb){var topicBtns=D.querySelectorAll('#topicsList [data-a="tgl"]');for(var j=0;j<topicBtns.length;j++)if(topicBtns[j].dataset.t===String(x.tid)){try{topicBtns[j].click()}catch(e){}break}}
+        setTimeout(function(){
+          var row=D.querySelector('#topicsList input[data-a="rd"][data-t="'+esc(String(x.tid))+'"][data-s="'+esc(String(x.sid))+'"]');
+          if(!row){toast('مبحث آخر پیدا نشد');return}
+          var el=row.closest('.sub-row')||row.parentElement;if(!el)return;
+          D.querySelectorAll('.v59-last-sub').forEach(function(z){z.classList.remove('v59-last-sub')});
+          el.classList.add('v59-last-sub');
+          var top=D.querySelector('.topbar');
+          var y=el.getBoundingClientRect().top+W.scrollY-((top?top.offsetHeight:60)+12);
+          W.scrollTo({top:Math.max(0,y),behavior:smooth===false?'auto':'smooth'});
+          setTimeout(function(){el.classList.remove('v59-last-sub')},1800);
+        },120);
+      },90);
+    }
+    try{
+      var ls=D.createElement('style');
+      ls.textContent='.v59-last-sub{outline:2px solid var(--accent)!important;outline-offset:3px!important;border-radius:8px!important;box-shadow:0 0 14px rgba(34,211,238,.25)!important}';
+      D.head.appendChild(ls);
+    }catch(e){}
+    if(typeof W.showTopicsPanel==='function'){
+      var baseTopics=W.showTopicsPanel;
+      W.showTopicsPanel=function(){var r=baseTopics.apply(this,arguments);setTimeout(function(){scrollLastSub(true)},180);return r};
+    }
+    if(typeof W.showSummary==='function'){
+      var baseSummary=W.showSummary;
+      W.showSummary=function(){
+        try{
+          var inf=SESSION&&SESSION.lastSubInfo;
+          if(inf&&inf.tid&&inf.sid&&subComplete(inf.tid,inf.sid))rememberCompleted(inf.tid,inf.sid);
+        }catch(e){}
+        return baseSummary.apply(this,arguments);
+      };
+    }
+    D.addEventListener('keydown',function(e){
+      if(e.code==='NumpadAdd'||e.key==='+'){
+        e.preventDefault();e.stopPropagation();
+        scrollLastSub(true);
+      }
+    },true);
+
+    /* ========================= Enter = ذخیره ========================= */
+    function isModal(el){return !!(el&&el.classList&&(
+      el.classList.contains('modal-bg')||el.classList.contains('story-modal')||el.classList.contains('levelup-modal')
+    ))}
+    function findSaveButton(modal){
+      var btns=Array.from(modal.querySelectorAll('button'));
+      var strong=/^(ذخیره|ثبت|تأیید|ساخت|شروع|اضافه|انجام|اتصال|ذخیره و بستن|تأیید و انتقال)$/;
+      var byId=btns.find(function(b){var id=(b.id||'').toLowerCase();return !b.disabled&&/(save|submit|confirm|apply|^eps$|^nps$|^m-save$|^e-save$)/.test(id)});
+      if(byId)return byId;
+      return btns.find(function(b){return !b.disabled&&strong.test((b.textContent||'').trim().replace(/\s+/g,' '))})||null;
+    }
+    D.addEventListener('keydown',function(e){
+      if(e.key!=='Enter'||e.shiftKey)return;
+      var t=e.target,modal=t&&t.closest?t.closest('.modal-bg,.story-modal,.levelup-modal'):null;
+      if(!isModal(modal))return;
+      if(!modal.querySelector('input,textarea,select'))return;
+      var b=findSaveButton(modal);
+      if(b){e.preventDefault();e.stopImmediatePropagation();b.click()}
+    },true);
+
+    /* ========================= برنامه مطالعاتی: فقط سررسید ========================= */
+    function dueForTopic(tid,sid){
+      var t=(DATA.topics||[]).find(function(x){return x.id===tid});if(!t)return[];
+      var out=[];
+      (t.subtopics||[]).forEach(function(s){
+        if(sid&&s.id!==sid)return;
+        (s.cards||[]).forEach(function(c){var k=W.ck(c.q||'',c.a||'');if(W.isActive(k)&&W.isDue(k))out.push(k)});
+      });
+      return out;
+    }
+    W.getDueKeysForTopic=dueForTopic;
+    W.getDueKeysForSub=function(tid,sid){return dueForTopic(tid,sid)};
+    if(typeof W.startSession==='function'){
+      var baseStart=W.startSession;
+      W.startSession=function(mode,keys,info,opts){
+        if(mode==='due'){
+          keys=(keys||[]).filter(function(k){return W.isActive(k)&&W.isDue(k)});
+          if(!keys.length){toast('⏰ فعلاً کارت سررسیده‌ای نیست');return}
+        }
+        return baseStart.apply(this,[mode,keys,info,opts]);
+      };
+      W.window?.startSession;
+    }
+    D.addEventListener('click',function(e){
+      var b=e.target.closest&&e.target.closest('#planBody [data-act="rev"]');
+      if(!b)return;
+      e.preventDefault();e.stopImmediatePropagation();
+      var p=(DATA.plans||[]).find(function(x){return x.id===b.dataset.p});if(!p)return;
+      var ks=dueForTopic(p.topicId);
+      if(!ks.length){toast('⏰ فعلاً کارت سررسیده‌ای برای این برنامه نیست');return}
+      W.startSession('due',ks,{tid:p.topicId},{ordered:true});
+    },true);
+
+    /* ========================= امتحان: پیش‌فرض ۴ ماه و قابل تنظیم ========================= */
+    function ensureExam(){
+      DATA.exam=DATA.exam||{date:'2027-10-13'};
+      if(!DATA.exam.calcMonths)DATA.exam.calcMonths=4;
+      if(DATA.exam.showDaily===undefined)DATA.exam.showDaily=true;
+      if(DATA.exam.calcDaily===undefined)DATA.exam.calcDaily=true;
+    }
+    ensureExam();
+    function countUnread(){
+      var n=0;
+      (DATA.topics||[]).forEach(function(t){(t.subtopics||[]).forEach(function(s){(s.cards||[]).forEach(function(c){var k=W.ck(c.q||'',c.a||'');if((!W.isActive||W.isActive(k))){var z=DATA.cards[k];if(!z||!z.seen)n++}})})});
+      return n;
+    }
+    function renderExam(){
+      ensureExam();
+      var b=D.getElementById('examBox');if(!b)return;
+      var ex=DATA.exam.date;if(!ex){b.style.display='none';return}
+      var ms=new Date(ex+'T00:00:00').getTime()-Date.now();
+      if(ms<=0){b.innerHTML='🎓 روز امتحان رسید';b.style.display='';return}
+      var days=Math.floor(ms/86400000),hours=Math.floor((ms%86400000)/3600000);
+      var h='⏳ تا امتحان: <b>'+days+'</b> روز و <b>'+hours+'</b> ساعت';
+      if(DATA.exam.showDaily&&DATA.exam.calcDaily){
+        var m=Math.max(1,Math.min(24,parseInt(DATA.exam.calcMonths,10)||4));
+        var per=Math.ceil(countUnread()/Math.max(1,Math.round(m*30)));
+        h+='<br>📚 '+countUnread()+' کارت نخوانده · با محاسبهٔ '+m+' ماهه: <b>روزی '+per+' کارت</b>';
+      }
+      b.innerHTML=h;b.style.display='';
+    }
+    function addExamSettings(){
+      ensureExam();
+      if(D.getElementById('v59ExamSettings'))return;
+      var p=D.getElementById('pSettings');if(!p)return;
+      var sec=D.createElement('div');sec.className='sect';sec.id='v59ExamSettings';
+      sec.innerHTML='<h4>📚 محاسبهٔ مطالعه تا امتحان</h4>'+
+        '<label style="display:block;margin-bottom:7px"><input type="checkbox" id="v59ShowDailyExam"> نمایش تعداد کارت پیشنهادی روزانه</label>'+
+        '<label style="display:block;margin-bottom:7px"><input type="checkbox" id="v59CalcExam"> محاسبهٔ تعداد کارت روزانه</label>'+
+        '<label style="display:block">مدت محاسبه: <input type="number" id="v59ExamMonths" min="1" max="24" step="1" style="width:75px;background:var(--bg);border:1px solid var(--bd);color:var(--text);border-radius:6px;padding:5px"> ماه</label>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:5px">پیش‌فرض: ۴ ماه</div>';
+      p.appendChild(sec);
+      var a=D.getElementById('v59ShowDailyExam'),c=D.getElementById('v59CalcExam'),m=D.getElementById('v59ExamMonths');
+      if(a){a.checked=DATA.exam.showDaily!==false;a.onchange=function(){DATA.exam.showDaily=this.checked;save();renderExam()}}
+      if(c){c.checked=DATA.exam.calcDaily!==false;c.onchange=function(){DATA.exam.calcDaily=this.checked;save();renderExam()}}
+      if(m){m.value=Number(DATA.exam.calcMonths)||4;m.onchange=function(){var v=Math.max(1,Math.min(24,parseInt(this.value,10)||4));this.value=v;DATA.exam.calcMonths=v;save();renderExam()}}
+    }
+    if(typeof W.fillSettings==='function'){
+      var baseFill=W.fillSettings;
+      W.fillSettings=function(){var r=baseFill.apply(this,arguments);setTimeout(function(){addExamSettings();var a=D.getElementById('v59ShowDailyExam'),c=D.getElementById('v59CalcExam'),m=D.getElementById('v59ExamMonths');if(a)a.checked=DATA.exam.showDaily!==false;if(c)c.checked=DATA.exam.calcDaily!==false;if(m)m.value=Number(DATA.exam.calcMonths)||4},0);return r};
+    }
+    addExamSettings();renderExam();setInterval(renderExam,60000);
+
+    /* ========================= Sync v59 ========================= */
+    function metaLoad(){try{return JSON.parse(localStorage.getItem(META_KEY)||'{}')||{}}catch(e){return{}}}
+    function metaSave(x){try{localStorage.setItem(META_KEY,JSON.stringify(x))}catch(e){}}
+    function fnv(str){
+      var h=2166136261>>>0,s=String(str||'');
+      for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}
+      return (h>>>0).toString(36);
+    }
+    function deviceId(){var m=metaLoad();if(m.deviceId)return m.deviceId;var x='v59_'+fnv(String(Math.random())+'|'+Date.now()+'|'+navigator.userAgent);m.deviceId=x;metaSave(m);return x}
+    function shardOf(k){return parseInt(fnv(k),36)%SHARDS}
+    function compactState(s){
+      var x={};if(!s)return x;
+      ['seen','starred','suspended','deleted','pinned','reverse','todayCorrect'].forEach(function(k){if(s[k])x[k]=true});
+      ['correctCount','partialCount','wrongCount','totalWrong','stepIndex','viewCount','timeSpent'].forEach(function(k){if(Number(s[k]||0)>0)x[k]=Number(s[k])});
+      ['lastSeen','firstSeenDate','firstSeenMs','nextDue','lastWrongDate','lastPartialDate','updatedAt','lastActionAt','lastActionDevice','note'].forEach(function(k){if(s[k]!=null&&s[k]!=='')x[k]=s[k]});
+      return x;
+    }
+    function makeShardCache(){
+      shardCache={};for(var i=0;i<SHARDS;i++)shardCache[i]={};
+      Object.keys(DATA.cards||{}).forEach(function(k){shardCache[shardOf(k)][k]=compactState(DATA.cards[k])});
+      shardReady=true;
+    }
+    function ensureShardCache(){if(!shardReady)makeShardCache()}
+    function shardPack(id){
+      ensureShardCache();
+      return pack(JSON.stringify({v:59,kind:'cards',shard:id,cards:shardCache[id]||{}}));
+    }
+    async function pack(str){
+      var enc='raw',data=String(str||'');
+      try{
+        if(typeof CompressionStream!=='undefined'){
+          var u=new Uint8Array(await new Response(new Blob([str]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());
+          var out='';for(var i=0;i<u.length;i+=32768)out+=String.fromCharCode.apply(null,u.subarray(i,i+32768));
+          data=btoa(out);enc='gz';
+        }
+      }catch(e){enc='raw';data=str}
+      return {v:1,enc:enc,data:data}
+    }
+    async function unpack(env){
+      if(!env)return '{}';
+      if(env.enc==='raw')return typeof env.data==='string'?env.data:'{}';
+      if(env.enc==='gz'){
+        var bin=atob(env.data),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+        if(typeof DecompressionStream!=='undefined')return await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+      }
+      return '{}';
+    }
+    async function fileText(f){
+      if(!f)return null;
+      if(f.truncated&&f.raw_url){var r=await fetch(f.raw_url,{cache:'no-store'});if(!r.ok)throw new Error('خواندن فایل ابر ناموفق بود');return await r.text()}
+      return f.content||null;
+    }
+    async function decodeFile(f){var t=await fileText(f);if(!t)return null;try{return JSON.parse(await unpack(JSON.parse(t)))}catch(e){return null}}
+    function normalizeOldRemote(data){
+      if(!data)return {};
+      if(data.state&&typeof data.state==='object')data=data.state;
+      if(data.data&&typeof data.data==='object'&&!data.cards)data=data.data;
+      return data;
+    }
+    function mergeCard(l,r){
+      l=l||{};r=r||{};
+      var lu=Number(l.updatedAt||l.lastActionAt||0),ru=Number(r.updatedAt||r.lastActionAt||0);
+      if(lu===0&&ru===0){
+        var b=Object.assign({},l,r);
+        ['correctCount','partialCount','wrongCount','totalWrong','viewCount','timeSpent','stepIndex'].forEach(function(k){b[k]=Math.max(Number(l[k]||0),Number(r[k]||0))});
+        b.seen=!!(l.seen||r.seen);
+        ['starred','suspended','deleted','pinned','todayCorrect'].forEach(function(k){if(l[k]||r[k])b[k]=true});
+        if(Number(r.nextDue||0)>Number(l.nextDue||0))b.nextDue=r.nextDue;else if(l.nextDue)b.nextDue=l.nextDue;
+        if(l.note&&r.note&&l.note!==r.note)b.note=r.note||l.note;else if(r.note)b.note=r.note;else if(l.note)b.note=l.note;
+        return b;
+      }
+      /* در v59 زمان آخرین اقدام، آخرین Snapshot واقعی را برنده می‌کند؛
+         بنابراین «غلط» عمدی هم می‌تواند مرحله را پایین بیاورد و عقب‌گرد ناخواسته رخ نمی‌دهد. */
+      var pickRemote=ru>lu || (ru===lu && String(r.lastActionDevice||'')>String(l.lastActionDevice||''));
+      var b=pickRemote?Object.assign({},l,r):Object.assign({},r,l);
+      ['correctCount','partialCount','wrongCount','totalWrong','viewCount','timeSpent'].forEach(function(k){b[k]=Math.max(Number(l[k]||0),Number(r[k]||0))});
+      return b;
+    }
+    function mergePlainObject(local,remote){return Object.assign({},local||{},remote||{})}
+    function mergeDailyRecords(local,remote){
+      var out=Object.assign({},local||{});
+      Object.keys(remote||{}).forEach(function(d){var a=out[d]||{},b=remote[d]||{};['total','newCards','correct','wrong','partial'].forEach(function(k){a[k]=Math.max(Number(a[k]||0),Number(b[k]||0))});out[d]=a});
+      return out;
+    }
+    function mergeArrayById(local,remote){
+      var out=(local||[]).slice(),map={};out.forEach(function(x){if(x&&x.id)map[x.id]=x});
+      (remote||[]).forEach(function(x){if(x&&x.id&&!map[x.id]){out.push(x);map[x.id]=x}});return out;
+    }
+    function mergeTopics(remoteTopics){
+      var local=DATA.topics||[];var tm={};local.forEach(function(t){if(t&&t.id)tm[t.id]=t});
+      (remoteTopics||[]).forEach(function(rt){
+        if(!rt||!rt.id)return;
+        if(!tm[rt.id]){local.push(rt);tm[rt.id]=rt;return}
+        var lt=tm[rt.id];if(!lt.name&&rt.name)lt.name=rt.name;lt.subtopics=lt.subtopics||[];var sm={};lt.subtopics.forEach(function(s){if(s&&s.id)sm[s.id]=s});
+        (rt.subtopics||[]).forEach(function(rs){
+          if(!rs||!rs.id)return;
+          if(!sm[rs.id]){lt.subtopics.push(rs);sm[rs.id]=rs;return}
+          var ls=sm[rs.id];if(!ls.name&&rs.name)ls.name=rs.name;ls.cards=ls.cards||[];var cm={};ls.cards.forEach(function(c){if(c)cm[W.ck(c.q||'',c.a||'')]=c});
+          (rs.cards||[]).forEach(function(rc){if(!rc)return;var k=W.ck(rc.q||'',rc.a||'');if(!cm[k]){ls.cards.push(rc);cm[k]=rc}});
+        });
+      });
+      DATA.topics=local;
+    }
+    function deckSignature(){
+      var h=2166136261>>>0;
+      function add(v){var s=String(v==null?'':v);for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}}
+      (DATA.topics||[]).forEach(function(t){
+        add(t.id); add(t.name);
+        (t.subtopics||[]).forEach(function(s){
+          add(s.id); add(s.name);
+          (s.cards||[]).forEach(function(c){
+            add(c.q||''); add('\u0000'); add(c.a||'');
+          });
+        });
+      });
+      return (h>>>0).toString(36)+'-'+String((DATA.topics||[]).length);
+    }
+    function metaPayload(){
+      return {
+        readSubtopics:DATA.readSubtopics||{},dailyRecords:DATA.dailyRecords||{},xp:DATA.xp||{},medals:DATA.medals||{},hidden:DATA.hidden||{},unlockables:DATA.unlockables||{},unlockActive:DATA.unlockActive||{},
+        missions:DATA.missions||{},plans:DATA.plans||[],journal:DATA.journal||{},daily:DATA.daily||{},batch:DATA.batch||{},challenge:DATA.challenge||{},freeze:DATA.freeze||{},folders:DATA.folders||{},lastReadSubtopic:getLastSub()
+      };
+    }
+    function mergeMeta(remote){
+      if(!remote)return;
+      DATA.readSubtopics=Object.assign({},DATA.readSubtopics||{},remote.readSubtopics||{});
+      DATA.dailyRecords=mergeDailyRecords(DATA.dailyRecords,remote.dailyRecords);
+      DATA.xp=DATA.xp||{xp:0,level:1,history:[],boostUntil:null};
+      if(remote.xp){DATA.xp.xp=Math.max(Number(DATA.xp.xp||0),Number(remote.xp.xp||0));DATA.xp.level=Math.max(Number(DATA.xp.level||1),Number(remote.xp.level||1));DATA.xp.history=(DATA.xp.history||[]).concat(remote.xp.history||[]).slice(-1200)}
+      DATA.medals=mergePlainObject(DATA.medals,remote.medals);DATA.hidden=mergePlainObject(DATA.hidden,remote.hidden);DATA.unlockables=mergePlainObject(DATA.unlockables,remote.unlockables);DATA.unlockActive=mergePlainObject(DATA.unlockActive,remote.unlockActive);
+      DATA.plans=mergeArrayById(DATA.plans,remote.plans);
+      DATA.daily=DATA.daily||{date:null,keys:[],done:false};if(remote.daily){DATA.daily.keys=Array.from(new Set((DATA.daily.keys||[]).concat(remote.daily.keys||[])));DATA.daily.done=!!(DATA.daily.done||remote.daily.done);if(remote.daily.date&&(!DATA.daily.date||remote.daily.date>DATA.daily.date))DATA.daily.date=remote.daily.date}
+      DATA.batch=DATA.batch||{keys:[],ts:0};if(remote.batch){DATA.batch.keys=Array.from(new Set((DATA.batch.keys||[]).concat(remote.batch.keys||[])));DATA.batch.ts=Math.max(Number(DATA.batch.ts||0),Number(remote.batch.ts||0))}
+      DATA.folders=mergePlainObject(DATA.folders,remote.folders);
+      DATA.freeze=DATA.freeze||{used:{}};DATA.freeze.used=Object.assign({},DATA.freeze.used||{},remote.freeze&&remote.freeze.used||{});
+      if(remote.challenge){DATA.challenge=DATA.challenge||{};DATA.challenge.level=Math.max(Number(DATA.challenge.level||1),Number(remote.challenge.level||1));DATA.challenge.streak=Math.max(Number(DATA.challenge.streak||0),Number(remote.challenge.streak||0));DATA.challenge.history=(DATA.challenge.history||[]).concat(remote.challenge.history||[]).slice(-600)}
+      if(remote.lastReadSubtopic&&(!getLastSub()||Number(remote.lastReadSubtopic.at||0)>Number(getLastSub().at||0)))rememberCompleted(remote.lastReadSubtopic.tid,remote.lastReadSubtopic.sid);
+      if(remote.journal)DATA.journal=Object.assign({},DATA.journal||{},remote.journal);
+      if(remote.missions&&(!DATA.missions||!DATA.missions.list))DATA.missions=remote.missions;
+    }
+    function touchKey(k){
+      try{
+        if(!k)return;
+        var s=DATA.cards[k];if(!s)return;
+        var t=now();s.updatedAt=t;s.lastActionAt=t;s.lastActionDevice=deviceId();
+        if(shardReady){var id=shardOf(k);shardCache[id][k]=compactState(s);dirtyShards[id]=true}
+        else dirtyShards[shardOf(k)]=true;
+      }catch(e){}
+    }
+    if(typeof W.answerCard==='function'){
+      var baseAnswer=W.answerCard;
+      W.answerCard=function(type,fromQ4){var c=SESSION&&SESSION.queue&&SESSION.queue[SESSION.idx];var r=baseAnswer.apply(this,arguments);try{if(c)touchKey(c.key)}catch(e){}return r};
+    }
+    D.addEventListener('click',function(e){
+      var b=e.target.closest&&e.target.closest('#cardArea .act,#actions .act,#tStar,#tSusp,#tDel,#tPin,#tEdit,#noteSave,#eSave,#mSave,#savV');
+      if(b)setTimeout(function(){var c=SESSION&&SESSION.queue&&SESSION.queue[SESSION.idx];if(c)touchKey(c.key)},0);
+    },true);
+    D.addEventListener('click',function(e){
+      var b=e.target.closest&&e.target.closest('#btnNewTopic,#sdAdd,#sdBulk,#savV,#eSave,#mSave,#sdDel,#btnUpJson,#btnUpTxt');
+      if(b){deckDirty=true;setTimeout(function(){try{DATA._v59DeckEditedAt=now()}catch(e){}},0);try{if(W.invalidateIndex)W.invalidateIndex()}catch(ex){}}
+    },true);
+
+    function loadSyncRec(){try{return W.syRec?W.syRec():JSON.parse(localStorage.getItem('FC_SYNC')||'{}')}catch(e){return{}}}
+    function saveSyncRec(r){try{if(W.sySave)W.sySave(r);else localStorage.setItem('FC_SYNC',JSON.stringify(r))}catch(e){}}
+    async function findOrCreateGist(rec,H){
+      if(rec.gist)return rec.gist;
+      var g=null;
+      try{if(W.syFind)g=await W.syFind(H)}catch(e){}
+      if(!g){
+        var f={};f[STATE_FILE]={content:JSON.stringify({v:59,kind:'manifest',empty:true,shardHashes:{}})};
+        var r=await fetch(GAPI+'/gists',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},H),body:JSON.stringify({description:'Flashcard sync data (private) · v59',public:false,files:f}),cache:'no-store'});
+        if(!r.ok)throw new Error('ساخت Gist ناموفق ('+r.status+')');
+        g=(await r.json()).id;
+      }
+      rec.gist=g;rec.etag=null;saveSyncRec(rec);return g;
+    }
+    async function readGist(rec,H,use304){
+      var headers=Object.assign({},H);if(use304&&rec.etag)headers['If-None-Match']=rec.etag;
+      var r=await fetch(GAPI+'/gists/'+rec.gist,{headers:headers,cache:'no-store'});
+      if(r.status===304)return {notModified:true,etag:rec.etag,files:null};
+      if(r.status===401||r.status===403)throw new Error('توکن GitHub معتبر نیست یا دسترسی Gist لازم است');
+      if(r.status===404)throw new Error('Gist پیدا نشد');
+      if(!r.ok)throw new Error('خطای ابر ('+r.status+')');
+      var j=await r.json();rec.etag=r.headers.get('ETag')||rec.etag||null;return {notModified:false,etag:rec.etag,files:j.files||{}};
+    }
+    async function remoteState(files){
+      var nf=files[STATE_FILE];
+      if(nf){var d=await decodeFile(nf);if(d&&d.v===59)return {v59:d,old:null}}
+      var old=files[STATE_FILE];
+      if(old){
+        try{
+          var txt=await fileText(old), env=txt?JSON.parse(txt):null, body=null;
+          if(env&&env.enc)body=JSON.parse(await unpack(env));
+          else if(env&&typeof env.data==='string'&&!env.cards&&!env.topics){try{body=JSON.parse(env.data)}catch(e){body=env}}
+          else body=env;
+          return {v59:null,old:normalizeOldRemote(body)};
+        }catch(e){}
+      }
+      return {v59:null,old:null};
+    }
+    async function readShard(files,name){var f=files[name];if(!f)return null;return await decodeFile(f)}
+    async function readDeck(files){var f=files[DECK_FILE];if(!f)return null;return await decodeFile(f)}
+    function localShardHash(id){ensureShardCache();return fnv(JSON.stringify(shardCache[id]||{}))}
+    function setManifest(m){m.v=59;m.kind='manifest';return m}
+    async function buildShardEnvelope(id){return await pack(JSON.stringify({v:59,kind:'cards',shard:id,cards:shardCache[id]||{}}))}
+    async function buildManifest(meta,deckSig,hashes,device){
+      return {v:59,kind:'manifest',deviceId:device,updatedAt:now(),deckSig:deckSig,deckEditedAt:Number(DATA._v59DeckEditedAt||0),shardHashes:hashes,meta:meta};
+    }
+    async function pushFiles(rec,H,filesToWrite,writeDeck){
+      var body={files:{}};
+      for(var k in filesToWrite)body.files[k]={content:filesToWrite[k]};
+      if(writeDeck&&filesToWrite.__deckEnvelope){body.files[DECK_FILE]={content:filesToWrite.__deckEnvelope};delete body.files.__deckEnvelope}
+      var headers=Object.assign({'Content-Type':'application/json'},H);
+      if(rec.etag)headers['If-Match']=rec.etag;
+      var r=await fetch(GAPI+'/gists/'+rec.gist,{method:'PATCH',headers:headers,body:JSON.stringify(body),cache:'no-store'});
+      if(r.status===412)throw new Error('__RETRY__');
+      if(!r.ok)throw new Error('ارسال همگام‌سازی ناموفق بود ('+r.status+')');
+      rec.etag=r.headers.get('ETag')||rec.etag;saveSyncRec(rec);
+    }
+    async function applyShardData(id,data){
+      if(!data||!data.cards)return;
+      ensureShardCache();
+      Object.keys(data.cards).forEach(function(k){DATA.cards[k]=mergeCard(DATA.cards[k],data.cards[k]);shardCache[id][k]=compactState(DATA.cards[k])});
+    }
+    async function fullMigrateOld(old,rec){
+      if(!old)return false;
+      mergeTopics(old.topics||[]);
+      Object.keys(old.cards||{}).forEach(function(k){DATA.cards[k]=mergeCard(DATA.cards[k],old.cards[k])});
+      mergeMeta(old);
+      await saveNow();
+      shardReady=false;ensureShardCache();
+      return true;
+    }
+
+    async function syncCore(force,attempt){
+      attempt=attempt||0;
+      var rec=loadSyncRec();if(!rec.token)return{s:'off'};
+      var H={Authorization:'Bearer '+rec.token,Accept:'application/vnd.github+json'};
+      await findOrCreateGist(rec,H);
+      var remote=await readGist(rec,H,!force&&!Object.keys(dirtyShards).length&&!deckDirty);
+      if(remote.notModified){rec.lastOk=new Date().toISOString();saveSyncRec(rec);return{s:'ok'}}
+      var files=remote.files||{};
+      var man=await remoteState(files);
+      var meta=metaLoad();
+      var device=deviceId();
+      var localDeckSig=deckSignature();
+      var remoteManifest=man.v59;
+      if(!remoteManifest&&man.old){await fullMigrateOld(man.old,rec);localDeckSig=deckSignature();remoteManifest=null;files={};}
+      if(!remoteManifest&&man.v59===null&&!man.old){
+        ensureShardCache();
+      }
+      /* متادیتای ابر */
+      if(remoteManifest){
+        mergeMeta(remoteManifest.meta||{});
+      }
+      var remoteDeckSig=remoteManifest&&remoteManifest.deckSig||null;
+      var localMetaDeckSig=meta.deckSig||'';
+      var localDeckChanged=deckDirty||!!(localMetaDeckSig&&localDeckSig!==localMetaDeckSig);
+      var pullDeck=false,mergeDeck=false;
+      if(remoteDeckSig&&remoteDeckSig!==localDeckSig){pullDeck=true;mergeDeck=localDeckChanged}
+      if(!remoteDeckSig&&!files[DECK_FILE]&&(man.old&&man.old.topics))pullDeck=false;
+      if(pullDeck){
+        var rd=await readDeck(files);
+        if(rd&&rd.topics){if(mergeDeck)mergeTopics(rd.topics);else DATA.topics=rd.topics;localDeckSig=deckSignature();deckDirty=false}
+      }
+      /* همگام‌سازی شاردهای کارت: فقط شاردهای تغییرکرده/متفاوت خوانده می‌شوند */
+      ensureShardCache();
+      var remoteHashes=(remoteManifest&&remoteManifest.shardHashes)||{};
+      var known=meta.shardHashes||{};
+      var mergedAny=false,pushAny=false;
+      for(var id=0;id<SHARDS;id++){
+        var rk=remoteHashes[id];var lk=known[id];
+        var needRemote=!!rk && (dirtyShards[id]||lk!==rk||!lk);
+        if(needRemote){
+          var fname='flashcards-cards-'+String(id).padStart(2,'0')+'.json';
+          var rd2=await readShard(files,fname);
+          if(rd2){await applyShardData(id,rd2);mergedAny=true}
+        }
+      }
+      /* شاردهای محلیِ قدیمی یا dirty نیز باید در cloud نوشته شوند. */
+      var hashes={};
+      for(var id2=0;id2<SHARDS;id2++)hashes[id2]=localShardHash(id2);
+      for(var id3=0;id3<SHARDS;id3++){
+        if(hashes[id3]!==remoteHashes[id3])pushAny=true;
+      }
+      mergeMeta({});
+      await saveNow();
+      var out={};
+      if(pushAny||!remoteManifest){
+        for(var id4=0;id4<SHARDS;id4++){
+          if(hashes[id4]!==remoteHashes[id4]||!remoteManifest){
+            var env=await buildShardEnvelope(id4);out['flashcards-cards-'+String(id4).padStart(2,'0')+'.json']=JSON.stringify(env);
+          }
+        }
+      }
+      var writeDeck=(!files[DECK_FILE])||localDeckChanged||((remoteDeckSig||'')!==localDeckSig);
+      if(writeDeck){
+        var de=await pack(JSON.stringify({v:59,kind:'deck',sig:localDeckSig,editedAt:Number(DATA._v59DeckEditedAt||0),topics:DATA.topics||[]}));
+        out.__deckEnvelope=JSON.stringify(de);
+      }
+      var manifestMeta=metaPayload();
+      var manifest=await buildManifest(manifestMeta,localDeckSig,hashes,device);
+      out[STATE_FILE]=JSON.stringify(await pack(JSON.stringify(manifest)));
+      var changedFiles=Object.keys(out).length>0;
+      if(changedFiles){
+        try{await pushFiles(rec,H,out,writeDeck)}catch(e){if(e.message==='__RETRY__'&&attempt<2)return syncCore(true,attempt+1);throw e}
+      }
+      meta.shardHashes=hashes;meta.deckSig=localDeckSig;meta.deviceId=device;meta.lastOk=now();metaSave(meta);
+      Object.keys(dirtyShards).forEach(function(k){delete dirtyShards[k]});deckDirty=false;
+      rec.sig=fnv(JSON.stringify({hashes:hashes,deckSig:localDeckSig}));rec.at=now();rec.lastOk=new Date().toISOString();saveSyncRec(rec);
+      try{if(W.updateCounts)W.updateCounts();if(W.renderTopics)W.renderTopics();if(W.renderPlanPanel)W.renderPlanPanel()}catch(e){}
+      return{s:mergedAny||pushAny?'merged':'ok'};
+    }
+
+    async function syncOnce(force){
+      if(syncLock)return{s:'busy'};
+      syncLock=syncCore(!!force).catch(function(e){return{s:'err',m:String(e&&e.message||e)}}).finally(function(){syncLock=null});
+      return await syncLock;
+    }
+    async function doSync(show){
+      var r=await syncOnce(!!show);
+      if(r.s==='off'){toast('☁️ ابتدا توکن GitHub را از تنظیمات فعال کن');return r}
+      if(r.s==='busy'){toast('☁️ همگام‌سازی در حال انجام است');return r}
+      if(r.s==='err'){toast('❌ '+r.m);return r}
+      toast(r.s==='merged'?'☁️ دو دستگاه با هم ادغام شدند ✅':'☁️ همگام است ✅');
+      return r;
+    }
+    W.syncOnce=syncOnce;W.v59Sync=doSync;
+
+    /* ابر هرگز صفحه را عوض نمی‌کند. */
+    var cloud=D.getElementById('btnSync');
+    if(cloud){cloud.onclick=function(e){e.preventDefault();e.stopImmediatePropagation();doSync(true)}}
+    var sn=D.getElementById('syNow');if(sn)sn.onclick=function(){doSync(true)};
+
+    /* صف همگام‌سازی سبک: بعد از چند پاسخ، نه بعد از هر کارت یک درخواست. */
+    function queueSync(delay){
+      clearTimeout(syncTimer);syncTimer=setTimeout(function(){
+        try{if(loadSyncRec().token&&((Object.keys(dirtyShards).length>0)||deckDirty))doSync(false)}catch(e){}
+      },delay||3500);
+    }
+    D.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#cardArea .act,#actions .act'))queueSync(3500)},true);
+    D.addEventListener('visibilitychange',function(){if(D.hidden){clearTimeout(syncTimer);queueSync(1200)}else{try{if(loadSyncRec().token)doSync(false)}catch(e){}}});
+    W.addEventListener('online',function(){try{if(loadSyncRec().token)doSync(false)}catch(e){}});
+
+    /* Sync اولیه بعد از آماده شدن اپ، با جلوگیری از هر reload. */
+    setTimeout(function(){try{if(loadSyncRec().token)doSync(false)}catch(e){}},250);
+
+    /* به‌روزرسانی مقدار آخرین مبحث از checkboxها در صورت تغییر مستقیم. */
+    D.addEventListener('change',function(e){
+      var b=e.target;
+      if(b&&b.matches&&b.matches('#topicsList input[data-a="rd"]')&&b.checked)rememberCompleted(b.dataset.t,b.dataset.s);
+    },true);
+
+    /* خروجی‌های دسترسی برای دیباگ و نسخه. */
+    W.V59={version:59,scrollLastSub:scrollLastSub,doSync:doSync,renderExam:renderExam,markDeckDirty:function(){deckDirty=true},touchKey:touchKey};
+    try{D.title='فلش‌کارت v59'}catch(e){}
+  }
+
+  bootBase();
+})();
+</script>
+</body>
+</html>
