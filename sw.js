@@ -1,154 +1,69 @@
 /* =========================================================
-   Flashcard v58 Service Worker
+   Flashcard v59 Service Worker
+   شبکه اول + cache نسخه‌دار + cache کردن v59 و هستهٔ v56
    ========================================================= */
+var CACHE_NAME='fc-cache-v59';
+var ASSETS=['./app-v59.html','./app-v56.html','./'];
 
-var CACHE_NAME='fc-cache-v58';
+self.addEventListener('install',function(e){
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache){
+        return Promise.all(
+          ASSETS.map(function(x){
+            return cache.add(x).catch(function(){});
+          })
+        );
+      })
+      .then(function(){
+        return self.skipWaiting();
+      })
+  );
+});
 
-self.addEventListener(
-  'install',
-  function(e){
-
-    e.waitUntil(
-
-      caches.open(CACHE_NAME)
-        .then(function(cache){
-
-          return Promise.all([
-            cache.add('./app-v58.html').catch(function(){}),
-            cache.add('./').catch(function(){})
-          ]);
-
+self.addEventListener('activate',function(e){
+  e.waitUntil(
+    caches.keys().then(function(keys){
+      return Promise.all(
+        keys.map(function(k){
+          return k===CACHE_NAME ? null : caches.delete(k);
         })
-        .then(function(){
+      );
+    }).then(function(){
+      return self.clients.claim();
+    })
+  );
+});
 
-          return self.skipWaiting();
+self.addEventListener('fetch',function(e){
+  var r=e.request;
 
-        })
+  if(
+    r.method!=='GET' ||
+    new URL(r.url).origin!==self.location.origin
+  ) return;
 
-    );
-
-  }
-);
-
-
-self.addEventListener(
-  'activate',
-  function(e){
-
-    e.waitUntil(
-
-      caches.keys()
-        .then(function(keys){
-
-          return Promise.all(
-
-            keys.map(function(k){
-
-              if(k!==CACHE_NAME){
-
-                return caches.delete(k);
-
-              }
-
-            })
-
-          );
-
-        })
-        .then(function(){
-
-          return self.clients.claim();
-
-        })
-
-    );
-
-  }
-);
-
-
-self.addEventListener(
-  'fetch',
-  function(e){
-
-    var r=e.request;
-
-    if(
-      r.method!=='GET' ||
-      new URL(r.url).origin!==self.location.origin
-    ){
-
-      return;
-
-    }
-
-
-    /*
-     * اول شبکه:
-     * نسخه جدید app-v58 سریع‌تر دریافت می‌شود.
-     *
-     * در صورت قطعی:
-     * cache استفاده می‌شود.
-     */
-
-    e.respondWith(
-
-      fetch(
-        r,
-        {
-          cache:'no-store'
-        }
-      )
-
+  e.respondWith(
+    fetch(r,{cache:'no-store'})
       .then(function(res){
-
-        if(
-          res &&
-          res.ok
-        ){
-
+        if(res && res.ok){
           var cp=res.clone();
 
-          caches.open(CACHE_NAME)
-            .then(function(cache){
-
-              cache.put(r,cp);
-
-            })
-            .catch(function(){});
-
+          caches.open(CACHE_NAME).then(function(c){
+            c.put(r,cp);
+          }).catch(function(){});
         }
 
         return res;
-
       })
-
       .catch(function(){
+        return caches.match(r,{ignoreSearch:true}).then(function(hit){
+          if(hit) return hit;
 
-        return caches.match(
-          r,
-          {
-            ignoreSearch:true
-          }
-        )
-
-        .then(function(hit){
-
-          if(hit){
-
-            return hit;
-
-          }
-
-          return caches.match(
-            './app-v58.html'
-          );
-
+          return caches.match('./app-v59.html').then(function(fallback){
+            return fallback || caches.match('./app-v56.html');
+          });
         });
-
       })
-
-    );
-
-  }
-);
+  );
+});
