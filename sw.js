@@ -1,69 +1,32 @@
-/* =========================================================
-   Flashcard v59 Service Worker
-   شبکه اول + cache نسخه‌دار + cache کردن v59 و هستهٔ v56
-   ========================================================= */
-var CACHE_NAME='fc-cache-v59';
-var ASSETS=['./app-v59.html','./app-v56.html','./'];
-
-self.addEventListener('install',function(e){
-  e.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache){
-        return Promise.all(
-          ASSETS.map(function(x){
-            return cache.add(x).catch(function(){});
-          })
-        );
-      })
-      .then(function(){
-        return self.skipWaiting();
-      })
-  );
+/* Flashcard v65: same-origin, network-first offline cache for GitHub Pages. */
+var CACHE_NAME='fc-cache-v65';
+var ASSETS=['./app-v65.html','./app-v56.html','./'];
+self.addEventListener('install',function(event){
+  event.waitUntil(caches.open(CACHE_NAME).then(function(cache){
+    return Promise.all(ASSETS.map(function(asset){return cache.add(asset).catch(function(){})}));
+  }).then(function(){return self.skipWaiting()}));
 });
-
-self.addEventListener('activate',function(e){
-  e.waitUntil(
-    caches.keys().then(function(keys){
-      return Promise.all(
-        keys.map(function(k){
-          return k===CACHE_NAME ? null : caches.delete(k);
-        })
-      );
-    }).then(function(){
-      return self.clients.claim();
-    })
-  );
+self.addEventListener('activate',function(event){
+  event.waitUntil(caches.keys().then(function(keys){
+    return Promise.all(keys.map(function(key){
+      return key!==CACHE_NAME&&key.indexOf('fc-cache-')===0?caches.delete(key):Promise.resolve(false);
+    }));
+  }).then(function(){return self.clients.claim()}));
 });
-
-self.addEventListener('fetch',function(e){
-  var r=e.request;
-
-  if(
-    r.method!=='GET' ||
-    new URL(r.url).origin!==self.location.origin
-  ) return;
-
-  e.respondWith(
-    fetch(r,{cache:'no-store'})
-      .then(function(res){
-        if(res && res.ok){
-          var cp=res.clone();
-
-          caches.open(CACHE_NAME).then(function(c){
-            c.put(r,cp);
-          }).catch(function(){});
-        }
-
-        return res;
-      })
-      .catch(function(){
-        return caches.match(r,{ignoreSearch:true}).then(function(hit){
-          if(hit) return hit;
-
-          return caches.match('./app-v59.html').then(function(fallback){
-            return fallback || caches.match('./app-v56.html');
-          });
-        });
-      })
-  );
+self.addEventListener('fetch',function(event){
+  var request=event.request;
+  if(request.method!=='GET'||new URL(request.url).origin!==self.location.origin)return;
+  event.respondWith(fetch(request,{cache:'no-store'}).then(function(response){
+    if(response&&response.ok){
+      caches.open(CACHE_NAME).then(function(cache){return cache.put(request,response.clone())}).catch(function(){});
+    }
+    return response;
+  }).catch(function(){
+    return caches.match(request,{ignoreSearch:true}).then(function(hit){
+      if(hit)return hit;
+      return caches.match('./app-v65.html').then(function(current){
+        return current||caches.match('./app-v56.html');
+      });
+    });
+  }));
 });
